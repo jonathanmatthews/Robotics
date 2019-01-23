@@ -4,21 +4,26 @@ import time
 import almath
 from naoqi import ALProxy
 
+
 def userArmsCartesian(motionProxy):
-    effector   = ["LArm", "RArm"]
-    frame      = motion.FRAME_TORSO
+    effector = ["LArm", "RArm"]
+    frame = motion.FRAME_TORSO
     useSensorValues = False
 
     # just control position
-    axisMask   = [motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL]
+    axisMask = [motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL]
 
     # LArm path
     pathLArm = []
-    initTf   = almath.Transform(motionProxy.getTransform("LArm", frame, useSensorValues))
-    targetTf = almath.Transform(motionProxy.getTransform("LArm", frame, useSensorValues))
-    targetTf.r1_c4 += 0.04 # x
-    targetTf.r2_c4 -= 0.10 # y
-    targetTf.r3_c4 += 0.10 # z
+    initTf = almath.Transform(
+        motionProxy.getTransform(
+            "LArm", frame, useSensorValues))
+    targetTf = almath.Transform(
+        motionProxy.getTransform(
+            "LArm", frame, useSensorValues))
+    targetTf.r1_c4 += 0.04  # x
+    targetTf.r2_c4 -= 0.10  # y
+    targetTf.r3_c4 += 0.10  # z
     pathLArm.append(list(targetTf.toVector()))
     pathLArm.append(list(initTf.toVector()))
     pathLArm.append(list(targetTf.toVector()))
@@ -26,11 +31,15 @@ def userArmsCartesian(motionProxy):
 
     # RArm path
     pathRArm = []
-    initTf   = almath.Transform(motionProxy.getTransform("RArm", frame, useSensorValues))
-    targetTf = almath.Transform(motionProxy.getTransform("RArm", frame, useSensorValues))
-    targetTf.r1_c4 += 0.04 # x
-    targetTf.r2_c4 += 0.10 # y
-    targetTf.r3_c4 += 0.10 # z
+    initTf = almath.Transform(
+        motionProxy.getTransform(
+            "RArm", frame, useSensorValues))
+    targetTf = almath.Transform(
+        motionProxy.getTransform(
+            "RArm", frame, useSensorValues))
+    targetTf.r1_c4 += 0.04  # x
+    targetTf.r2_c4 += 0.10  # y
+    targetTf.r3_c4 += 0.10  # z
     pathRArm.append(list(targetTf.toVector()))
     pathRArm.append(list(initTf.toVector()))
     pathRArm.append(list(targetTf.toVector()))
@@ -42,31 +51,34 @@ def userArmsCartesian(motionProxy):
 
     # Go to the target and back again
     timesList = [[1.0, 2.0, 3.0, 4.0],
-                 [1.0, 2.0, 3.0, 4.0]] # seconds
+                 [1.0, 2.0, 3.0, 4.0]]  # seconds
 
     motionProxy.transformInterpolations(effector, frame, pathList,
-                                       axisMask, timesList)
+                                        axisMask, timesList)
 
 
 def userArmArticular(motionProxy):
     # Arms motion from user have always the priority than walk arms motion
     JointNames = ["LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll"]
-    Arm1 = [-40,  25, 0, -40]
-    Arm1 = [ x * motion.TO_RAD for x in Arm1]
+    Arm1 = [-40, 25, 0, -40]
+    Arm1 = [x * motion.TO_RAD for x in Arm1]
 
-    Arm2 = [-40,  50, 0, -80]
-    Arm2 = [ x * motion.TO_RAD for x in Arm2]
+    Arm2 = [-40, 50, 0, -80]
+    Arm2 = [x * motion.TO_RAD for x in Arm2]
 
     pFractionMaxSpeed = 0.6
 
-    motionProxy.angleInterpolationWithSpeed(JointNames, Arm1, pFractionMaxSpeed)
-    motionProxy.angleInterpolationWithSpeed(JointNames, Arm2, pFractionMaxSpeed)
-    motionProxy.angleInterpolationWithSpeed(JointNames, Arm1, pFractionMaxSpeed)
+    motionProxy.angleInterpolationWithSpeed(
+        JointNames, Arm1, pFractionMaxSpeed)
+    motionProxy.angleInterpolationWithSpeed(
+        JointNames, Arm2, pFractionMaxSpeed)
+    motionProxy.angleInterpolationWithSpeed(
+        JointNames, Arm1, pFractionMaxSpeed)
 
 
 def main(robotIP, PORT=9559):
 
-    motionProxy  = ALProxy("ALMotion", robotIP, PORT)
+    motionProxy = ALProxy("ALMotion", robotIP, PORT)
     postureProxy = ALProxy("ALRobotPosture", robotIP, PORT)
 
     # Wake up robot
@@ -76,46 +88,46 @@ def main(robotIP, PORT=9559):
     postureProxy.goToPosture("StandInit", 0.5)
 
     #####################
-    ## Enable arms control by Motion algorithm
+    # Enable arms control by Motion algorithm
     #####################
     motionProxy.setMoveArmsEnabled(True, True)
     # motionProxy.setMoveArmsEnabled(False, False)
 
     #####################
-    ## FOOT CONTACT PROTECTION
+    # FOOT CONTACT PROTECTION
     #####################
     #motionProxy.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", False]])
     motionProxy.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", True]])
 
-    #TARGET VELOCITY
+    # TARGET VELOCITY
     X = -0.5  # backward
     Y = 0.0
     Theta = 0.0
-    Frequency =0.0 # low speed
+    Frequency = 0.0  # low speed
     try:
         motionProxy.moveToward(X, Y, Theta, [["Frequency", Frequency]])
-    except Exception, errorMsg:
+    except Exception as errorMsg:
         print str(errorMsg)
         print "This example is not allowed on this robot."
         exit()
 
     userArmsCartesian(motionProxy)
 
-    #TARGET VELOCITY
+    # TARGET VELOCITY
     X = 0.8
     Y = 0.0
     Theta = 0.0
-    Frequency =1.0 # max speed
+    Frequency = 1.0  # max speed
     try:
         motionProxy.moveToward(X, Y, Theta, [["Frequency", Frequency]])
-    except Exception, errorMsg:
+    except Exception as errorMsg:
         print str(errorMsg)
         print "This example is not allowed on this robot."
         exit()
 
     time.sleep(4.0)
 
-    #TARGET VELOCITY
+    # TARGET VELOCITY
     X = 0.2
     Y = -0.5
     Theta = 0.2
@@ -123,7 +135,7 @@ def main(robotIP, PORT=9559):
 
     try:
         motionProxy.moveToward(X, Y, Theta, [["Frequency", Frequency]])
-    except Exception, errorMsg:
+    except Exception as errorMsg:
         print str(errorMsg)
         print "This example is not allowed on this robot."
         exit()
@@ -133,9 +145,9 @@ def main(robotIP, PORT=9559):
     time.sleep(2.0)
 
     #####################
-    ## End Walk
+    # End Walk
     #####################
-    #TARGET VELOCITY
+    # TARGET VELOCITY
     X = 0.0
     Y = 0.0
     Theta = 0.0
@@ -145,6 +157,7 @@ def main(robotIP, PORT=9559):
 
     # Go to rest position
     motionProxy.rest()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
