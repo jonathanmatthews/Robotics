@@ -7,7 +7,8 @@ name = "pypi"
 naoqi = "1.14.5"
 
 [dev-packages]
-"autopep8" = "*"
+py-make = "*"
+autopep8 = "*"
 pylint = "*"
 
 [requires]

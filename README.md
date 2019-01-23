@@ -3,7 +3,7 @@ Follow guide at:
 http://doc.aldebaran.com/2-1/dev/python/install_guide.html#python-install-guide  
 
 # Running project:
-Install packages in Pipfile and then run through terminal  
+Install all packages in Pipfile and then run through terminal  
 Linux:  
 > `pip3 install {package}`  
 Windows:
@@ -11,21 +11,28 @@ Windows:
 Then make sure being ran in python2.7, can be set to default but if not like this works  
 > `python2.7 {filename}`  
 
+# Setting up Makefile:  
+Install py-make  
+Linux:  
+> `pip3 install py-make`  
+Windows:
+> `pip install py-make`  
+
 # Autoformatting:  
 This formats all the code so it's the same style everywhere  
 1. Install autopep8:  
 > `pip3 install pycodestyle`  
 > `pip3 install --upgrade autopep8`  
-2. Run Makefile command:
-> `make -f Makefile format`  
+2. Run Makefile if has been installed:
+> `pymake format`  
 
 # Running tests:
+> `pymake test`    
+Alternatively:  
 1. Navigate to root folder  
 > e.g. `cd ~Documents/{foldername}`
 2. Run test script  
-> `python scripts/test.py`  
-Alternatively:  
-> `make -f Makefile test`  
+> `python scripts/test.py`    
 will run all tests.
 
 # Writing tests:
@@ -41,7 +48,7 @@ Commit files added using previous command
 Push all changes to cloud for everyone  
 > `git push`  
 Create a branch to work on  
-> `git -b {replace_with_branch_name}`  
+> `git branch {replace_with_branch_name}`  
 Move to a different branch  
 > `git checkout {branch_to_look_at}`  
 Pull down any changes other people have pushed  
