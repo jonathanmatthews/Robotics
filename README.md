@@ -2,28 +2,12 @@
 Follow guide at:  
 http://doc.aldebaran.com/2-1/dev/python/install_guide.html#python-install-guide  
 
-# Installing pipenv
-`sudo pip install pipenv`  
-
-# Installing dependencies  
-This should install all modules in the Pipfile  
-1. Change directory into project folder:  
-> e.g. `cd ~/Documents/{foldername}`
-2. Install dependencies after installing pipenv:  
-> `pipenv install`
-
-# Adding a dependency  
-Just to help everyone keep track of what modules they need installed  
-> `pipenv install {dependency}`
-
-# Removing a dependency  
-Again just to keep track  
-> `pipenv uninstall {dependency}`
-
 # Running project:
 Install packages in Pipfile and then run through terminal  
-If modules won't install via pipenv  
+Linux:  
 > `pip3 install {package}`  
+Windows:
+> `pip install {package}`  
 Then make sure being ran in python2.7, can be set to default but if not like this works  
 > `python2.7 {filename}`  
 
@@ -60,3 +44,6 @@ Create a branch to work on
 > `git -b {replace_with_branch_name}`  
 Move to a different branch  
 > `git checkout {branch_to_look_at}`  
+Pull down any changes other people have pushed  
+> `git pull`  
+
