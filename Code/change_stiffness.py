@@ -6,11 +6,14 @@ def convert_stiff_to_numeric(stiff):
     else:
         return 1.0, 'Loosening'
 
-if __name__ == '__main__':
+def get_input():
     stiff = input("Enter True to stiffen, False to un-stiffen")
     if stiff not in [True, False]:
-        raise ValueError('Input not allowed')
+        raise ValueError('Input not allowed')    
+    return stiff
 
+if __name__ == '__main__':
+    stiff = get_input()
     stiff_numeric, confirm_text = convert_stiff_to_numeric(stiff)
     print('{} up'.format(confirm_text))
 
