@@ -7,7 +7,7 @@ def convert_stiff_to_numeric(stiff):
         return 1.0, 'Loosening'
 
 def get_input():
-    stiff = input("Enter True to stiffen, False to un-stiffen")
+    stiff = input("Enter False to stiffen, True to un-stiffen \n")
     if stiff not in [True, False]:
         raise ValueError('Input not allowed')    
     return stiff

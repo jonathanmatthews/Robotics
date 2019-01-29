@@ -13,7 +13,7 @@ def check_connection():
     """
     Connects 
     """
-    ip_port = router_or_you('direct')
+    ip_port = router_or_you('router')
     try:
         tts = ALProxy("ALTextToSpeech", *ip_port)
         tts.say("Connected")
