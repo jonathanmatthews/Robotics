@@ -1,9 +1,11 @@
-# -*- encoding: UTF-8 -*- 
+# -*- encoding: UTF-8 -*-
 
 import sys
 from naoqi import ALProxy
 
-robotIp= "192.168.1.3"
+robotIp = "192.168.1.3"
+
+
 def StiffnessOn(proxy):
     # We use the "Body" name to signify the collection of all joints
     pNames = "Body"
@@ -16,13 +18,13 @@ def main(robotIP):
     # Init proxies.
     try:
         motionProxy = ALProxy("ALMotion", robotIP, 9559)
-    except Exception, e:
+    except Exception as e:
         print "Could not create proxy to ALMotion"
         print "Error was: ", e
 
     try:
         postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
-    except Exception, e:
+    except Exception as e:
         print "Could not create proxy to ALRobotPosture"
         print "Error was: ", e
 
@@ -64,10 +66,10 @@ def main(robotIP):
     ###############################
     stepFrequency = 0.8
     clearExisting = False
-    nbStepDance = 2 # defined the number of cycle to make
+    nbStepDance = 2  # defined the number of cycle to make
 
-    for j in range( nbStepDance ):
-        for i in range( len(footStepsList) ):
+    for j in range(nbStepDance):
+        for i in range(len(footStepsList)):
             motionProxy.setFootStepsWithSpeed(
                 footStepsList[i][0],
                 footStepsList[i][1],

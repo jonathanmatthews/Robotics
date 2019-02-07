@@ -1,39 +1,38 @@
 # -*- encoding: UTF-8 -*-
 """
 record sensor values from the head (yaw) movement and output them to a file.
-
 """
-
-
-ALMEMORY_KEY_NAMES = [
-"Device/SubDeviceList/HeadYaw/Position/Sensor/Value",
-"Device/SubDeviceList/HeadYaw/Position/Actuator/Value",
-]
-
-ROBOT_IP = "192.168.1.3"
 
 import os
 import sys
 import time
-
 from naoqi import ALProxy
+from change_stiffness import change_stiffness
+from datanames import values
 
-def recordData(nao_ip):
+ALMEMORY_KEY_NAMES = [
+    values['HY'][1],
+    # Should below line exist in values datasheet? 07/02 George
+    # "Device/SubDeviceList/HeadYaw/Position/Actuator/Value",
+]
+
+ROBOT_IP = "192.168.1.3"
+
+
+def recordData(ROBOT_IP, output_path):
     """ records the data from ALMemory.
     Returns a matrix of the values
 
     """
     print "Recording data ..."
-    memory = ALProxy("ALMemory", nao_ip, 9559)
-    data = list()
-    for i in range (1, 100):
-        line = list()
-        for key in ALMEMORY_KEY_NAMES:
-            value = memory.getData(key)
-            line.append(value)
-        data.append(line)
-        time.sleep(0.05)
-    return data
+    memory = ALProxy("ALMemory", ROBOT_IP, 9559)
+    with open(output_path, "w") as fp:
+        for _ in range(1, 100):
+            line = [memory.getData(key) for key in ALMEMORY_KEY_NAMES]
+            fp.write(", ".join(str(x) for x in line) + "\n")
+            time.sleep(0.05)
+
+    print "Results written to", output_path
 
 
 def main():
@@ -48,28 +47,20 @@ def main():
         nao_ip = sys.argv[1]
 
     motion = ALProxy("ALMotion", nao_ip, 9559)
-    # Set stiffness on for Head motors
-    motion.setStiffnesses("Head", 1.0)
+    change_stiffness("Stiffen", "Head")
     # Will go to 1.0 then 0 radian
     # in two seconds
     motion.post.angleInterpolation(
         ["HeadYaw"],
         [1.2, 1],
-        [1  , 2],
+        [1, 2],
         False
     )
-    data = recordData(nao_ip)
+    output_path = "Output_data/recordheadmovement.csv"
+
+    recordData(nao_ip, output_path)
     # Gently set stiff off for Head motors
-    motion.setStiffnesses("Head", 0.0)
-
-    output = os.path.abspath("Output_data/recordheadmovement.csv")
-
-    with open(output, "w") as fp:
-        for line in data:
-            fp.write("; ".join(str(x) for x in line))
-            fp.write("\n")
-
-    print "Results written to", output
+    change_stiffness("Unstiffen", 'Head')
 
 
 if __name__ == "__main__":
