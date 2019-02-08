@@ -14,16 +14,18 @@ Requires:
 """
 
 from sys import path
-from naoqi import ALProxy
+from datanames import values
 
 try:
-  path.insert(0, "path/to/encoder_files") # Insert encoder path.
-  import hingeencoder as LittleEncoders
-  import encoder_functions as BigEncoder
+  path.insert(0, "hidlibs") # Insert encoder path.
+  from pynaoqi.naoqi import ALProxy
+  import top_encoder as BigEncoder
+  import bottom_encoder as LittleEncoders
   encoders_available = True
   
-except ImportError:
-  print("Error: unable to load encoder functions, encoder data will be unavailable")
+except Exception as e:
+  print "Exception", e
+  print "Error: unable to load encoder functions, encoder data will be unavailable"
   encoders_available = False
 
 
@@ -43,7 +45,7 @@ class Robot:
     
     # Set up connection manager.
     self.connection = ALProxy("ALConnectionManager", ip, port)
-    print("Network state: " + connection.state())
+    print("Network state: " + self.connection.state())
     
     # Set up proxies to robot.
     self.motion = ALProxy("ALMotion", ip, port)
@@ -53,7 +55,7 @@ class Robot:
     # Set up encoders, if available.
     if encoders_available:
       LittleEncoders.calibrate()
-      BigEncoder.calibrate_zero()
+      BigEncoder.calibrate()
     
     
     self.posture.goToPosture(initial_position, 1.0) # Set initial position.
@@ -64,9 +66,9 @@ class Robot:
     in rad/s.
     """
     
-    x_data = self.memory.getData("Device/SubDeviceList/InertialSensor/GyroscopeX/Sensor/Value")
-    y_data = self.memory.getData("Device/SubDeviceList/InertialSensor/GyroscopeY/Sensor/Value")
-    z_data = self.memory.getData("Device/SubDeviceList/InertialSensor/GyroscopeZ/Sensor/Value") # Might not be available.
+    x_data = self.memory.getData(values['GX'][1])
+    y_data = self.memory.getData(values['GY'][1])
+    z_data = self.memory.getData(values['GZ'][1])
     
     return x_data, y_data, z_data
   
@@ -75,10 +77,9 @@ class Robot:
     Obtain the current accelerometer data. Returns a tuple containing the (x, y, z) acceleromenter data,
     in m/s.
     """
-    
-    x_data = self.memory.getData("Device/SubDeviceList/InertialSensor/AccelerometerX/Sensor/Value")
-    y_data = self.memory.getData("Device/SubDeviceList/InertialSensor/AccelerometerY/Sensor/Value")
-    z_data = self.memory.getData("Device/SubDeviceList/InertialSensor/AccelerometerZ/Sensor/Value")
+    x_data = self.memory.getData(values['AX'][1])
+    y_data = self.memory.getData(values['AY'][1])
+    z_data = self.memory.getData(values['AZ'][1])
     
     return x_data, y_data, z_data
   
@@ -106,7 +107,7 @@ class Robot:
     """
     
     if encoders_available:
-      return BigEncoder.get_angle()
+      return BigEncoder.getAngle()
   
       
   
