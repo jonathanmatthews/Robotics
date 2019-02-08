@@ -18,10 +18,11 @@ from datanames import values
 
 try:
   path.insert(0, "hidlibs") # Insert encoder path.
-  from pynaoqi.naoqi import ALProxy
-  import top_encoder as BigEncoder
-  import bottom_encoder as LittleEncoders
+  from pynaoqi.naoqi import *
+  import top_encoder.encoder_functions as BigEncoder
+  import bottom_encoder.hingeencoder as LittleEncoders
   encoders_available = True
+  print "Modules loaded successfully"
   
 except Exception as e:
   print "Exception", e
@@ -29,12 +30,12 @@ except Exception as e:
   encoders_available = False
 
 
-class Robot:
+class Robot():
   """
   Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
   """
   
-  def __init__(self, ip="127.0.0.1", port=9559, initial_position="Stand"):
+  def __init__(self, ip="192.168.1.3", port=9559, initial_position="Stand"):
     """
     Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
     Requires arguments:
@@ -44,13 +45,16 @@ class Robot:
     """
     
     # Set up connection manager.
-    self.connection = ALProxy("ALConnectionManager", ip, port)
-    print("Network state: " + self.connection.state())
+    #self.connection = ALProxy("ALConnectionManager", ip, port)
+    #print("Network state: " + self.connection.state())
     
     # Set up proxies to robot.
-    self.motion = ALProxy("ALMotion", ip, port)
-    self.posture = ALProxy("ALRobotPosture", ip, port)
-    self.memory = ALProxy("ALMemory", ip, port)
+    #self.motion = ALProxy("ALMotion", ip, port)
+    #self.posture = ALProxy("ALRobotPosture", ip, port)
+    #self.memory = ALProxy("ALMemory", ip, port)
+    self.speech = ALProxy("ALTextToSpeech", ip, port)
+    
+    self.speech.say("Connected")
     
     # Set up encoders, if available.
     if encoders_available:
@@ -58,7 +62,7 @@ class Robot:
       BigEncoder.calibrate()
     
     
-    self.posture.goToPosture(initial_position, 1.0) # Set initial position.
+    #self.posture.goToPosture(initial_position, 1.0) # Set initial position.
   
   def get_gyro(self):
     """
@@ -108,7 +112,10 @@ class Robot:
     
     if encoders_available:
       return BigEncoder.getAngle()
-  
+      
+robot = Robot()
+print robot.get_little_encoders()
+print robot.get_acc()
       
   
   
