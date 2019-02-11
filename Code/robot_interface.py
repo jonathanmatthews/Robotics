@@ -16,6 +16,7 @@ Requires:
 from sys import path
 from datanames import values
 from time import time, sleep, gmtime, strftime
+from utility_functions import flatten
 
 try:
   path.insert(0, "hidlibs") # Insert encoder path.
@@ -121,7 +122,7 @@ class Robot():
         """
 
         if encoders_available:
-            return [BigEncoder.getAngle()]
+            return BigEncoder.getAngle()
 
     @staticmethod
     def store(f, values):
@@ -137,9 +138,7 @@ class Robot():
 
     @staticmethod
     def algorithm(time, acc, gyro, l_encoder, b_encoder):
-        # don't like having to do this, if anyone can figure out how to not have to do this while
-        # still storing flat list then tell me how George
-        time, b_encoder = time[0], b_encoder[0]
+        print time, acc, gyro, l_encoder, b_encoder
 
 
     def run(self, t, period):
@@ -157,10 +156,11 @@ class Robot():
 
                 # needs to be list of lists for easy flattening for storage while retaining ease of use for 
                 # putting into algorithm
-                values = [[start_time], self.get_acc(), self.get_gyro(), self.get_little_encoders(), self.get_big_encoder()]
-                flat_values = [item for sublist in values for item in sublist]
-                self.store(f, flat_values)
+                values = [start_time, self.get_acc(), self.get_gyro(), self.get_little_encoders(), self.get_big_encoder()]
                 self.algorithm(*values)
+                
+                flat_values = flatten(values)
+                self.store(f, flat_values)
 
                 counter += 1
 
