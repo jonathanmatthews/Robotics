@@ -137,12 +137,9 @@ class Robot():
 
     @staticmethod
     def algorithm(time, acc, gyro, l_encoder, b_encoder):
-        "Not implemented"
-        print(time)
-        print(acc)
-        print(gyro)
-        print(l_encoder)
-        print(b_encoder)
+        # don't like having to do this, if anyone can figure out how to not have to do this while
+        # still storing flat list then tell me how George
+        time, b_encoder = time[0], b_encoder[0]
 
 
     def run(self, t, period):
@@ -153,8 +150,8 @@ class Robot():
         max_runs = t * 1/period
         file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
 
-        counter = 0
         with open('Output_data/'+file_name, 'w') as f:
+            counter = 0
             while counter < max_runs:
                 start_time = time()
 
@@ -177,15 +174,9 @@ class Robot():
         else:
             print('Ran on time')
         print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
-
-
-
-
-
-
       
 robot = Robot()
-robot.run(1, 0.5)
+robot.run(5, 0.1)
       
   
   
