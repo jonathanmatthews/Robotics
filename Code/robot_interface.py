@@ -15,10 +15,11 @@ Requires:
 
 from sys import path
 from datanames import values
+from time import time, sleep, gmtime, strftime
 
 try:
   path.insert(0, "hidlibs") # Insert encoder path.
-  from pynaoqi.naoqi import *
+  from pynaoqi.naoqi import ALProxy
   import top_encoder.encoder_functions as BigEncoder
   import bottom_encoder.hingeencoder as LittleEncoders
   encoders_available = True
@@ -48,13 +49,14 @@ class Robot():
     #self.connection = ALProxy("ALConnectionManager", ip, port)
     #print("Network state: " + self.connection.state())
     
+    self.speech = ALProxy("ALTextToSpeech", ip, port)
+    self.speech.say("Connected")
+
     # Set up proxies to robot.
     #self.motion = ALProxy("ALMotion", ip, port)
     #self.posture = ALProxy("ALRobotPosture", ip, port)
-    #self.memory = ALProxy("ALMemory", ip, port)
-    self.speech = ALProxy("ALTextToSpeech", ip, port)
+    self.memory = ALProxy("ALMemory", ip, port)
     
-    self.speech.say("Connected")
     
     # Set up encoders, if available.
     if encoders_available:
@@ -112,10 +114,58 @@ class Robot():
     
     if encoders_available:
       return BigEncoder.getAngle()
+
+    @staticmethod
+    def store(f, values):
+        """
+        Stores list of values
+        f: reference to file (with open() as f)
+        values: list of values to store
+        """
+
+        values = [str(x) for x in values]
+        f.write(", ".join(values) + "\n")
+        return
+
+
+    def run(self, t, period):
+        """
+        t: time to run for
+        period: period of cycle time
+        """
+        max_runs = t * 1/period
+        file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
+
+        counter = 0
+        with open(file_name, 'w') as f:
+            while counter < max_runs:
+                start_time = time()
+
+                values = start_time, self.get_acc(), self.get_gyro(), self.get_little_encoders(), self.get_big_encoder()
+                store(f, values)
+
+                counter += 1
+
+                cycle_time = time() - start_time
+                if cycle_time < period:
+                    sleep(period - cycle_time)
+                    
+            f.close()
+        if  cycle_time > period:
+            print('Ran behind schedule')
+        else:
+            print('Ran on time')
+        print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
+
+
+
+
+
+
       
 robot = Robot()
-print robot.get_little_encoders()
-print robot.get_acc()
+# print robot.get_little_encoders()
+# print robot.get_acc()
       
   
   
