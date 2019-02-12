@@ -17,17 +17,18 @@ from sys import path
 from datanames import values
 from time import time, sleep, gmtime, strftime
 from utility_functions import flatten
-path.insert(0, "hidlibs")  # Insert encoder path.
-from pynaoqi.naoqi import ALProxy
+from shlex import split
 
 try:
+    path.insert(0, "hidlibs")  # Insert encoder path.
+    from pynaoqi.naoqi import ALProxy
     import top_encoder.encoder_functions as BigEncoder
     import bottom_encoder.hingeencoder as LittleEncoders
     encoders_available = True
     print "Modules loaded successfully"
 
 except Exception as e:
-    training = False
+    training = True
     print "Exception", e
     print "Error: unable to load encoder functions, encoder data will be unavailable"
     encoders_available = False
@@ -87,7 +88,7 @@ class Robot():
 
     def get_acc(self):
         """
-        Obtain the current accelerometer data. Returns a tuple containing the (x, y, z) acceleromenter data,
+        Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
         x_data = self.memory.getData(values['AX'][1])
@@ -139,45 +140,98 @@ class Robot():
         # print time, acc, gyro, l_encoder, b_encoder
         pass
 
-    def run(self, t, period):
+    def run(self, t, period, filename=None):
         """
         t: time to run for
         period: period of cycle time
+        filename : string, location of the file to read from if training. Ignore if not training.
         """
-        max_runs = t * 1 / period
-        file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
 
-        with open('Output_data/' + file_name, 'w') as f:
-            counter = 0
-            while counter < max_runs:
-                start_time = time()
+        if training:
+            self.parser(filename)
 
-                # needs to be list of lists for easy flattening for storage while retaining ease of use for
-                # putting into algorithm
-                values = [
-                    start_time,
-                    self.get_acc(),
-                    self.get_gyro(),
-                    self.get_little_encoders(),
-                    self.get_big_encoder()]
-                self.algorithm(*values)
+            for line in self.data:
+                time = line[0]
+                acc = line[1:4]
+                gyro = line[4:7]
+                little_encoders = line[7:11]
+                big_encoder = line[11]
 
-                flat_values = flatten(values)
-                self.store(f, flat_values)
+                self.algorithm(time, acc, gyro, little_encoders, big_encoder)
 
-                counter += 1
-
-                cycle_time = time() - start_time
-                if cycle_time < period:
-                    sleep(period - cycle_time)
-
-            f.close()
-        if cycle_time > period:
-            print('Ran behind schedule')
         else:
-            print('Ran on time')
-        print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
+
+            max_runs = t * 1 / period
+            file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
+
+            with open('Output_data/' + file_name, 'w') as f:
+                counter = 0
+                while counter < max_runs:
+                    start_time = time()
+
+                    # needs to be list of lists for easy flattening for storage while retaining ease of use for
+                    # putting into algorithm
+                    values = [
+                        start_time,
+                        self.get_acc(),
+                        self.get_gyro(),
+                        self.get_little_encoders(),
+                        self.get_big_encoder()]
+                    self.algorithm(*values)
+
+                    flat_values = flatten(values)
+                    self.store(f, flat_values)
+
+                    counter += 1
+
+                    cycle_time = time() - start_time
+                    if cycle_time < period:
+                        sleep(period - cycle_time)
+
+                f.close()
+            if cycle_time > period:
+                print('Ran behind schedule')
+            else:
+                print('Ran on time')
+            print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
+
+    class _parser(list):
+        """
+        Defines an inner class to act as a parser for output files. Not intended to be instantiated
+        from outside Class 'Robot'.
+        """
+
+        def __init__(self, filename):
+            """
+            Read the data from a given file and store as a list (self) of lists.
+            Takes arguments:
+
+            filename : string, the location of the file to read.
+            """
+
+            data_file = open(filename, "r")
+
+            for line in data_file:
+                curr_line = list(split(line))
+                # val[:-1] because cast to float can't handle comma.
+                head = [float(val[:-1]) for val in curr_line[:-1]]
+                # There's no comma on the last entry, so handle separately.
+                tail = [float(curr_line[-1])]
+                self.append(head + tail)
+
+            data_file.close()
+
+    def parser(self, filename):
+        """
+        Create a parser and store as the 'data' member. Will need to be called again to update data,
+        if it has changed.
+        Takes arguments:
+
+        filename : string, the location of the data to read from disk.
+        """
+        self.data = self._parser(filename)
 
 
-robot = Robot()
-robot.run(5, 0.1)
+if __name__ == "__main__":
+    robot = Robot()
+    robot.run(5, 0.1)
