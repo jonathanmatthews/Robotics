@@ -18,26 +18,36 @@ from datanames import values
 import time as tme
 from utility_functions import flatten
 from shlex import split
+from pandas import DataFrame, read_csv
 
-try:
+###
+### Set mode to run here
+### Developing for running through real code away from encoders
+### Testing for seeing how algorithm reacts to old dataset
+### Real for in lab running from lab PC
+###
+setup = 'Testing'
+if setup == 'Testing':
+    print "Starting test mode, will run data through algorithm"
+    path.insert(0, "Training_functions")
+    from naoqi import ALProxy
+    encoders_available = False
+elif setup == 'Developing':
+    print "Using developer mode, encoders will return fake values"
+    path.insert(0, "Training_functions")
+    from naoqi import ALProxy
+    import BigEncoder
+    import SmallEncoders
+    encoders_available = True
+    print "Fake encoders connected"
+elif setup == 'Real':
+    print "Using real mode"
     path.insert(0, "hidlibs")  # Insert encoder path.
     from pynaoqi.naoqi import ALProxy
     import top_encoder.encoder_functions as BigEncoder
-    import bottom_encoder.hingeencoder as LittleEncoders
+    import bottom_encoder.hingeencoder as SmallEncoders
     encoders_available = True
-    print "Modules loaded successfully"
-
-except Exception as e:
-    training = False
-    print "Exception", e
-    print "Error: unable to load encoder functions, encoder data will be unavailable"
-    encoders_available = False
-    if training:
-        path.insert(0, "Training_functions")
-        import BigEncoder
-        import LittleEncoders
-        from naoqi import ALProxy
-        encoders_available = True
+    print "Encoders connected"
 
 
 class Robot():
@@ -45,7 +55,7 @@ class Robot():
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
     """
 
-    def __init__(self, ip="192.168.1.3", port=9559, initial_position="Stand"):
+    def __init__(self, setup, ip="192.168.1.3", port=9559, initial_position="Stand"):
         """
         Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
         Requires arguments:
@@ -53,6 +63,8 @@ class Robot():
         ip : string, contains the IPv4 address of the robot to connect to.
         port : int, contains the port number through which to access the robot.
         """
+        # Run different setup code
+        self.setup = setup
 
         # Set up connection manager.
         #self.connection = ALProxy("ALConnectionManager", ip, port)
@@ -68,7 +80,7 @@ class Robot():
 
         # Set up encoders, if available.
         if encoders_available:
-            LittleEncoders.calibrate()
+            SmallEncoders.calibrate()
             BigEncoder.calibrate()
 
         # self.posture.goToPosture(initial_position, 1.0) # Set initial
@@ -98,7 +110,7 @@ class Robot():
         return [x_data, y_data, z_data]
 
     @staticmethod
-    def get_little_encoders():
+    def get_small_encoders():
         """
         Return the angles recorded by the small hinge encoders, at the base of the sqing, at the time of calling.
         If encoders are not available, will return None *without* producing an error.
@@ -106,10 +118,10 @@ class Robot():
         """
 
         if encoders_available:
-            encoder0 = LittleEncoders.getAngle0()
-            encoder1 = LittleEncoders.getAngle1()
-            encoder2 = LittleEncoders.getAngle2()
-            encoder3 = LittleEncoders.getAngle3()
+            encoder0 = SmallEncoders.getAngle0()
+            encoder1 = SmallEncoders.getAngle1()
+            encoder2 = SmallEncoders.getAngle2()
+            encoder3 = SmallEncoders.getAngle3()
 
             return [encoder0, encoder1, encoder2, encoder3]
 
@@ -123,22 +135,73 @@ class Robot():
         if encoders_available:
             return BigEncoder.getAngle()
 
-    @staticmethod
-    def store(f, values):
+    def store(self, filename):
         """
-        Stores list of values
-        f: reference to file (with open() as f)
-        values: list of values to store
+        Stores data as csv
+        filename: name of file to store to
         """
 
-        values = [str(x) for x in values]
-        f.write(", ".join(values) + "\n")
-        return
+        self.all_data.to_csv('Output_data/' + filename)
+        print 'Data saved to {}'.format(filename)
 
-    @staticmethod
-    def algorithm(time, acc, gyro, l_encoder, b_encoder):
-        # print time, acc, gyro, l_encoder, b_encoder
-        pass
+    def algorithm(self, time, acc, gyro, l_encoder, b_encoder):
+        recent_data = self.collect_old_data(5)
+        print recent_data
+
+    def collect_old_data(self, last_n_results):
+        """
+        Returns dataframe of last_n_results INCLUDING latest
+        """
+        return self.all_data.tail(last_n_results)
+
+    def __run_real(self, t, period, filename=None):
+        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE'])
+        self.all_data.index.name = 'Time'
+
+        max_runs = t * 1 / period
+        if filename == None:
+            filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
+
+        for _ in range(int(max_runs)):
+            start_time = tme.time()
+
+            # needs to be list of lists for easy flattening for storage while retaining ease of use for
+            # putting into algorithm
+            values = [
+                start_time,
+                self.get_acc(),
+                self.get_gyro(),
+                self.get_small_encoders(),
+                self.get_big_encoder()]
+
+            flat_values = flatten(values)
+            # Computationally expensive but incredibly useful for quick data manipulation
+            self.all_data.loc[start_time, :] = flat_values[1:]
+
+            self.algorithm(*values)
+
+            cycle_time = tme.time() - start_time
+            if cycle_time < period:
+                tme.sleep(period - cycle_time)
+
+
+        if cycle_time > period:
+            print('RAN BEHIND SCHEDULE')
+        else:
+            print('Ran on time')
+        self.store(filename)
+
+    def __run_test(self, t, period, filename=None):
+        print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
+        data = self.read('TestData')
+
+        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE'])
+        self.all_data.index.name = 'Time'
+
+        for index, row in data.iterrows():
+            self.all_data.loc[index, :] = row
+            self.algorithm(row['Time'], row[['AX', 'AY', 'AZ']], row[['GX', 'GY', 'GZ']], row[['SE1', 'SE2', 'SE3', 'SE4']], row['BE'])
+            
 
     def run(self, t, period, filename=None):
         """
@@ -147,91 +210,17 @@ class Robot():
         filename : string, location of the file to read from if training. Ignore if not training.
         """
 
-        if training:
-            self.parser(filename)
-
-            for line in self.data:
-                time = line[0]
-                acc = line[1:4]
-                gyro = line[4:7]
-                little_encoders = line[7:11]
-                big_encoder = line[11]
-
-                self.algorithm(time, acc, gyro, little_encoders, big_encoder)
-
+        if self.setup == 'Testing':
+            self.__run_test(t, period, filename)
         else:
+            self.__run_real(t, period, filename)
 
-            max_runs = t * 1 / period
-            file_name = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-
-            with open('Output_data/' + file_name, 'w') as f:
-                counter = 0
-                while counter < max_runs:
-                    start_time = tme.time()
-
-                    # needs to be list of lists for easy flattening for storage while retaining ease of use for
-                    # putting into algorithm
-                    values = [
-                        start_time,
-                        self.get_acc(),
-                        self.get_gyro(),
-                        self.get_little_encoders(),
-                        self.get_big_encoder()]
-                    self.algorithm(*values)
-
-                    flat_values = flatten(values)
-                    self.store(f, flat_values)
-
-                    counter += 1
-
-                    cycle_time = tme.time() - start_time
-                    if cycle_time < period:
-                        tme.sleep(period - cycle_time)
-
-                f.close()
-            if cycle_time > period:
-                print('Ran behind schedule')
-            else:
-                print('Ran on time')
-            print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
-
-    class _parser(list):
+    def read(self, filename):
         """
-        Defines an inner class to act as a parser for output files. Not intended to be instantiated
-        from outside Class 'Robot'.
-        """
-
-        def __init__(self, filename):
-            """
-            Read the data from a given file and store as a list (self) of lists.
-            Takes arguments:
-
-            filename : string, the location of the file to read.
-            """
-
-            data_file = open(filename, "r")
-
-            for line in data_file:
-                curr_line = list(split(line))
-                # val[:-1] because cast to float can't handle comma.
-                head = [float(val[:-1]) for val in curr_line[:-1]]
-                # There's no comma on the last entry, so handle separately.
-                tail = [float(curr_line[-1])]
-                self.append(head + tail)
-
-            data_file.close()
-
-    def parser(self, filename):
-        """
-        Create a parser and store as the 'data' member. Will need to be called again to update data,
-        if it has changed.
-        Takes arguments:
-
-        filename : string, the location of the data to read from disk.
-        """
-        self.data = self._parser(filename)
-
+        Reads old data
+        """ 
+        return read_csv('Output_data/' + filename, sep=',')
 
 if __name__ == "__main__":
-    robot = Robot()
+    robot = Robot(setup)
     robot.run(10, 0.1)
