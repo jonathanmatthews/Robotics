@@ -1,11 +1,7 @@
-# Installing the SDK  
-Follow guide at:  
-http://doc.aldebaran.com/2-1/dev/python/install_guide.html#python-install-guide  
-
 # Running project:
 Install all packages in Pipfile and then run through terminal  
 Linux:  
-> `pip3 install {package}`  
+> `pip install {package}`  
 
 Windows:
 > `pip install {package}`  
