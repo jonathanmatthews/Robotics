@@ -17,17 +17,17 @@ from sys import path
 from datanames import values
 from time import time, sleep, gmtime, strftime
 from utility_functions import flatten
+path.insert(0, "hidlibs")  # Insert encoder path.
+from pynaoqi.naoqi import ALProxy
 
 try:
-    path.insert(0, "hidlibs")  # Insert encoder path.
-    from pynaoqi.naoqi import ALProxy
     import top_encoder.encoder_functions as BigEncoder
     import bottom_encoder.hingeencoder as LittleEncoders
     encoders_available = True
     print "Modules loaded successfully"
 
 except Exception as e:
-    training = True
+    training = False
     print "Exception", e
     print "Error: unable to load encoder functions, encoder data will be unavailable"
     encoders_available = False
