@@ -138,7 +138,8 @@ class Robot():
 
     @staticmethod
     def algorithm(time, acc, gyro, l_encoder, b_encoder):
-        print time, acc, gyro, l_encoder, b_encoder
+        # print time, acc, gyro, l_encoder, b_encoder
+        pass
 
 
     def run(self, t, period):
