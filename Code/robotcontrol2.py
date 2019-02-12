@@ -3,14 +3,14 @@ import sys
 import time
 from datanames import values
 from naoqi import ALProxy
-from change_stiffness import extended, seated
+from change_stiffness import *
 from positionvalues import extended, seated
 ROBOT_IP = "192.168.1.3"
 PORT = 9559
 
 
 class Robotcontrol():
-    def __init__(self, ROBOT_IP="192.168.1.3", PORT=9559):
+    def __init__(self, ROBOT_IP="192.168.1.2", PORT=9559):
         self.motion = ALProxy("ALMotion", ROBOT_IP, PORT)
         self.memory = ALProxy("ALMemory", ROBOT_IP, PORT)
 
@@ -48,20 +48,19 @@ class Robotcontrol():
     def extended_position(self):
         angle_names = extended.keys()
         angles = extended.values()
-        rest_time = 1.30
+        rest_time = 0
         parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-
+        final_angle_names = [values[name][0] for name in angle_names]
         #speed =       [normalise_speed()]
-        self.move_part(self.motion, parts, angle_names, angles, 0.6, rest_time)
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
 
     def seated_position(self):
-        rest_time = 1.30
+        rest_time = 0
         parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
         angle_names = seated.keys()
         angles = seated.values()
-        rest_time = 1.30
-        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-        self.move_part(self.motion, parts, angle_names, angles, 0.6, rest_time)
+        final_angle_names = [values[name][0] for name in angle_names]
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
 
     def record_data(self, nameofpart):
         """ records the data from ALMemory.
@@ -95,7 +94,6 @@ print 1
 r.extended_position()
 try:
     while True:
-        print 2
         a = raw_input("extend")
 
         b = raw_input("sit")
