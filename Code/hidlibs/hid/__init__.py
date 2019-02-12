@@ -97,11 +97,16 @@ class Device(object):
     def __hidcall(self, function, *args, **kwargs):
         if self.__dev == 0:
             raise HIDException('device closed')
+<<<<<<< HEAD
+
+        ret = function(*args, **kwargs)
+=======
 	
 	print 'Before segmentation fault __init__'
 	print dir(hidapi)
         ret = function(*args, **kwargs)
 	print 'After segmentation fault __init__'
+>>>>>>> master
 
         if ret == -1:
             err = hidapi.hid_error(self.__dev)
