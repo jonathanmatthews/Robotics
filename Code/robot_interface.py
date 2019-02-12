@@ -15,7 +15,7 @@ Requires:
 
 from sys import path
 from datanames import values
-from time import time, sleep, gmtime, strftime
+import time as tme
 from utility_functions import flatten
 from shlex import split
 
@@ -28,7 +28,7 @@ try:
     print "Modules loaded successfully"
 
 except Exception as e:
-    training = True
+    training = False
     print "Exception", e
     print "Error: unable to load encoder functions, encoder data will be unavailable"
     encoders_available = False
@@ -162,12 +162,12 @@ class Robot():
         else:
 
             max_runs = t * 1 / period
-            file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
+            file_name = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
             with open('Output_data/' + file_name, 'w') as f:
                 counter = 0
                 while counter < max_runs:
-                    start_time = time()
+                    start_time = tme.time()
 
                     # needs to be list of lists for easy flattening for storage while retaining ease of use for
                     # putting into algorithm
@@ -184,9 +184,9 @@ class Robot():
 
                     counter += 1
 
-                    cycle_time = time() - start_time
+                    cycle_time = tme.time() - start_time
                     if cycle_time < period:
-                        sleep(period - cycle_time)
+                        tme.sleep(period - cycle_time)
 
                 f.close()
             if cycle_time > period:
@@ -234,4 +234,4 @@ class Robot():
 
 if __name__ == "__main__":
     robot = Robot()
-    robot.run(5, 0.1)
+    robot.run(10, 0.1)
