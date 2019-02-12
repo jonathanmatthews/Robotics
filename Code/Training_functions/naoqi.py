@@ -3,7 +3,7 @@ class ALProxy():
         pass
 
     def say(self, word):
-        print word
+        print 'NAO: ', word
 
     def getData(self, item):
         return 1
