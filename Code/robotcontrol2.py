@@ -52,7 +52,7 @@ class Robotcontrol():
         parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
         final_angle_names = [values[name][0] for name in angle_names]
         #speed =       [normalise_speed()]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+        self.move_part(parts, final_angle_names, angles, 0.3, rest_time)
 
     def seated_position(self):
         rest_time = 0
@@ -60,7 +60,7 @@ class Robotcontrol():
         angle_names = seated.keys()
         angles = seated.values()
         final_angle_names = [values[name][0] for name in angle_names]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+        self.move_part(parts, final_angle_names, angles, 0.3, rest_time)
 
     def record_data(self, nameofpart):
         """ records the data from ALMemory.
@@ -86,18 +86,20 @@ class Robotcontrol():
         # motion.setAngles("LAnklePitch",-1.18943989277,0.1)
         self.motion.setAngles("RKneePitch", 0.800258815289, 0.1)
         # motion.setAngles("RAnklePitch",-1.18943989277,0.1)
+    def summary(self):
+        print self.motion.getSummary()
 
-
-print 6
+#print 6
 r = Robotcontrol(ROBOT_IP="192.168.1.3", PORT=9559)
-print 1
-r.extended_position()
-try:
-    while True:
-        a = raw_input("extend")
+#r.move_part("Body", "LHand", 0,0.5, 0)
+#print 1
+#r.extended_position()
+#try:
+#    while True:
+#        a = raw_input("extend")
+#        b = raw_input("sit")
+#        r.seated_position()
 
-        b = raw_input("sit")
-        r.seated_position()
-
-except KeyboardInterrupt:
-    pass
+#except KeyboardInterrupt:
+ #   pass
+r.summary()
