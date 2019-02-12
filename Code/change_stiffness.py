@@ -20,5 +20,15 @@ if __name__ == '__main__':
     stiff_numeric, confirm_text = convert_stiff_to_numeric(stiff)
     print('{} up'.format(confirm_text))
 
+def change_stiffness(stiffness, part):
+    if stiffness in ['stiffen', 'Stiffen', 'stiff', 'Stiff']:
+        motion.setStiffnesses(part, 1.0)
+        return 'Stiffening'
+    else:
+        motion.setStiffnesses(part, 0.0)
+        return 'Loosening'
+
+
+if __name__ == '__main__':
     motion = ALProxy("ALMotion", "192.168.1.3", 9559)
     motion.setStiffnesses("Body", stiff_numeric)

@@ -3,6 +3,7 @@ import sys
 import time
 from datanames import values
 from naoqi import ALProxy
+from change_stiffness import *
 
 ROBOT_IP = "192.168.1.3"
 PORT = 9559
@@ -10,15 +11,6 @@ PORT = 9559
 motion = ALProxy("ALMotion", ROBOT_IP, PORT)
 memory = ALProxy("ALMemory", ROBOT_IP, PORT)
 
-
-def change_stiffness(stiffness):
-    '''Body will control the stiffness of all the joints in NAO
-    using stiffen or loosen'''
-    if stiffness == 'stiffen':
-        s = 1.0
-    else:
-        s = 0.0
-    motion.setStiffnesses("Body", s)
 # example usage change_stiffness('stiffen')
 
 
@@ -85,12 +77,6 @@ RH = ["RHand", 0.00860, 0.001, 0.00860, ]
 LH = ["LHand", 0.00860, 0.001, 0.00860, ]
 
 
-# knee range is longest so normalise based on this parameter
-# def normalise_speed(part, speed)
-#   partspeed = speed*(part/RKP[2])
-
-
-# knee range is longest so normalise based on this parameter
 def move_part(motion, parts, angle_names, angles, speed, rest_time):
     motion.setStiffnesses(parts, 1.0)
     motion.setAngles(angle_names, angles, speed)
@@ -98,7 +84,7 @@ def move_part(motion, parts, angle_names, angles, speed, rest_time):
 
 
 def extended_position(motion):
-    rest_time = 1.30
+    rest_time = 0
     parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
     angle_names = [
         HP[0],
@@ -141,7 +127,7 @@ def extended_position(motion):
 
 
 def seated_position(motion):
-    rest_time = 1.30
+    rest_time = 0
 
     parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
     angle_names = [
@@ -181,7 +167,7 @@ def seated_position(motion):
         RH[3],
         LH[3]]
     #speed =       []
-    move_part(motion, parts, angle_names, angles, 0.6, rest_time)
+    move_part(motion, parts, angle_names, angles, 1, rest_time)
 
 
 try:
@@ -202,7 +188,7 @@ def record_data(nameofpart):
     """
     print "Recording data from NAO..."
 
-    output = os.path.abspath('record_data.csv')
+    output = os.path.abspath('Output_data/record_data.csv')
 
     with open(output, "w") as fp:
         for i in range(1, 100):
