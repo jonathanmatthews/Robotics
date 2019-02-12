@@ -13,6 +13,14 @@ Requires:
   encoder_functions
 """
 
+# Begin additional imports from robotcontrol2...
+import os
+import sys
+from change_stiffness import *
+from positionvalues import extended, seated
+# End additional imports form robotcontrol2.
+
+
 from sys import path
 from datanames import values
 import time as tme
@@ -74,7 +82,7 @@ class Robot():
         self.speech.say("Connected")
 
         # Set up proxies to robot.
-        #self.motion = ALProxy("ALMotion", ip, port)
+        self.motion = ALProxy("ALMotion", ip, port)
         #self.posture = ALProxy("ALRobotPosture", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
@@ -134,6 +142,77 @@ class Robot():
 
         if encoders_available:
             return BigEncoder.getAngle()
+
+    def get_angle(self, nameofpart):
+		"""
+		Get the current angle of the named part. (Taken from robotcontrol2.py)
+		Requires:
+		
+		nameofpart : the name of the part.
+		"""
+        a = self.memory.getData(values[str(nameofpart)][1])
+        name = values[str(nameofpart)][0]
+        return a, name
+
+    def initial_seated_position(self):
+        """
+        Sets the robot to the initial seated position.
+        """
+    
+        parts = ["Head", "RLeg", "LLeg"]
+        self.motion.setStiffnesses(parts, 1.0)  # stiffen
+        angle_names = [
+            values['HP'][0],
+            values['RHP'][0],
+            values['LHP'][0],
+            values['RKP'][0],
+            values['LKP'][0]]
+        angles = [-0.6, -0.51, -0.51, -0.09, -0.09]
+        speed = 0.5
+        self.motion.setAngles(angle_names, angles, speed)
+
+    def move_part(self, parts, angle_names, angles, speed, rest_time):
+        """
+        Moves the specified parts.
+        """
+        self.motion.setStiffnesses(parts, 1.0)
+        self.motion.setAngles(angle_names, angles, speed)
+        tme.sleep(rest_time)
+
+
+    def extended_position(self):
+        """
+        Sets the extended position for when on swing.
+        """
+        angle_names = extended.keys()
+        angles = extended.values()
+        rest_time = 0
+        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
+        final_angle_names = [values[name][0] for name in angle_names]
+        #speed =       [normalise_speed()]
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+
+    def seated_position(self):
+        """
+        Sets the seated position for when on swing.
+        """
+        rest_time = 0
+        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
+        angle_names = seated.keys()
+        angles = seated.values()
+        final_angle_names = [values[name][0] for name in angle_names]
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+
+    def test_move_part(self):
+        """
+        Movement test.
+        """
+        self.motion.setStiffnesses("RLeg", 1.0)
+        self.motion.setStiffnesses("LLeg", 1.0)
+        self.motion.setAngles("LKneePitch", 0.800258815289, 0.1)
+        # motion.setAngles("LAnklePitch",-1.18943989277,0.1)
+        self.motion.setAngles("RKneePitch", 0.800258815289, 0.1)
+        # motion.setAngles("RAnklePitch",-1.18943989277,0.1)
 
     def store(self, filename):
         """
@@ -224,3 +303,5 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot(setup)
     robot.run(10, 0.1)
+
+
