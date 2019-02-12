@@ -1,6 +1,6 @@
+from pynaoqi.naoqi import *
 import sys
 sys.path.insert(0, 'hidlibs')
-from pynaoqi.naoqi import *
 # print dir(pynaoqi)
 
 

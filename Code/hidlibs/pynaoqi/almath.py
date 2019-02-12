@@ -6,13 +6,14 @@
 # This file is compatible with both classic and new-style classes.
 
 from sys import version_info
-if version_info >= (2,6,0):
+if version_info >= (2, 6, 0):
     def swig_import_helper():
         from os.path import dirname
         import imp
         fp = None
         try:
-            fp, pathname, description = imp.find_module('_almath', [dirname(__file__)])
+            fp, pathname, description = imp.find_module(
+                '_almath', [dirname(__file__)])
         except ImportError:
             import _almath
             return _almath
@@ -30,64 +31,96 @@ del version_info
 try:
     _swig_property = property
 except NameError:
-    pass # Python < 2.2 doesn't have 'property'.
-def _swig_setattr_nondynamic(self,class_type,name,value,static=1):
-    if (name == "thisown"): return self.this.own(value)
+    pass  # Python < 2.2 doesn't have 'property'.
+
+
+def _swig_setattr_nondynamic(self, class_type, name, value, static=1):
+    if (name == "thisown"):
+        return self.this.own(value)
     if (name == "this"):
         if type(value).__name__ == 'SwigPyObject':
             self.__dict__[name] = value
             return
-    method = class_type.__swig_setmethods__.get(name,None)
-    if method: return method(self,value)
-    if (not static) or hasattr(self,name):
+    method = class_type.__swig_setmethods__.get(name, None)
+    if method:
+        return method(self, value)
+    if (not static) or hasattr(self, name):
         self.__dict__[name] = value
     else:
         raise AttributeError("You cannot add attributes to %s" % self)
 
-def _swig_setattr(self,class_type,name,value):
-    return _swig_setattr_nondynamic(self,class_type,name,value,0)
 
-def _swig_getattr(self,class_type,name):
-    if (name == "thisown"): return self.this.own()
-    method = class_type.__swig_getmethods__.get(name,None)
-    if method: return method(self)
+def _swig_setattr(self, class_type, name, value):
+    return _swig_setattr_nondynamic(self, class_type, name, value, 0)
+
+
+def _swig_getattr(self, class_type, name):
+    if (name == "thisown"):
+        return self.this.own()
+    method = class_type.__swig_getmethods__.get(name, None)
+    if method:
+        return method(self)
     raise AttributeError(name)
 
+
 def _swig_repr(self):
-    try: strthis = "proxy of " + self.this.__repr__()
-    except: strthis = ""
-    return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
+    try:
+        strthis = "proxy of " + self.this.__repr__()
+    except BaseException:
+        strthis = ""
+    return "<%s.%s; %s >" % (self.__class__.__module__,
+                             self.__class__.__name__, strthis,)
+
 
 try:
     _object = object
     _newclass = 1
 except AttributeError:
-    class _object : pass
+    class _object:
+        pass
     _newclass = 0
 
 
 class SwigPyIterator(_object):
     """Proxy of C++ swig::SwigPyIterator class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, SwigPyIterator, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        SwigPyIterator,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, SwigPyIterator, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+
+    def __getattr__(
+        self, name): return _swig_getattr(
+        self, SwigPyIterator, name)
+
+    def __init__(
+        self,
+        *
+        args,
+        **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
     __swig_destroy__ = _almath.delete_SwigPyIterator
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
     def value(self):
         """value(self) -> PyObject"""
         return _almath.SwigPyIterator_value(self)
 
-    def incr(self, n = 1):
+    def incr(self, n=1):
         """
         incr(self, size_t n = 1) -> SwigPyIterator
         incr(self) -> SwigPyIterator
         """
         return _almath.SwigPyIterator_incr(self, n)
 
-    def decr(self, n = 1):
+    def decr(self, n=1):
         """
         decr(self, size_t n = 1) -> SwigPyIterator
         decr(self) -> SwigPyIterator
@@ -150,20 +183,34 @@ class SwigPyIterator(_object):
         return _almath.SwigPyIterator___sub__(self, *args)
 
     def __iter__(self): return self
+
+
 SwigPyIterator_swigregister = _almath.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
+
 
 class vectorFloat(_object):
     """Proxy of C++ std::vector<(float)> class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, vectorFloat, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        vectorFloat,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, vectorFloat, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, vectorFloat, name)
+
     def iterator(self):
         """iterator(self) -> SwigPyIterator"""
         return _almath.vectorFloat_iterator(self)
 
     def __iter__(self): return self.iterator()
+
     def __nonzero__(self):
         """__nonzero__(self) -> bool"""
         return _almath.vectorFloat___nonzero__(self)
@@ -264,7 +311,7 @@ class vectorFloat(_object):
         """
         return _almath.vectorFloat_erase(self, *args)
 
-    def __init__(self, *args): 
+    def __init__(self, *args):
         """
         __init__(self) -> vectorFloat
         __init__(self, vectorFloat arg0) -> vectorFloat
@@ -272,8 +319,11 @@ class vectorFloat(_object):
         __init__(self, size_type size, value_type value) -> vectorFloat
         """
         this = _almath.new_vectorFloat(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def push_back(self, *args):
         """push_back(self, value_type x)"""
         return _almath.vectorFloat_push_back(self, *args)
@@ -317,21 +367,38 @@ class vectorFloat(_object):
         return _almath.vectorFloat___repr__(self)
 
     __swig_destroy__ = _almath.delete_vectorFloat
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 vectorFloat_swigregister = _almath.vectorFloat_swigregister
 vectorFloat_swigregister(vectorFloat)
+
 
 class vectorPosition2D(_object):
     """Proxy of C++ std::vector<(AL::Math::Position2D)> class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, vectorPosition2D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        vectorPosition2D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, vectorPosition2D, name)
+
+    def __getattr__(
+        self, name): return _swig_getattr(
+        self, vectorPosition2D, name)
+
     def iterator(self):
         """iterator(self) -> SwigPyIterator"""
         return _almath.vectorPosition2D_iterator(self)
 
     def __iter__(self): return self.iterator()
+
     def __nonzero__(self):
         """__nonzero__(self) -> bool"""
         return _almath.vectorPosition2D___nonzero__(self)
@@ -432,7 +499,7 @@ class vectorPosition2D(_object):
         """
         return _almath.vectorPosition2D_erase(self, *args)
 
-    def __init__(self, *args): 
+    def __init__(self, *args):
         """
         __init__(self) -> vectorPosition2D
         __init__(self, vectorPosition2D arg0) -> vectorPosition2D
@@ -440,8 +507,11 @@ class vectorPosition2D(_object):
         __init__(self, size_type size, value_type value) -> vectorPosition2D
         """
         this = _almath.new_vectorPosition2D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def push_back(self, *args):
         """push_back(self, value_type x)"""
         return _almath.vectorPosition2D_push_back(self, *args)
@@ -485,21 +555,36 @@ class vectorPosition2D(_object):
         return _almath.vectorPosition2D___repr__(self)
 
     __swig_destroy__ = _almath.delete_vectorPosition2D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 vectorPosition2D_swigregister = _almath.vectorPosition2D_swigregister
 vectorPosition2D_swigregister(vectorPosition2D)
+
 
 class vectorPose2D(_object):
     """Proxy of C++ std::vector<(AL::Math::Pose2D)> class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, vectorPose2D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        vectorPose2D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, vectorPose2D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, vectorPose2D, name)
+
     def iterator(self):
         """iterator(self) -> SwigPyIterator"""
         return _almath.vectorPose2D_iterator(self)
 
     def __iter__(self): return self.iterator()
+
     def __nonzero__(self):
         """__nonzero__(self) -> bool"""
         return _almath.vectorPose2D___nonzero__(self)
@@ -600,7 +685,7 @@ class vectorPose2D(_object):
         """
         return _almath.vectorPose2D_erase(self, *args)
 
-    def __init__(self, *args): 
+    def __init__(self, *args):
         """
         __init__(self) -> vectorPose2D
         __init__(self, vectorPose2D arg0) -> vectorPose2D
@@ -608,8 +693,11 @@ class vectorPose2D(_object):
         __init__(self, size_type size, value_type value) -> vectorPose2D
         """
         this = _almath.new_vectorPose2D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def push_back(self, *args):
         """push_back(self, value_type x)"""
         return _almath.vectorPose2D_push_back(self, *args)
@@ -653,21 +741,38 @@ class vectorPose2D(_object):
         return _almath.vectorPose2D___repr__(self)
 
     __swig_destroy__ = _almath.delete_vectorPose2D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 vectorPose2D_swigregister = _almath.vectorPose2D_swigregister
 vectorPose2D_swigregister(vectorPose2D)
+
 
 class vectorPosition6D(_object):
     """Proxy of C++ std::vector<(AL::Math::Position6D)> class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, vectorPosition6D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        vectorPosition6D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, vectorPosition6D, name)
+
+    def __getattr__(
+        self, name): return _swig_getattr(
+        self, vectorPosition6D, name)
+
     def iterator(self):
         """iterator(self) -> SwigPyIterator"""
         return _almath.vectorPosition6D_iterator(self)
 
     def __iter__(self): return self.iterator()
+
     def __nonzero__(self):
         """__nonzero__(self) -> bool"""
         return _almath.vectorPosition6D___nonzero__(self)
@@ -768,7 +873,7 @@ class vectorPosition6D(_object):
         """
         return _almath.vectorPosition6D_erase(self, *args)
 
-    def __init__(self, *args): 
+    def __init__(self, *args):
         """
         __init__(self) -> vectorPosition6D
         __init__(self, vectorPosition6D arg0) -> vectorPosition6D
@@ -776,8 +881,11 @@ class vectorPosition6D(_object):
         __init__(self, size_type size, value_type value) -> vectorPosition6D
         """
         this = _almath.new_vectorPosition6D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def push_back(self, *args):
         """push_back(self, value_type x)"""
         return _almath.vectorPosition6D_push_back(self, *args)
@@ -821,26 +929,45 @@ class vectorPosition6D(_object):
         return _almath.vectorPosition6D___repr__(self)
 
     __swig_destroy__ = _almath.delete_vectorPosition6D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 vectorPosition6D_swigregister = _almath.vectorPosition6D_swigregister
 vectorPosition6D_swigregister(vectorPosition6D)
+
 
 class Pose2D(_object):
     """Proxy of C++ AL::Math::Pose2D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Pose2D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Pose2D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Pose2D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Pose2D, name)
     __swig_setmethods__["x"] = _almath.Pose2D_x_set
     __swig_getmethods__["x"] = _almath.Pose2D_x_get
-    if _newclass:x = _swig_property(_almath.Pose2D_x_get, _almath.Pose2D_x_set)
+    if _newclass:
+        x = _swig_property(_almath.Pose2D_x_get, _almath.Pose2D_x_set)
     __swig_setmethods__["y"] = _almath.Pose2D_y_set
     __swig_getmethods__["y"] = _almath.Pose2D_y_get
-    if _newclass:y = _swig_property(_almath.Pose2D_y_get, _almath.Pose2D_y_set)
+    if _newclass:
+        y = _swig_property(_almath.Pose2D_y_get, _almath.Pose2D_y_set)
     __swig_setmethods__["theta"] = _almath.Pose2D_theta_set
     __swig_getmethods__["theta"] = _almath.Pose2D_theta_get
-    if _newclass:theta = _swig_property(_almath.Pose2D_theta_get, _almath.Pose2D_theta_set)
-    def __init__(self, *args): 
+    if _newclass:
+        theta = _swig_property(
+            _almath.Pose2D_theta_get,
+            _almath.Pose2D_theta_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Pose2D
         __init__(self, float pInit) -> Pose2D
@@ -848,8 +975,11 @@ class Pose2D(_object):
         __init__(self, vectorFloat pFloats) -> Pose2D
         """
         this = _almath.new_Pose2D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Pose2D pPos2) -> Pose2D"""
         return _almath.Pose2D___add__(self, *args)
@@ -936,7 +1066,10 @@ class Pose2D(_object):
         return _almath.Pose2D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Pose2D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Pose2D_swigregister = _almath.Pose2D_swigregister
 Pose2D_swigregister(Pose2D)
 cvar = _almath.cvar
@@ -953,19 +1086,32 @@ AXIS_MASK_VEL = cvar.AXIS_MASK_VEL
 AXIS_MASK_ROT = cvar.AXIS_MASK_ROT
 AXIS_MASK_NONE = cvar.AXIS_MASK_NONE
 
+
 class Position2D(_object):
     """Proxy of C++ AL::Math::Position2D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Position2D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Position2D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Position2D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Position2D, name)
     __swig_setmethods__["x"] = _almath.Position2D_x_set
     __swig_getmethods__["x"] = _almath.Position2D_x_get
-    if _newclass:x = _swig_property(_almath.Position2D_x_get, _almath.Position2D_x_set)
+    if _newclass:
+        x = _swig_property(_almath.Position2D_x_get, _almath.Position2D_x_set)
     __swig_setmethods__["y"] = _almath.Position2D_y_set
     __swig_getmethods__["y"] = _almath.Position2D_y_get
-    if _newclass:y = _swig_property(_almath.Position2D_y_get, _almath.Position2D_y_set)
-    def __init__(self, *args): 
+    if _newclass:
+        y = _swig_property(_almath.Position2D_y_get, _almath.Position2D_y_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Position2D
         __init__(self, float pInit) -> Position2D
@@ -973,8 +1119,11 @@ class Position2D(_object):
         __init__(self, vectorFloat pFloats) -> Position2D
         """
         this = _almath.new_Position2D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Position2D pPos2) -> Position2D"""
         return _almath.Position2D___add__(self, *args)
@@ -1063,33 +1212,51 @@ class Position2D(_object):
         return _almath.Position2D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Position2D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Position2D_swigregister = _almath.Position2D_swigregister
 Position2D_swigregister(Position2D)
 
+
 def pose2DInverse(*args):
-  """
-    pose2DInverse(Pose2D pPos) -> Pose2D
-    pose2DInverse(Pose2D pPos, Pose2D pRes)
     """
-  return _almath.pose2DInverse(*args)
+      pose2DInverse(Pose2D pPos) -> Pose2D
+      pose2DInverse(Pose2D pPos, Pose2D pRes)
+      """
+    return _almath.pose2DInverse(*args)
+
 
 class Position3D(_object):
     """Proxy of C++ AL::Math::Position3D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Position3D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Position3D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Position3D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Position3D, name)
     __swig_setmethods__["x"] = _almath.Position3D_x_set
     __swig_getmethods__["x"] = _almath.Position3D_x_get
-    if _newclass:x = _swig_property(_almath.Position3D_x_get, _almath.Position3D_x_set)
+    if _newclass:
+        x = _swig_property(_almath.Position3D_x_get, _almath.Position3D_x_set)
     __swig_setmethods__["y"] = _almath.Position3D_y_set
     __swig_getmethods__["y"] = _almath.Position3D_y_get
-    if _newclass:y = _swig_property(_almath.Position3D_y_get, _almath.Position3D_y_set)
+    if _newclass:
+        y = _swig_property(_almath.Position3D_y_get, _almath.Position3D_y_set)
     __swig_setmethods__["z"] = _almath.Position3D_z_set
     __swig_getmethods__["z"] = _almath.Position3D_z_get
-    if _newclass:z = _swig_property(_almath.Position3D_z_get, _almath.Position3D_z_set)
-    def __init__(self, *args): 
+    if _newclass:
+        z = _swig_property(_almath.Position3D_z_get, _almath.Position3D_z_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Position3D
         __init__(self, float pInit) -> Position3D
@@ -1097,8 +1264,11 @@ class Position3D(_object):
         __init__(self, vectorFloat pFloats) -> Position3D
         """
         this = _almath.new_Position3D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Position3D pPos2) -> Position3D"""
         return _almath.Position3D___add__(self, *args)
@@ -1191,53 +1361,84 @@ class Position3D(_object):
         return _almath.Position3D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Position3D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Position3D_swigregister = _almath.Position3D_swigregister
 Position3D_swigregister(Position3D)
 
 
 def __div__(*args):
-  """__div__(float pM, Position3D pPos1) -> Position3D"""
-  return _almath.__div__(*args)
+    """__div__(float pM, Position3D pPos1) -> Position3D"""
+    return _almath.__div__(*args)
+
 
 def dotProduct(*args):
-  """dotProduct(Position3D pPos1, Position3D pPos2) -> float"""
-  return _almath.dotProduct(*args)
+    """dotProduct(Position3D pPos1, Position3D pPos2) -> float"""
+    return _almath.dotProduct(*args)
+
+
 class Position6D(_object):
     """Proxy of C++ AL::Math::Position6D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Position6D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Position6D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Position6D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Position6D, name)
     __swig_setmethods__["x"] = _almath.Position6D_x_set
     __swig_getmethods__["x"] = _almath.Position6D_x_get
-    if _newclass:x = _swig_property(_almath.Position6D_x_get, _almath.Position6D_x_set)
+    if _newclass:
+        x = _swig_property(_almath.Position6D_x_get, _almath.Position6D_x_set)
     __swig_setmethods__["y"] = _almath.Position6D_y_set
     __swig_getmethods__["y"] = _almath.Position6D_y_get
-    if _newclass:y = _swig_property(_almath.Position6D_y_get, _almath.Position6D_y_set)
+    if _newclass:
+        y = _swig_property(_almath.Position6D_y_get, _almath.Position6D_y_set)
     __swig_setmethods__["z"] = _almath.Position6D_z_set
     __swig_getmethods__["z"] = _almath.Position6D_z_get
-    if _newclass:z = _swig_property(_almath.Position6D_z_get, _almath.Position6D_z_set)
+    if _newclass:
+        z = _swig_property(_almath.Position6D_z_get, _almath.Position6D_z_set)
     __swig_setmethods__["wx"] = _almath.Position6D_wx_set
     __swig_getmethods__["wx"] = _almath.Position6D_wx_get
-    if _newclass:wx = _swig_property(_almath.Position6D_wx_get, _almath.Position6D_wx_set)
+    if _newclass:
+        wx = _swig_property(
+            _almath.Position6D_wx_get,
+            _almath.Position6D_wx_set)
     __swig_setmethods__["wy"] = _almath.Position6D_wy_set
     __swig_getmethods__["wy"] = _almath.Position6D_wy_get
-    if _newclass:wy = _swig_property(_almath.Position6D_wy_get, _almath.Position6D_wy_set)
+    if _newclass:
+        wy = _swig_property(
+            _almath.Position6D_wy_get,
+            _almath.Position6D_wy_set)
     __swig_setmethods__["wz"] = _almath.Position6D_wz_set
     __swig_getmethods__["wz"] = _almath.Position6D_wz_get
-    if _newclass:wz = _swig_property(_almath.Position6D_wz_get, _almath.Position6D_wz_set)
-    def __init__(self, *args): 
+    if _newclass:
+        wz = _swig_property(
+            _almath.Position6D_wz_get,
+            _almath.Position6D_wz_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Position6D
         __init__(self, float pInit) -> Position6D
-        __init__(self, float pX, float pY, float pZ, float pWx, float pWy, 
+        __init__(self, float pX, float pY, float pZ, float pWx, float pWy,
             float pWz) -> Position6D
         __init__(self, vectorFloat pFloats) -> Position6D
         """
         this = _almath.new_Position6D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Position6D pPos2) -> Position6D"""
         return _almath.Position6D___add__(self, *args)
@@ -1318,40 +1519,66 @@ class Position6D(_object):
         return _almath.Position6D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Position6D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Position6D_swigregister = _almath.Position6D_swigregister
 Position6D_swigregister(Position6D)
 
+
 def crossProduct(*args):
-  """
-    crossProduct(Position2D pPos1, Position2D pPos2) -> float
-    crossProduct(Position2D pPos1, Position2D pPos2, float pRes)
-    crossProduct(Position3D pPos1, Position3D pPos2) -> Position3D
-    crossProduct(Position3D pPos1, Position3D pPos2, Position3D pRes)
     """
-  return _almath.crossProduct(*args)
+      crossProduct(Position2D pPos1, Position2D pPos2) -> float
+      crossProduct(Position2D pPos1, Position2D pPos2, float pRes)
+      crossProduct(Position3D pPos1, Position3D pPos2) -> Position3D
+      crossProduct(Position3D pPos1, Position3D pPos2, Position3D pRes)
+      """
+    return _almath.crossProduct(*args)
+
 
 class PositionAndVelocity(_object):
     """Proxy of C++ AL::Math::PositionAndVelocity class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, PositionAndVelocity, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        PositionAndVelocity,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, PositionAndVelocity, name)
+
+    def __getattr__(
+        self, name): return _swig_getattr(
+        self, PositionAndVelocity, name)
     __swig_setmethods__["q"] = _almath.PositionAndVelocity_q_set
     __swig_getmethods__["q"] = _almath.PositionAndVelocity_q_get
-    if _newclass:q = _swig_property(_almath.PositionAndVelocity_q_get, _almath.PositionAndVelocity_q_set)
+    if _newclass:
+        q = _swig_property(
+            _almath.PositionAndVelocity_q_get,
+            _almath.PositionAndVelocity_q_set)
     __swig_setmethods__["dq"] = _almath.PositionAndVelocity_dq_set
     __swig_getmethods__["dq"] = _almath.PositionAndVelocity_dq_get
-    if _newclass:dq = _swig_property(_almath.PositionAndVelocity_dq_get, _almath.PositionAndVelocity_dq_set)
-    def __init__(self, pq = 0.0, pdq = 0.0): 
+    if _newclass:
+        dq = _swig_property(
+            _almath.PositionAndVelocity_dq_get,
+            _almath.PositionAndVelocity_dq_set)
+
+    def __init__(self, pq=0.0, pdq=0.0):
         """
         __init__(self, float pq = 0.0, float pdq = 0.0) -> PositionAndVelocity
         __init__(self, float pq = 0.0) -> PositionAndVelocity
         __init__(self) -> PositionAndVelocity
         """
         this = _almath.new_PositionAndVelocity(pq, pdq)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def isNear(self, *args):
         """
         isNear(self, PositionAndVelocity pDat2, float pEpsilon = 0.0001) -> bool
@@ -1364,55 +1591,78 @@ class PositionAndVelocity(_object):
         return _almath.PositionAndVelocity___repr__(self)
 
     __swig_destroy__ = _almath.delete_PositionAndVelocity
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 PositionAndVelocity_swigregister = _almath.PositionAndVelocity_swigregister
 PositionAndVelocity_swigregister(PositionAndVelocity)
 
+
 def distanceSquared(*args):
-  """
-    distanceSquared(Pose2D pPos1, Pose2D pPos2) -> float
-    distanceSquared(Position2D pPos1, Position2D pPos2) -> float
-    distanceSquared(Position3D pPos1, Position3D pPos2) -> float
-    distanceSquared(Position6D pPos1, Position6D pPos2) -> float
     """
-  return _almath.distanceSquared(*args)
+      distanceSquared(Pose2D pPos1, Pose2D pPos2) -> float
+      distanceSquared(Position2D pPos1, Position2D pPos2) -> float
+      distanceSquared(Position3D pPos1, Position3D pPos2) -> float
+      distanceSquared(Position6D pPos1, Position6D pPos2) -> float
+      """
+    return _almath.distanceSquared(*args)
+
 
 def distance(*args):
-  """
-    distance(Pose2D pPos1, Pose2D pPos2) -> float
-    distance(Position2D pPos1, Position2D pPos2) -> float
-    distance(Position3D pPos1, Position3D pPos2) -> float
-    distance(Position6D pPos1, Position6D pPos2) -> float
     """
-  return _almath.distance(*args)
+      distance(Pose2D pPos1, Pose2D pPos2) -> float
+      distance(Position2D pPos1, Position2D pPos2) -> float
+      distance(Position3D pPos1, Position3D pPos2) -> float
+      distance(Position6D pPos1, Position6D pPos2) -> float
+      """
+    return _almath.distance(*args)
+
 
 class Quaternion(_object):
     """Proxy of C++ AL::Math::Quaternion class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Quaternion, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Quaternion,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Quaternion, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Quaternion, name)
     __swig_setmethods__["w"] = _almath.Quaternion_w_set
     __swig_getmethods__["w"] = _almath.Quaternion_w_get
-    if _newclass:w = _swig_property(_almath.Quaternion_w_get, _almath.Quaternion_w_set)
+    if _newclass:
+        w = _swig_property(_almath.Quaternion_w_get, _almath.Quaternion_w_set)
     __swig_setmethods__["x"] = _almath.Quaternion_x_set
     __swig_getmethods__["x"] = _almath.Quaternion_x_get
-    if _newclass:x = _swig_property(_almath.Quaternion_x_get, _almath.Quaternion_x_set)
+    if _newclass:
+        x = _swig_property(_almath.Quaternion_x_get, _almath.Quaternion_x_set)
     __swig_setmethods__["y"] = _almath.Quaternion_y_set
     __swig_getmethods__["y"] = _almath.Quaternion_y_get
-    if _newclass:y = _swig_property(_almath.Quaternion_y_get, _almath.Quaternion_y_set)
+    if _newclass:
+        y = _swig_property(_almath.Quaternion_y_get, _almath.Quaternion_y_set)
     __swig_setmethods__["z"] = _almath.Quaternion_z_set
     __swig_getmethods__["z"] = _almath.Quaternion_z_get
-    if _newclass:z = _swig_property(_almath.Quaternion_z_get, _almath.Quaternion_z_set)
-    def __init__(self, *args): 
+    if _newclass:
+        z = _swig_property(_almath.Quaternion_z_get, _almath.Quaternion_z_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Quaternion
         __init__(self, float pW, float pX, float pY, float pZ) -> Quaternion
         __init__(self, vectorFloat pFloats) -> Quaternion
         """
         this = _almath.new_Quaternion(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __mul__(self, *args):
         """__mul__(self, Quaternion pQua2) -> Quaternion"""
         return _almath.Quaternion___mul__(self, *args)
@@ -1459,8 +1709,11 @@ class Quaternion(_object):
         """fromAngleAndAxisRotation(float pAngle, float pAxisX, float pAxisY, float pAxisZ) -> Quaternion"""
         return _almath.Quaternion_fromAngleAndAxisRotation(*args)
 
-    if _newclass:fromAngleAndAxisRotation = staticmethod(fromAngleAndAxisRotation)
-    __swig_getmethods__["fromAngleAndAxisRotation"] = lambda x: fromAngleAndAxisRotation
+    if _newclass:
+        fromAngleAndAxisRotation = staticmethod(fromAngleAndAxisRotation)
+    __swig_getmethods__[
+        "fromAngleAndAxisRotation"] = lambda x: fromAngleAndAxisRotation
+
     def toVector(self):
         """toVector(self) -> vectorFloat"""
         return _almath.Quaternion_toVector(self)
@@ -1470,66 +1723,113 @@ class Quaternion(_object):
         return _almath.Quaternion___repr__(self)
 
     __swig_destroy__ = _almath.delete_Quaternion
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Quaternion_swigregister = _almath.Quaternion_swigregister
 Quaternion_swigregister(Quaternion)
 
+
 def Quaternion_fromAngleAndAxisRotation(*args):
-  """Quaternion_fromAngleAndAxisRotation(float pAngle, float pAxisX, float pAxisY, float pAxisZ) -> Quaternion"""
-  return _almath.Quaternion_fromAngleAndAxisRotation(*args)
+    """Quaternion_fromAngleAndAxisRotation(float pAngle, float pAxisX, float pAxisY, float pAxisZ) -> Quaternion"""
+    return _almath.Quaternion_fromAngleAndAxisRotation(*args)
 
 
 def quaternionFromAngleAndAxisRotation(*args):
-  """quaternionFromAngleAndAxisRotation(float pAngle, float pAxisX, float pAxisY, float pAxisZ) -> Quaternion"""
-  return _almath.quaternionFromAngleAndAxisRotation(*args)
+    """quaternionFromAngleAndAxisRotation(float pAngle, float pAxisX, float pAxisY, float pAxisZ) -> Quaternion"""
+    return _almath.quaternionFromAngleAndAxisRotation(*args)
+
 
 def angleAndAxisRotationFromQuaternion(*args):
-  """
-    angleAndAxisRotationFromQuaternion(Quaternion pQuaternion, float pAngle, float pAxisX, 
-        float pAxisY, float pAxisZ)
     """
-  return _almath.angleAndAxisRotationFromQuaternion(*args)
+      angleAndAxisRotationFromQuaternion(Quaternion pQuaternion, float pAngle, float pAxisX,
+          float pAxisY, float pAxisZ)
+      """
+    return _almath.angleAndAxisRotationFromQuaternion(*args)
+
+
 class Rotation(_object):
     """Proxy of C++ AL::Math::Rotation class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Rotation, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Rotation,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Rotation, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Rotation, name)
     __swig_setmethods__["r1_c1"] = _almath.Rotation_r1_c1_set
     __swig_getmethods__["r1_c1"] = _almath.Rotation_r1_c1_get
-    if _newclass:r1_c1 = _swig_property(_almath.Rotation_r1_c1_get, _almath.Rotation_r1_c1_set)
+    if _newclass:
+        r1_c1 = _swig_property(
+            _almath.Rotation_r1_c1_get,
+            _almath.Rotation_r1_c1_set)
     __swig_setmethods__["r1_c2"] = _almath.Rotation_r1_c2_set
     __swig_getmethods__["r1_c2"] = _almath.Rotation_r1_c2_get
-    if _newclass:r1_c2 = _swig_property(_almath.Rotation_r1_c2_get, _almath.Rotation_r1_c2_set)
+    if _newclass:
+        r1_c2 = _swig_property(
+            _almath.Rotation_r1_c2_get,
+            _almath.Rotation_r1_c2_set)
     __swig_setmethods__["r1_c3"] = _almath.Rotation_r1_c3_set
     __swig_getmethods__["r1_c3"] = _almath.Rotation_r1_c3_get
-    if _newclass:r1_c3 = _swig_property(_almath.Rotation_r1_c3_get, _almath.Rotation_r1_c3_set)
+    if _newclass:
+        r1_c3 = _swig_property(
+            _almath.Rotation_r1_c3_get,
+            _almath.Rotation_r1_c3_set)
     __swig_setmethods__["r2_c1"] = _almath.Rotation_r2_c1_set
     __swig_getmethods__["r2_c1"] = _almath.Rotation_r2_c1_get
-    if _newclass:r2_c1 = _swig_property(_almath.Rotation_r2_c1_get, _almath.Rotation_r2_c1_set)
+    if _newclass:
+        r2_c1 = _swig_property(
+            _almath.Rotation_r2_c1_get,
+            _almath.Rotation_r2_c1_set)
     __swig_setmethods__["r2_c2"] = _almath.Rotation_r2_c2_set
     __swig_getmethods__["r2_c2"] = _almath.Rotation_r2_c2_get
-    if _newclass:r2_c2 = _swig_property(_almath.Rotation_r2_c2_get, _almath.Rotation_r2_c2_set)
+    if _newclass:
+        r2_c2 = _swig_property(
+            _almath.Rotation_r2_c2_get,
+            _almath.Rotation_r2_c2_set)
     __swig_setmethods__["r2_c3"] = _almath.Rotation_r2_c3_set
     __swig_getmethods__["r2_c3"] = _almath.Rotation_r2_c3_get
-    if _newclass:r2_c3 = _swig_property(_almath.Rotation_r2_c3_get, _almath.Rotation_r2_c3_set)
+    if _newclass:
+        r2_c3 = _swig_property(
+            _almath.Rotation_r2_c3_get,
+            _almath.Rotation_r2_c3_set)
     __swig_setmethods__["r3_c1"] = _almath.Rotation_r3_c1_set
     __swig_getmethods__["r3_c1"] = _almath.Rotation_r3_c1_get
-    if _newclass:r3_c1 = _swig_property(_almath.Rotation_r3_c1_get, _almath.Rotation_r3_c1_set)
+    if _newclass:
+        r3_c1 = _swig_property(
+            _almath.Rotation_r3_c1_get,
+            _almath.Rotation_r3_c1_set)
     __swig_setmethods__["r3_c2"] = _almath.Rotation_r3_c2_set
     __swig_getmethods__["r3_c2"] = _almath.Rotation_r3_c2_get
-    if _newclass:r3_c2 = _swig_property(_almath.Rotation_r3_c2_get, _almath.Rotation_r3_c2_set)
+    if _newclass:
+        r3_c2 = _swig_property(
+            _almath.Rotation_r3_c2_get,
+            _almath.Rotation_r3_c2_set)
     __swig_setmethods__["r3_c3"] = _almath.Rotation_r3_c3_set
     __swig_getmethods__["r3_c3"] = _almath.Rotation_r3_c3_get
-    if _newclass:r3_c3 = _swig_property(_almath.Rotation_r3_c3_get, _almath.Rotation_r3_c3_set)
-    def __init__(self, *args): 
+    if _newclass:
+        r3_c3 = _swig_property(
+            _almath.Rotation_r3_c3_get,
+            _almath.Rotation_r3_c3_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Rotation
         __init__(self, vectorFloat pFloats) -> Rotation
         """
         this = _almath.new_Rotation(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __imul__(self, *args):
         """__imul__(self, Rotation pRot2) -> Rotation"""
         return _almath.Rotation___imul__(self, *args)
@@ -1561,38 +1861,50 @@ class Rotation(_object):
         """fromQuaternion(float pA, float pB, float pC, float pD) -> Rotation"""
         return _almath.Rotation_fromQuaternion(*args)
 
-    if _newclass:fromQuaternion = staticmethod(fromQuaternion)
+    if _newclass:
+        fromQuaternion = staticmethod(fromQuaternion)
     __swig_getmethods__["fromQuaternion"] = lambda x: fromQuaternion
+
     def fromAngleDirection(*args):
         """fromAngleDirection(float pAngle, float pX, float pY, float pZ) -> Rotation"""
         return _almath.Rotation_fromAngleDirection(*args)
 
-    if _newclass:fromAngleDirection = staticmethod(fromAngleDirection)
+    if _newclass:
+        fromAngleDirection = staticmethod(fromAngleDirection)
     __swig_getmethods__["fromAngleDirection"] = lambda x: fromAngleDirection
+
     def fromRotX(*args):
         """fromRotX(float pRotX) -> Rotation"""
         return _almath.Rotation_fromRotX(*args)
 
-    if _newclass:fromRotX = staticmethod(fromRotX)
+    if _newclass:
+        fromRotX = staticmethod(fromRotX)
     __swig_getmethods__["fromRotX"] = lambda x: fromRotX
+
     def fromRotY(*args):
         """fromRotY(float pRotY) -> Rotation"""
         return _almath.Rotation_fromRotY(*args)
 
-    if _newclass:fromRotY = staticmethod(fromRotY)
+    if _newclass:
+        fromRotY = staticmethod(fromRotY)
     __swig_getmethods__["fromRotY"] = lambda x: fromRotY
+
     def fromRotZ(*args):
         """fromRotZ(float pRotZ) -> Rotation"""
         return _almath.Rotation_fromRotZ(*args)
 
-    if _newclass:fromRotZ = staticmethod(fromRotZ)
+    if _newclass:
+        fromRotZ = staticmethod(fromRotZ)
     __swig_getmethods__["fromRotZ"] = lambda x: fromRotZ
+
     def from3DRotation(*args):
         """from3DRotation(float pWX, float pWY, float pWZ) -> Rotation"""
         return _almath.Rotation_from3DRotation(*args)
 
-    if _newclass:from3DRotation = staticmethod(from3DRotation)
+    if _newclass:
+        from3DRotation = staticmethod(from3DRotation)
     __swig_getmethods__["from3DRotation"] = lambda x: from3DRotation
+
     def toVector(self):
         """toVector(self) -> vectorFloat"""
         return _almath.Rotation_toVector(self)
@@ -1613,85 +1925,122 @@ class Rotation(_object):
         return _almath.Rotation___mul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Rotation
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Rotation_swigregister = _almath.Rotation_swigregister
 Rotation_swigregister(Rotation)
 
+
 def quaternionInverse(*args):
-  """
-    quaternionInverse(Quaternion pQua, Quaternion pQuaOut)
-    quaternionInverse(Quaternion pQua) -> Quaternion
     """
-  return _almath.quaternionInverse(*args)
+      quaternionInverse(Quaternion pQua, Quaternion pQuaOut)
+      quaternionInverse(Quaternion pQua) -> Quaternion
+      """
+    return _almath.quaternionInverse(*args)
+
 
 def Rotation_fromQuaternion(*args):
-  """Rotation_fromQuaternion(float pA, float pB, float pC, float pD) -> Rotation"""
-  return _almath.Rotation_fromQuaternion(*args)
+    """Rotation_fromQuaternion(float pA, float pB, float pC, float pD) -> Rotation"""
+    return _almath.Rotation_fromQuaternion(*args)
+
 
 def Rotation_fromAngleDirection(*args):
-  """Rotation_fromAngleDirection(float pAngle, float pX, float pY, float pZ) -> Rotation"""
-  return _almath.Rotation_fromAngleDirection(*args)
+    """Rotation_fromAngleDirection(float pAngle, float pX, float pY, float pZ) -> Rotation"""
+    return _almath.Rotation_fromAngleDirection(*args)
+
 
 def Rotation_fromRotX(*args):
-  """Rotation_fromRotX(float pRotX) -> Rotation"""
-  return _almath.Rotation_fromRotX(*args)
+    """Rotation_fromRotX(float pRotX) -> Rotation"""
+    return _almath.Rotation_fromRotX(*args)
+
 
 def Rotation_fromRotY(*args):
-  """Rotation_fromRotY(float pRotY) -> Rotation"""
-  return _almath.Rotation_fromRotY(*args)
+    """Rotation_fromRotY(float pRotY) -> Rotation"""
+    return _almath.Rotation_fromRotY(*args)
+
 
 def Rotation_fromRotZ(*args):
-  """Rotation_fromRotZ(float pRotZ) -> Rotation"""
-  return _almath.Rotation_fromRotZ(*args)
+    """Rotation_fromRotZ(float pRotZ) -> Rotation"""
+    return _almath.Rotation_fromRotZ(*args)
+
 
 def Rotation_from3DRotation(*args):
-  """Rotation_from3DRotation(float pWX, float pWY, float pWZ) -> Rotation"""
-  return _almath.Rotation_from3DRotation(*args)
+    """Rotation_from3DRotation(float pWX, float pWY, float pWZ) -> Rotation"""
+    return _almath.Rotation_from3DRotation(*args)
 
 
 def transpose(*args):
-  """transpose(Rotation pRot) -> Rotation"""
-  return _almath.transpose(*args)
+    """transpose(Rotation pRot) -> Rotation"""
+    return _almath.transpose(*args)
+
 
 def rotationFromQuaternion(*args):
-  """rotationFromQuaternion(float pA, float pB, float pC, float pD) -> Rotation"""
-  return _almath.rotationFromQuaternion(*args)
+    """rotationFromQuaternion(float pA, float pB, float pC, float pD) -> Rotation"""
+    return _almath.rotationFromQuaternion(*args)
+
 
 def applyRotation(*args):
-  """applyRotation(Rotation pRot, float pX, float pY, float pZ)"""
-  return _almath.applyRotation(*args)
+    """applyRotation(Rotation pRot, float pX, float pY, float pZ)"""
+    return _almath.applyRotation(*args)
+
 
 def rotationFromRotX(*args):
-  """rotationFromRotX(float pRotX) -> Rotation"""
-  return _almath.rotationFromRotX(*args)
+    """rotationFromRotX(float pRotX) -> Rotation"""
+    return _almath.rotationFromRotX(*args)
+
 
 def rotationFromRotY(*args):
-  """rotationFromRotY(float pRotY) -> Rotation"""
-  return _almath.rotationFromRotY(*args)
+    """rotationFromRotY(float pRotY) -> Rotation"""
+    return _almath.rotationFromRotY(*args)
+
 
 def rotationFromRotZ(*args):
-  """rotationFromRotZ(float pRotZ) -> Rotation"""
-  return _almath.rotationFromRotZ(*args)
+    """rotationFromRotZ(float pRotZ) -> Rotation"""
+    return _almath.rotationFromRotZ(*args)
+
 
 def rotationFrom3DRotation(*args):
-  """rotationFrom3DRotation(float pWX, float pWY, float pWZ) -> Rotation"""
-  return _almath.rotationFrom3DRotation(*args)
+    """rotationFrom3DRotation(float pWX, float pWY, float pWZ) -> Rotation"""
+    return _almath.rotationFrom3DRotation(*args)
+
+
 class Rotation3D(_object):
     """Proxy of C++ AL::Math::Rotation3D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Rotation3D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Rotation3D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Rotation3D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Rotation3D, name)
     __swig_setmethods__["wx"] = _almath.Rotation3D_wx_set
     __swig_getmethods__["wx"] = _almath.Rotation3D_wx_get
-    if _newclass:wx = _swig_property(_almath.Rotation3D_wx_get, _almath.Rotation3D_wx_set)
+    if _newclass:
+        wx = _swig_property(
+            _almath.Rotation3D_wx_get,
+            _almath.Rotation3D_wx_set)
     __swig_setmethods__["wy"] = _almath.Rotation3D_wy_set
     __swig_getmethods__["wy"] = _almath.Rotation3D_wy_get
-    if _newclass:wy = _swig_property(_almath.Rotation3D_wy_get, _almath.Rotation3D_wy_set)
+    if _newclass:
+        wy = _swig_property(
+            _almath.Rotation3D_wy_get,
+            _almath.Rotation3D_wy_set)
     __swig_setmethods__["wz"] = _almath.Rotation3D_wz_set
     __swig_getmethods__["wz"] = _almath.Rotation3D_wz_get
-    if _newclass:wz = _swig_property(_almath.Rotation3D_wz_get, _almath.Rotation3D_wz_set)
-    def __init__(self, *args): 
+    if _newclass:
+        wz = _swig_property(
+            _almath.Rotation3D_wz_get,
+            _almath.Rotation3D_wz_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Rotation3D
         __init__(self, float pInit) -> Rotation3D
@@ -1699,8 +2048,11 @@ class Rotation3D(_object):
         __init__(self, vectorFloat pFloats) -> Rotation3D
         """
         this = _almath.new_Rotation3D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Rotation3D pRot2) -> Rotation3D"""
         return _almath.Rotation3D___add__(self, *args)
@@ -1761,61 +2113,114 @@ class Rotation3D(_object):
         return _almath.Rotation3D___repr__(self)
 
     __swig_destroy__ = _almath.delete_Rotation3D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Rotation3D_swigregister = _almath.Rotation3D_swigregister
 Rotation3D_swigregister(Rotation3D)
+
 
 class Transform(_object):
     """Proxy of C++ AL::Math::Transform class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Transform, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Transform,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Transform, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Transform, name)
     __swig_setmethods__["r1_c1"] = _almath.Transform_r1_c1_set
     __swig_getmethods__["r1_c1"] = _almath.Transform_r1_c1_get
-    if _newclass:r1_c1 = _swig_property(_almath.Transform_r1_c1_get, _almath.Transform_r1_c1_set)
+    if _newclass:
+        r1_c1 = _swig_property(
+            _almath.Transform_r1_c1_get,
+            _almath.Transform_r1_c1_set)
     __swig_setmethods__["r1_c2"] = _almath.Transform_r1_c2_set
     __swig_getmethods__["r1_c2"] = _almath.Transform_r1_c2_get
-    if _newclass:r1_c2 = _swig_property(_almath.Transform_r1_c2_get, _almath.Transform_r1_c2_set)
+    if _newclass:
+        r1_c2 = _swig_property(
+            _almath.Transform_r1_c2_get,
+            _almath.Transform_r1_c2_set)
     __swig_setmethods__["r1_c3"] = _almath.Transform_r1_c3_set
     __swig_getmethods__["r1_c3"] = _almath.Transform_r1_c3_get
-    if _newclass:r1_c3 = _swig_property(_almath.Transform_r1_c3_get, _almath.Transform_r1_c3_set)
+    if _newclass:
+        r1_c3 = _swig_property(
+            _almath.Transform_r1_c3_get,
+            _almath.Transform_r1_c3_set)
     __swig_setmethods__["r1_c4"] = _almath.Transform_r1_c4_set
     __swig_getmethods__["r1_c4"] = _almath.Transform_r1_c4_get
-    if _newclass:r1_c4 = _swig_property(_almath.Transform_r1_c4_get, _almath.Transform_r1_c4_set)
+    if _newclass:
+        r1_c4 = _swig_property(
+            _almath.Transform_r1_c4_get,
+            _almath.Transform_r1_c4_set)
     __swig_setmethods__["r2_c1"] = _almath.Transform_r2_c1_set
     __swig_getmethods__["r2_c1"] = _almath.Transform_r2_c1_get
-    if _newclass:r2_c1 = _swig_property(_almath.Transform_r2_c1_get, _almath.Transform_r2_c1_set)
+    if _newclass:
+        r2_c1 = _swig_property(
+            _almath.Transform_r2_c1_get,
+            _almath.Transform_r2_c1_set)
     __swig_setmethods__["r2_c2"] = _almath.Transform_r2_c2_set
     __swig_getmethods__["r2_c2"] = _almath.Transform_r2_c2_get
-    if _newclass:r2_c2 = _swig_property(_almath.Transform_r2_c2_get, _almath.Transform_r2_c2_set)
+    if _newclass:
+        r2_c2 = _swig_property(
+            _almath.Transform_r2_c2_get,
+            _almath.Transform_r2_c2_set)
     __swig_setmethods__["r2_c3"] = _almath.Transform_r2_c3_set
     __swig_getmethods__["r2_c3"] = _almath.Transform_r2_c3_get
-    if _newclass:r2_c3 = _swig_property(_almath.Transform_r2_c3_get, _almath.Transform_r2_c3_set)
+    if _newclass:
+        r2_c3 = _swig_property(
+            _almath.Transform_r2_c3_get,
+            _almath.Transform_r2_c3_set)
     __swig_setmethods__["r2_c4"] = _almath.Transform_r2_c4_set
     __swig_getmethods__["r2_c4"] = _almath.Transform_r2_c4_get
-    if _newclass:r2_c4 = _swig_property(_almath.Transform_r2_c4_get, _almath.Transform_r2_c4_set)
+    if _newclass:
+        r2_c4 = _swig_property(
+            _almath.Transform_r2_c4_get,
+            _almath.Transform_r2_c4_set)
     __swig_setmethods__["r3_c1"] = _almath.Transform_r3_c1_set
     __swig_getmethods__["r3_c1"] = _almath.Transform_r3_c1_get
-    if _newclass:r3_c1 = _swig_property(_almath.Transform_r3_c1_get, _almath.Transform_r3_c1_set)
+    if _newclass:
+        r3_c1 = _swig_property(
+            _almath.Transform_r3_c1_get,
+            _almath.Transform_r3_c1_set)
     __swig_setmethods__["r3_c2"] = _almath.Transform_r3_c2_set
     __swig_getmethods__["r3_c2"] = _almath.Transform_r3_c2_get
-    if _newclass:r3_c2 = _swig_property(_almath.Transform_r3_c2_get, _almath.Transform_r3_c2_set)
+    if _newclass:
+        r3_c2 = _swig_property(
+            _almath.Transform_r3_c2_get,
+            _almath.Transform_r3_c2_set)
     __swig_setmethods__["r3_c3"] = _almath.Transform_r3_c3_set
     __swig_getmethods__["r3_c3"] = _almath.Transform_r3_c3_get
-    if _newclass:r3_c3 = _swig_property(_almath.Transform_r3_c3_get, _almath.Transform_r3_c3_set)
+    if _newclass:
+        r3_c3 = _swig_property(
+            _almath.Transform_r3_c3_get,
+            _almath.Transform_r3_c3_set)
     __swig_setmethods__["r3_c4"] = _almath.Transform_r3_c4_set
     __swig_getmethods__["r3_c4"] = _almath.Transform_r3_c4_get
-    if _newclass:r3_c4 = _swig_property(_almath.Transform_r3_c4_get, _almath.Transform_r3_c4_set)
-    def __init__(self, *args): 
+    if _newclass:
+        r3_c4 = _swig_property(
+            _almath.Transform_r3_c4_get,
+            _almath.Transform_r3_c4_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Transform
         __init__(self, vectorFloat pFloats) -> Transform
         __init__(self, float pPosX, float pPosY, float pPosZ) -> Transform
         """
         this = _almath.new_Transform(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __imul__(self, *args):
         """__imul__(self, Transform pT2) -> Transform"""
         return _almath.Transform___imul__(self, *args)
@@ -1835,7 +2240,7 @@ class Transform(_object):
         """
         return _almath.Transform_isNear(self, *args)
 
-    def isTransform(self, pEpsilon = 0.0001):
+    def isTransform(self, pEpsilon=0.0001):
         """
         isTransform(self, float pEpsilon = 0.0001) -> bool
         isTransform(self) -> bool
@@ -1858,36 +2263,46 @@ class Transform(_object):
         """fromRotX(float pRotX) -> Transform"""
         return _almath.Transform_fromRotX(*args)
 
-    if _newclass:fromRotX = staticmethod(fromRotX)
+    if _newclass:
+        fromRotX = staticmethod(fromRotX)
     __swig_getmethods__["fromRotX"] = lambda x: fromRotX
+
     def fromRotY(*args):
         """fromRotY(float pRotY) -> Transform"""
         return _almath.Transform_fromRotY(*args)
 
-    if _newclass:fromRotY = staticmethod(fromRotY)
+    if _newclass:
+        fromRotY = staticmethod(fromRotY)
     __swig_getmethods__["fromRotY"] = lambda x: fromRotY
+
     def fromRotZ(*args):
         """fromRotZ(float pRotZ) -> Transform"""
         return _almath.Transform_fromRotZ(*args)
 
-    if _newclass:fromRotZ = staticmethod(fromRotZ)
+    if _newclass:
+        fromRotZ = staticmethod(fromRotZ)
     __swig_getmethods__["fromRotZ"] = lambda x: fromRotZ
+
     def from3DRotation(*args):
         """from3DRotation(float pWX, float pWY, float pWZ) -> Transform"""
         return _almath.Transform_from3DRotation(*args)
 
-    if _newclass:from3DRotation = staticmethod(from3DRotation)
+    if _newclass:
+        from3DRotation = staticmethod(from3DRotation)
     __swig_getmethods__["from3DRotation"] = lambda x: from3DRotation
+
     def fromPosition(*args):
         """
         fromPosition(float pX, float pY, float pZ) -> Transform
-        fromPosition(float pX, float pY, float pZ, float pWX, float pWY, 
+        fromPosition(float pX, float pY, float pZ, float pWX, float pWY,
             float pWZ) -> Transform
         """
         return _almath.Transform_fromPosition(*args)
 
-    if _newclass:fromPosition = staticmethod(fromPosition)
+    if _newclass:
+        fromPosition = staticmethod(fromPosition)
     __swig_getmethods__["fromPosition"] = lambda x: fromPosition
+
     def diff(self, *args):
         """diff(self, Transform pT2) -> Transform"""
         return _almath.Transform_diff(self, *args)
@@ -1920,90 +2335,128 @@ class Transform(_object):
         return _almath.Transform___mul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Transform
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Transform_swigregister = _almath.Transform_swigregister
 Transform_swigregister(Transform)
 
+
 def Transform_fromRotX(*args):
-  """Transform_fromRotX(float pRotX) -> Transform"""
-  return _almath.Transform_fromRotX(*args)
+    """Transform_fromRotX(float pRotX) -> Transform"""
+    return _almath.Transform_fromRotX(*args)
+
 
 def Transform_fromRotY(*args):
-  """Transform_fromRotY(float pRotY) -> Transform"""
-  return _almath.Transform_fromRotY(*args)
+    """Transform_fromRotY(float pRotY) -> Transform"""
+    return _almath.Transform_fromRotY(*args)
+
 
 def Transform_fromRotZ(*args):
-  """Transform_fromRotZ(float pRotZ) -> Transform"""
-  return _almath.Transform_fromRotZ(*args)
+    """Transform_fromRotZ(float pRotZ) -> Transform"""
+    return _almath.Transform_fromRotZ(*args)
+
 
 def Transform_from3DRotation(*args):
-  """Transform_from3DRotation(float pWX, float pWY, float pWZ) -> Transform"""
-  return _almath.Transform_from3DRotation(*args)
+    """Transform_from3DRotation(float pWX, float pWY, float pWZ) -> Transform"""
+    return _almath.Transform_from3DRotation(*args)
+
 
 def Transform_fromPosition(*args):
-  """
-    fromPosition(float pX, float pY, float pZ) -> Transform
-    Transform_fromPosition(float pX, float pY, float pZ, float pWX, float pWY, 
-        float pWZ) -> Transform
     """
-  return _almath.Transform_fromPosition(*args)
+      fromPosition(float pX, float pY, float pZ) -> Transform
+      Transform_fromPosition(float pX, float pY, float pZ, float pWX, float pWY,
+          float pWZ) -> Transform
+      """
+    return _almath.Transform_fromPosition(*args)
 
 
 def transformPreMultiply(*args):
-  """transformPreMultiply(Transform pT, Transform pTOut)"""
-  return _almath.transformPreMultiply(*args)
+    """transformPreMultiply(Transform pT, Transform pTOut)"""
+    return _almath.transformPreMultiply(*args)
+
 
 def transformFromRotX(*args):
-  """transformFromRotX(float pRotX) -> Transform"""
-  return _almath.transformFromRotX(*args)
+    """transformFromRotX(float pRotX) -> Transform"""
+    return _almath.transformFromRotX(*args)
+
 
 def transformFromRotY(*args):
-  """transformFromRotY(float pRotY) -> Transform"""
-  return _almath.transformFromRotY(*args)
+    """transformFromRotY(float pRotY) -> Transform"""
+    return _almath.transformFromRotY(*args)
+
 
 def transformFromRotZ(*args):
-  """transformFromRotZ(float pRotZ) -> Transform"""
-  return _almath.transformFromRotZ(*args)
+    """transformFromRotZ(float pRotZ) -> Transform"""
+    return _almath.transformFromRotZ(*args)
+
 
 def transformFrom3DRotation(*args):
-  """transformFrom3DRotation(float pWX, float pWY, float pWZ) -> Transform"""
-  return _almath.transformFrom3DRotation(*args)
+    """transformFrom3DRotation(float pWX, float pWY, float pWZ) -> Transform"""
+    return _almath.transformFrom3DRotation(*args)
+
 
 def transformInvertInPlace(*args):
-  """transformInvertInPlace(Transform pT)"""
-  return _almath.transformInvertInPlace(*args)
+    """transformInvertInPlace(Transform pT)"""
+    return _almath.transformInvertInPlace(*args)
+
 
 def pinv(*args):
-  """pinv(Transform pT) -> Transform"""
-  return _almath.pinv(*args)
+    """pinv(Transform pT) -> Transform"""
+    return _almath.pinv(*args)
+
 
 def transformDiff(*args):
-  """transformDiff(Transform pT1, Transform pT2) -> Transform"""
-  return _almath.transformDiff(*args)
+    """transformDiff(Transform pT1, Transform pT2) -> Transform"""
+    return _almath.transformDiff(*args)
+
 
 def transformDistanceSquared(*args):
-  """transformDistanceSquared(Transform pT1, Transform pT2) -> float"""
-  return _almath.transformDistanceSquared(*args)
+    """transformDistanceSquared(Transform pT1, Transform pT2) -> float"""
+    return _almath.transformDistanceSquared(*args)
+
 
 def transformDistance(*args):
-  """transformDistance(Transform pT1, Transform pT2) -> float"""
-  return _almath.transformDistance(*args)
+    """transformDistance(Transform pT1, Transform pT2) -> float"""
+    return _almath.transformDistance(*args)
+
+
 class Velocity3D(_object):
     """Proxy of C++ AL::Math::Velocity3D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Velocity3D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Velocity3D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Velocity3D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Velocity3D, name)
     __swig_setmethods__["xd"] = _almath.Velocity3D_xd_set
     __swig_getmethods__["xd"] = _almath.Velocity3D_xd_get
-    if _newclass:xd = _swig_property(_almath.Velocity3D_xd_get, _almath.Velocity3D_xd_set)
+    if _newclass:
+        xd = _swig_property(
+            _almath.Velocity3D_xd_get,
+            _almath.Velocity3D_xd_set)
     __swig_setmethods__["yd"] = _almath.Velocity3D_yd_set
     __swig_getmethods__["yd"] = _almath.Velocity3D_yd_get
-    if _newclass:yd = _swig_property(_almath.Velocity3D_yd_get, _almath.Velocity3D_yd_set)
+    if _newclass:
+        yd = _swig_property(
+            _almath.Velocity3D_yd_get,
+            _almath.Velocity3D_yd_set)
     __swig_setmethods__["zd"] = _almath.Velocity3D_zd_set
     __swig_getmethods__["zd"] = _almath.Velocity3D_zd_get
-    if _newclass:zd = _swig_property(_almath.Velocity3D_zd_get, _almath.Velocity3D_zd_set)
-    def __init__(self, *args): 
+    if _newclass:
+        zd = _swig_property(
+            _almath.Velocity3D_zd_get,
+            _almath.Velocity3D_zd_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Velocity3D
         __init__(self, float pInit) -> Velocity3D
@@ -2011,8 +2464,11 @@ class Velocity3D(_object):
         __init__(self, vectorFloat pFloats) -> Velocity3D
         """
         this = _almath.new_Velocity3D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Velocity3D pVel2) -> Velocity3D"""
         return _almath.Velocity3D___add__(self, *args)
@@ -2089,75 +2545,114 @@ class Velocity3D(_object):
         return _almath.Velocity3D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Velocity3D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Velocity3D_swigregister = _almath.Velocity3D_swigregister
 Velocity3D_swigregister(Velocity3D)
 
+
 def transformToFloatVector(*args):
-  """
-    transformToFloatVector(Transform pT, vectorFloat pTOut)
-    transformToFloatVector(Transform pT) -> vectorFloat
     """
-  return _almath.transformToFloatVector(*args)
+      transformToFloatVector(Transform pT, vectorFloat pTOut)
+      transformToFloatVector(Transform pT) -> vectorFloat
+      """
+    return _almath.transformToFloatVector(*args)
+
 
 def determinant(*args):
-  """
-    determinant(Rotation pRot) -> float
-    determinant(Transform pT) -> float
-    determinant(vectorFloat pFloats) -> float
     """
-  return _almath.determinant(*args)
+      determinant(Rotation pRot) -> float
+      determinant(Transform pT) -> float
+      determinant(vectorFloat pFloats) -> float
+      """
+    return _almath.determinant(*args)
+
 
 def transformInverse(*args):
-  """
-    transformInverse(Transform pT, Transform pTOut)
-    transformInverse(Transform pT) -> Transform
     """
-  return _almath.transformInverse(*args)
+      transformInverse(Transform pT, Transform pTOut)
+      transformInverse(Transform pT) -> Transform
+      """
+    return _almath.transformInverse(*args)
+
 
 def transformFromPosition(*args):
-  """
-    transformFromPosition(float pX, float pY, float pZ) -> Transform
-    transformFromPosition(float pX, float pY, float pZ, float pWX, float pWY, 
-        float pWZ) -> Transform
     """
-  return _almath.transformFromPosition(*args)
+      transformFromPosition(float pX, float pY, float pZ) -> Transform
+      transformFromPosition(float pX, float pY, float pZ, float pWX, float pWY,
+          float pWZ) -> Transform
+      """
+    return _almath.transformFromPosition(*args)
+
 
 class Velocity6D(_object):
     """Proxy of C++ AL::Math::Velocity6D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Velocity6D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        Velocity6D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Velocity6D, name)
+
+    def __getattr__(self, name): return _swig_getattr(self, Velocity6D, name)
     __swig_setmethods__["xd"] = _almath.Velocity6D_xd_set
     __swig_getmethods__["xd"] = _almath.Velocity6D_xd_get
-    if _newclass:xd = _swig_property(_almath.Velocity6D_xd_get, _almath.Velocity6D_xd_set)
+    if _newclass:
+        xd = _swig_property(
+            _almath.Velocity6D_xd_get,
+            _almath.Velocity6D_xd_set)
     __swig_setmethods__["yd"] = _almath.Velocity6D_yd_set
     __swig_getmethods__["yd"] = _almath.Velocity6D_yd_get
-    if _newclass:yd = _swig_property(_almath.Velocity6D_yd_get, _almath.Velocity6D_yd_set)
+    if _newclass:
+        yd = _swig_property(
+            _almath.Velocity6D_yd_get,
+            _almath.Velocity6D_yd_set)
     __swig_setmethods__["zd"] = _almath.Velocity6D_zd_set
     __swig_getmethods__["zd"] = _almath.Velocity6D_zd_get
-    if _newclass:zd = _swig_property(_almath.Velocity6D_zd_get, _almath.Velocity6D_zd_set)
+    if _newclass:
+        zd = _swig_property(
+            _almath.Velocity6D_zd_get,
+            _almath.Velocity6D_zd_set)
     __swig_setmethods__["wxd"] = _almath.Velocity6D_wxd_set
     __swig_getmethods__["wxd"] = _almath.Velocity6D_wxd_get
-    if _newclass:wxd = _swig_property(_almath.Velocity6D_wxd_get, _almath.Velocity6D_wxd_set)
+    if _newclass:
+        wxd = _swig_property(
+            _almath.Velocity6D_wxd_get,
+            _almath.Velocity6D_wxd_set)
     __swig_setmethods__["wyd"] = _almath.Velocity6D_wyd_set
     __swig_getmethods__["wyd"] = _almath.Velocity6D_wyd_get
-    if _newclass:wyd = _swig_property(_almath.Velocity6D_wyd_get, _almath.Velocity6D_wyd_set)
+    if _newclass:
+        wyd = _swig_property(
+            _almath.Velocity6D_wyd_get,
+            _almath.Velocity6D_wyd_set)
     __swig_setmethods__["wzd"] = _almath.Velocity6D_wzd_set
     __swig_getmethods__["wzd"] = _almath.Velocity6D_wzd_get
-    if _newclass:wzd = _swig_property(_almath.Velocity6D_wzd_get, _almath.Velocity6D_wzd_set)
-    def __init__(self, *args): 
+    if _newclass:
+        wzd = _swig_property(
+            _almath.Velocity6D_wzd_get,
+            _almath.Velocity6D_wzd_set)
+
+    def __init__(self, *args):
         """
         __init__(self) -> Velocity6D
         __init__(self, float pInit) -> Velocity6D
-        __init__(self, float pXd, float pYd, float pZd, float pWxd, float pWyd, 
+        __init__(self, float pXd, float pYd, float pZd, float pWxd, float pWyd,
             float pWzd) -> Velocity6D
         __init__(self, vectorFloat pFloats) -> Velocity6D
         """
         this = _almath.new_Velocity6D(*args)
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
+
     def __add__(self, *args):
         """__add__(self, Velocity6D pVel2) -> Velocity6D"""
         return _almath.Velocity6D___add__(self, *args)
@@ -2226,22 +2721,44 @@ class Velocity6D(_object):
         return _almath.Velocity6D___rmul__(self, *args)
 
     __swig_destroy__ = _almath.delete_Velocity6D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 Velocity6D_swigregister = _almath.Velocity6D_swigregister
 Velocity6D_swigregister(Velocity6D)
+
 
 class TransformAndVelocity6D(_object):
     """Proxy of C++ AL::Math::TransformAndVelocity6D class"""
     __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, TransformAndVelocity6D, name, value)
+
+    def __setattr__(
+        self,
+        name,
+        value): return _swig_setattr(
+        self,
+        TransformAndVelocity6D,
+        name,
+        value)
     __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, TransformAndVelocity6D, name)
+
+    def __getattr__(
+        self, name): return _swig_getattr(
+        self, TransformAndVelocity6D, name)
     __swig_setmethods__["T"] = _almath.TransformAndVelocity6D_T_set
     __swig_getmethods__["T"] = _almath.TransformAndVelocity6D_T_get
-    if _newclass:T = _swig_property(_almath.TransformAndVelocity6D_T_get, _almath.TransformAndVelocity6D_T_set)
+    if _newclass:
+        T = _swig_property(
+            _almath.TransformAndVelocity6D_T_get,
+            _almath.TransformAndVelocity6D_T_set)
     __swig_setmethods__["V"] = _almath.TransformAndVelocity6D_V_set
     __swig_getmethods__["V"] = _almath.TransformAndVelocity6D_V_get
-    if _newclass:V = _swig_property(_almath.TransformAndVelocity6D_V_get, _almath.TransformAndVelocity6D_V_set)
+    if _newclass:
+        V = _swig_property(
+            _almath.TransformAndVelocity6D_V_get,
+            _almath.TransformAndVelocity6D_V_set)
+
     def isNear(self, *args):
         """
         isNear(self, TransformAndVelocity6D pTV2, float pEpsilon = 0.0001) -> bool
@@ -2253,211 +2770,260 @@ class TransformAndVelocity6D(_object):
         """__repr__(self) -> char"""
         return _almath.TransformAndVelocity6D___repr__(self)
 
-    def __init__(self): 
+    def __init__(self):
         """__init__(self) -> TransformAndVelocity6D"""
         this = _almath.new_TransformAndVelocity6D()
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except BaseException:
+            self.this = this
     __swig_destroy__ = _almath.delete_TransformAndVelocity6D
-    __del__ = lambda self : None;
+
+    def __del__(self): return None
+
+
 TransformAndVelocity6D_swigregister = _almath.TransformAndVelocity6D_swigregister
 TransformAndVelocity6D_swigregister(TransformAndVelocity6D)
 
+
 def norm(*args):
-  """
-    norm(Position2D pPos) -> float
-    norm(Position3D pPos) -> float
-    norm(Position6D pPos) -> float
-    norm(Quaternion pQua) -> float
-    norm(Rotation3D pRot) -> float
-    norm(Transform pT) -> float
-    norm(Velocity3D pVel) -> float
-    norm(Velocity6D pVel) -> float
     """
-  return _almath.norm(*args)
+      norm(Position2D pPos) -> float
+      norm(Position3D pPos) -> float
+      norm(Position6D pPos) -> float
+      norm(Quaternion pQua) -> float
+      norm(Rotation3D pRot) -> float
+      norm(Transform pT) -> float
+      norm(Velocity3D pVel) -> float
+      norm(Velocity6D pVel) -> float
+      """
+    return _almath.norm(*args)
+
 
 def normalize(*args):
-  """
-    normalize(Position2D pPos) -> Position2D
-    normalize(Position3D pPos) -> Position3D
-    normalize(Position6D pPos) -> Position6D
-    normalize(Quaternion pQua) -> Quaternion
-    normalize(Velocity3D pVel) -> Velocity3D
-    normalize(Velocity6D pVel) -> Velocity6D
     """
-  return _almath.normalize(*args)
+      normalize(Position2D pPos) -> Position2D
+      normalize(Position3D pPos) -> Position3D
+      normalize(Position6D pPos) -> Position6D
+      normalize(Quaternion pQua) -> Quaternion
+      normalize(Velocity3D pVel) -> Velocity3D
+      normalize(Velocity6D pVel) -> Velocity6D
+      """
+    return _almath.normalize(*args)
 
 
 def getDubinsSolutions(*args):
-  """getDubinsSolutions(Pose2D pTargetPose, float pCircleRadius) -> vectorPose2D"""
-  return _almath.getDubinsSolutions(*args)
+    """getDubinsSolutions(Pose2D pTargetPose, float pCircleRadius) -> vectorPose2D"""
+    return _almath.getDubinsSolutions(*args)
+
 
 def avoidFootCollision(*args):
-  """
-    avoidFootCollision(vectorPose2D pLFootBoundingBox, vectorPose2D pRFootBoundingBox, 
-        bool pIsLeftSupport, Pose2D pMove) -> bool
     """
-  return _almath.avoidFootCollision(*args)
+      avoidFootCollision(vectorPose2D pLFootBoundingBox, vectorPose2D pRFootBoundingBox,
+          bool pIsLeftSupport, Pose2D pMove) -> bool
+      """
+    return _almath.avoidFootCollision(*args)
+
 
 def clipFootWithEllipse(*args):
-  """clipFootWithEllipse(float pMaxFootX, float pMaxFootY, Pose2D pMove) -> bool"""
-  return _almath.clipFootWithEllipse(*args)
+    """clipFootWithEllipse(float pMaxFootX, float pMaxFootY, Pose2D pMove) -> bool"""
+    return _almath.clipFootWithEllipse(*args)
+
 
 def transformLogarithmInPlace(*args):
-  """transformLogarithmInPlace(Transform pT, Velocity6D pVel)"""
-  return _almath.transformLogarithmInPlace(*args)
+    """transformLogarithmInPlace(Transform pT, Velocity6D pVel)"""
+    return _almath.transformLogarithmInPlace(*args)
+
 
 def transformLogarithm(*args):
-  """transformLogarithm(Transform pT) -> Velocity6D"""
-  return _almath.transformLogarithm(*args)
+    """transformLogarithm(Transform pT) -> Velocity6D"""
+    return _almath.transformLogarithm(*args)
+
 
 def velocityExponential(*args):
-  """velocityExponential(Velocity6D pVel) -> Transform"""
-  return _almath.velocityExponential(*args)
+    """velocityExponential(Velocity6D pVel) -> Transform"""
+    return _almath.velocityExponential(*args)
+
 
 def velocityExponentialInPlace(*args):
-  """velocityExponentialInPlace(Velocity6D pVel, Transform pT)"""
-  return _almath.velocityExponentialInPlace(*args)
+    """velocityExponentialInPlace(Velocity6D pVel, Transform pT)"""
+    return _almath.velocityExponentialInPlace(*args)
+
 
 def changeReferenceVelocity6D(*args):
-  """changeReferenceVelocity6D(Transform pT, Velocity6D pVelIn, Velocity6D pVelOut)"""
-  return _almath.changeReferenceVelocity6D(*args)
+    """changeReferenceVelocity6D(Transform pT, Velocity6D pVelIn, Velocity6D pVelOut)"""
+    return _almath.changeReferenceVelocity6D(*args)
+
 
 def changeReferencePosition6D(*args):
-  """changeReferencePosition6D(Transform pT, Position6D pPosIn, Position6D pPosOut)"""
-  return _almath.changeReferencePosition6D(*args)
+    """changeReferencePosition6D(Transform pT, Position6D pPosIn, Position6D pPosOut)"""
+    return _almath.changeReferencePosition6D(*args)
+
 
 def changeReferencePosition3DInPlace(*args):
-  """changeReferencePosition3DInPlace(Transform pT, Position3D pPosOut)"""
-  return _almath.changeReferencePosition3DInPlace(*args)
+    """changeReferencePosition3DInPlace(Transform pT, Position3D pPosOut)"""
+    return _almath.changeReferencePosition3DInPlace(*args)
+
 
 def changeReferenceTransposePosition3DInPlace(*args):
-  """changeReferenceTransposePosition3DInPlace(Transform pT, Position3D pPosOut)"""
-  return _almath.changeReferenceTransposePosition3DInPlace(*args)
+    """changeReferenceTransposePosition3DInPlace(Transform pT, Position3D pPosOut)"""
+    return _almath.changeReferenceTransposePosition3DInPlace(*args)
+
 
 def changeReferencePosition3D(*args):
-  """changeReferencePosition3D(Transform pT, Position3D pPosIn, Position3D pPosOut)"""
-  return _almath.changeReferencePosition3D(*args)
+    """changeReferencePosition3D(Transform pT, Position3D pPosIn, Position3D pPosOut)"""
+    return _almath.changeReferencePosition3D(*args)
+
 
 def changeReferenceTransposePosition3D(*args):
-  """changeReferenceTransposePosition3D(Transform pT, Position3D pPosIn, Position3D pPosOut)"""
-  return _almath.changeReferenceTransposePosition3D(*args)
+    """changeReferenceTransposePosition3D(Transform pT, Position3D pPosIn, Position3D pPosOut)"""
+    return _almath.changeReferenceTransposePosition3D(*args)
+
 
 def changeReferenceTransform(*args):
-  """changeReferenceTransform(Transform pT, Transform pTIn, Transform pTOut)"""
-  return _almath.changeReferenceTransform(*args)
+    """changeReferenceTransform(Transform pT, Transform pTIn, Transform pTOut)"""
+    return _almath.changeReferenceTransform(*args)
+
 
 def changeReferenceTransposeTransform(*args):
-  """changeReferenceTransposeTransform(Transform pT, Transform pTIn, Transform pTOut)"""
-  return _almath.changeReferenceTransposeTransform(*args)
+    """changeReferenceTransposeTransform(Transform pT, Transform pTIn, Transform pTOut)"""
+    return _almath.changeReferenceTransposeTransform(*args)
+
 
 def changeReferenceTransposeVelocity6D(*args):
-  """changeReferenceTransposeVelocity6D(Transform pT, Velocity6D pVelIn, Velocity6D pVelOut)"""
-  return _almath.changeReferenceTransposeVelocity6D(*args)
+    """changeReferenceTransposeVelocity6D(Transform pT, Velocity6D pVelIn, Velocity6D pVelOut)"""
+    return _almath.changeReferenceTransposeVelocity6D(*args)
+
 
 def changeReferenceTransposePosition6D(*args):
-  """changeReferenceTransposePosition6D(Transform pT, Position6D pPosIn, Position6D pPosOut)"""
-  return _almath.changeReferenceTransposePosition6D(*args)
+    """changeReferenceTransposePosition6D(Transform pT, Position6D pPosIn, Position6D pPosOut)"""
+    return _almath.changeReferenceTransposePosition6D(*args)
+
 
 def transformMeanInPlace(*args):
-  """transformMeanInPlace(Transform pTIn1, Transform pTIn2, float pVal, Transform pTOut)"""
-  return _almath.transformMeanInPlace(*args)
+    """transformMeanInPlace(Transform pTIn1, Transform pTIn2, float pVal, Transform pTOut)"""
+    return _almath.transformMeanInPlace(*args)
+
 
 def transformFromPosition3DInPlace(*args):
-  """transformFromPosition3DInPlace(Position3D pPosition, Transform pTransform)"""
-  return _almath.transformFromPosition3DInPlace(*args)
+    """transformFromPosition3DInPlace(Position3D pPosition, Transform pTransform)"""
+    return _almath.transformFromPosition3DInPlace(*args)
+
 
 def transformFromPosition3D(*args):
-  """transformFromPosition3D(Position3D pPosition) -> Transform"""
-  return _almath.transformFromPosition3D(*args)
+    """transformFromPosition3D(Position3D pPosition) -> Transform"""
+    return _almath.transformFromPosition3D(*args)
+
 
 def transformFromRotationInPlace(*args):
-  """transformFromRotationInPlace(Rotation pRotation, Transform pTransform)"""
-  return _almath.transformFromRotationInPlace(*args)
+    """transformFromRotationInPlace(Rotation pRotation, Transform pTransform)"""
+    return _almath.transformFromRotationInPlace(*args)
+
 
 def transformFromRotation(*args):
-  """transformFromRotation(Rotation pRotation) -> Transform"""
-  return _almath.transformFromRotation(*args)
+    """transformFromRotation(Rotation pRotation) -> Transform"""
+    return _almath.transformFromRotation(*args)
+
 
 def rotationFromTransformInPlace(*args):
-  """rotationFromTransformInPlace(Transform pTransform, Rotation pRotation)"""
-  return _almath.rotationFromTransformInPlace(*args)
+    """rotationFromTransformInPlace(Transform pTransform, Rotation pRotation)"""
+    return _almath.rotationFromTransformInPlace(*args)
+
 
 def rotationFromTransform(*args):
-  """rotationFromTransform(Transform pTransform) -> Rotation"""
-  return _almath.rotationFromTransform(*args)
+    """rotationFromTransform(Transform pTransform) -> Rotation"""
+    return _almath.rotationFromTransform(*args)
+
 
 def rotation3DFromRotation(*args):
-  """rotation3DFromRotation(Rotation pRotation) -> Rotation3D"""
-  return _almath.rotation3DFromRotation(*args)
+    """rotation3DFromRotation(Rotation pRotation) -> Rotation3D"""
+    return _almath.rotation3DFromRotation(*args)
+
 
 def position6DFromTransformInPlace(*args):
-  """position6DFromTransformInPlace(Transform pT, Position6D pPos)"""
-  return _almath.position6DFromTransformInPlace(*args)
+    """position6DFromTransformInPlace(Transform pT, Position6D pPos)"""
+    return _almath.position6DFromTransformInPlace(*args)
+
 
 def position6DFromTransform(*args):
-  """position6DFromTransform(Transform pT) -> Position6D"""
-  return _almath.position6DFromTransform(*args)
+    """position6DFromTransform(Transform pT) -> Position6D"""
+    return _almath.position6DFromTransform(*args)
+
 
 def transformFromPose2DInPlace(*args):
-  """transformFromPose2DInPlace(Pose2D pPose, Transform pT)"""
-  return _almath.transformFromPose2DInPlace(*args)
+    """transformFromPose2DInPlace(Pose2D pPose, Transform pT)"""
+    return _almath.transformFromPose2DInPlace(*args)
+
 
 def transformFromPose2D(*args):
-  """transformFromPose2D(Pose2D pPose) -> Transform"""
-  return _almath.transformFromPose2D(*args)
+    """transformFromPose2D(Pose2D pPose) -> Transform"""
+    return _almath.transformFromPose2D(*args)
+
 
 def pose2DFromTransformInPlace(*args):
-  """pose2DFromTransformInPlace(Transform pT, Pose2D pPos)"""
-  return _almath.pose2DFromTransformInPlace(*args)
+    """pose2DFromTransformInPlace(Transform pT, Pose2D pPos)"""
+    return _almath.pose2DFromTransformInPlace(*args)
+
 
 def pose2DFromTransform(*args):
-  """pose2DFromTransform(Transform pT) -> Pose2D"""
-  return _almath.pose2DFromTransform(*args)
+    """pose2DFromTransform(Transform pT) -> Pose2D"""
+    return _almath.pose2DFromTransform(*args)
+
 
 def transformFromRotation3D(*args):
-  """transformFromRotation3D(Rotation3D pRotation) -> Transform"""
-  return _almath.transformFromRotation3D(*args)
+    """transformFromRotation3D(Rotation3D pRotation) -> Transform"""
+    return _almath.transformFromRotation3D(*args)
+
 
 def transformFromPosition6D(*args):
-  """transformFromPosition6D(Position6D pPosition6D) -> Transform"""
-  return _almath.transformFromPosition6D(*args)
+    """transformFromPosition6D(Position6D pPosition6D) -> Transform"""
+    return _almath.transformFromPosition6D(*args)
+
 
 def position6DFromTransformDiffInPlace(*args):
-  """position6DFromTransformDiffInPlace(Transform pCurrent, Transform pTarget, Position6D result)"""
-  return _almath.position6DFromTransformDiffInPlace(*args)
+    """position6DFromTransformDiffInPlace(Transform pCurrent, Transform pTarget, Position6D result)"""
+    return _almath.position6DFromTransformDiffInPlace(*args)
+
 
 def position6DFromTransformDiff(*args):
-  """position6DFromTransformDiff(Transform pCurrent, Transform pTarget) -> Position6D"""
-  return _almath.position6DFromTransformDiff(*args)
+    """position6DFromTransformDiff(Transform pCurrent, Transform pTarget) -> Position6D"""
+    return _almath.position6DFromTransformDiff(*args)
+
 
 def position3DFromTransformInPlace(*args):
-  """position3DFromTransformInPlace(Transform pT, Position3D pPos)"""
-  return _almath.position3DFromTransformInPlace(*args)
+    """position3DFromTransformInPlace(Transform pT, Position3D pPos)"""
+    return _almath.position3DFromTransformInPlace(*args)
+
 
 def position3DFromTransform(*args):
-  """position3DFromTransform(Transform pT) -> Position3D"""
-  return _almath.position3DFromTransform(*args)
+    """position3DFromTransform(Transform pT) -> Position3D"""
+    return _almath.position3DFromTransform(*args)
+
 
 def rotation3DFromTransform(*args):
-  """rotation3DFromTransform(Transform pT) -> Rotation3D"""
-  return _almath.rotation3DFromTransform(*args)
+    """rotation3DFromTransform(Transform pT) -> Rotation3D"""
+    return _almath.rotation3DFromTransform(*args)
+
 
 def transformFromQuaternion(*args):
-  """transformFromQuaternion(Quaternion pQua) -> Transform"""
-  return _almath.transformFromQuaternion(*args)
+    """transformFromQuaternion(Quaternion pQua) -> Transform"""
+    return _almath.transformFromQuaternion(*args)
+
 
 def quaternionFromTransform(*args):
-  """quaternionFromTransform(Transform pT) -> Quaternion"""
-  return _almath.quaternionFromTransform(*args)
+    """quaternionFromTransform(Transform pT) -> Quaternion"""
+    return _almath.quaternionFromTransform(*args)
+
 
 def clipData(*args):
-  """clipData(float pMin, float pMax, float pData) -> bool"""
-  return _almath.clipData(*args)
+    """clipData(float pMin, float pMax, float pData) -> bool"""
+    return _almath.clipData(*args)
+
 
 def position6DFromVelocity6D(*args):
-  """position6DFromVelocity6D(Velocity6D pVel) -> Position6D"""
-  return _almath.position6DFromVelocity6D(*args)
+    """position6DFromVelocity6D(Velocity6D pVel) -> Position6D"""
+    return _almath.position6DFromVelocity6D(*args)
+
 
 _4_PI_ = cvar._4_PI_
 _2_PI_ = cvar._2_PI_
@@ -2467,72 +3033,80 @@ PI_4 = cvar.PI_4
 TO_RAD = cvar.TO_RAD
 TO_DEG = cvar.TO_DEG
 
+
 def transformMean(*args):
-  """
-    transformMean(Transform pTIn1, Transform pTIn2, float pVal = 0.5) -> Transform
-    transformMean(Transform pTIn1, Transform pTIn2) -> Transform
     """
-  return _almath.transformMean(*args)
+      transformMean(Transform pTIn1, Transform pTIn2, float pVal = 0.5) -> Transform
+      transformMean(Transform pTIn1, Transform pTIn2) -> Transform
+      """
+    return _almath.transformMean(*args)
+
 
 def transformFromRotationPosition3D(*args):
-  """
-    transformFromRotationPosition3D(Rotation pRot, float pX, float pY, float pZ) -> Transform
-    transformFromRotationPosition3D(Rotation pRot, Position3D pPos) -> Transform
     """
-  return _almath.transformFromRotationPosition3D(*args)
+      transformFromRotationPosition3D(Rotation pRot, float pX, float pY, float pZ) -> Transform
+      transformFromRotationPosition3D(Rotation pRot, Position3D pPos) -> Transform
+      """
+    return _almath.transformFromRotationPosition3D(*args)
+
 
 def transformFromRotVecInPlace(*args):
-  """
-    transformFromRotVecInPlace(int pAxis, float pTheta, Position3D pPos, Transform pT)
-    transformFromRotVecInPlace(Position3D pPos, Transform pT)
     """
-  return _almath.transformFromRotVecInPlace(*args)
+      transformFromRotVecInPlace(int pAxis, float pTheta, Position3D pPos, Transform pT)
+      transformFromRotVecInPlace(Position3D pPos, Transform pT)
+      """
+    return _almath.transformFromRotVecInPlace(*args)
+
 
 def transformFromRotVec(*args):
-  """
-    transformFromRotVec(int pAxis, float pTheta, Position3D pPos) -> Transform
-    transformFromRotVec(Position3D pPos) -> Transform
-    transformFromRotVec(int pAxis, float pTheta) -> Transform
     """
-  return _almath.transformFromRotVec(*args)
+      transformFromRotVec(int pAxis, float pTheta, Position3D pPos) -> Transform
+      transformFromRotVec(Position3D pPos) -> Transform
+      transformFromRotVec(int pAxis, float pTheta) -> Transform
+      """
+    return _almath.transformFromRotVec(*args)
+
 
 def axisRotationProjection(*args):
-  """
-    axisRotationProjection(Position3D pPos, Transform pT) -> Transform
-    axisRotationProjection(Position3D pAxis, Rotation pRot) -> Rotation
     """
-  return _almath.axisRotationProjection(*args)
+      axisRotationProjection(Position3D pPos, Transform pT) -> Transform
+      axisRotationProjection(Position3D pAxis, Rotation pRot) -> Rotation
+      """
+    return _almath.axisRotationProjection(*args)
+
 
 def axisRotationProjectionInPlace(*args):
-  """
-    axisRotationProjectionInPlace(Position3D pPos, Transform pT)
-    axisRotationProjectionInPlace(Position3D pPos, Rotation pRot)
     """
-  return _almath.axisRotationProjectionInPlace(*args)
+      axisRotationProjectionInPlace(Position3D pPos, Transform pT)
+      axisRotationProjectionInPlace(Position3D pPos, Rotation pRot)
+      """
+    return _almath.axisRotationProjectionInPlace(*args)
+
 
 def orthogonalSpace(*args):
-  """
-    orthogonalSpace(Position3D pPos, Transform pTOut)
-    orthogonalSpace(Position3D pPos) -> Transform
     """
-  return _almath.orthogonalSpace(*args)
+      orthogonalSpace(Position3D pPos, Transform pTOut)
+      orthogonalSpace(Position3D pPos) -> Transform
+      """
+    return _almath.orthogonalSpace(*args)
+
 
 def __mul__(*args):
-  """
-    __mul__(float pM, Position2D pPos1) -> Position2D
-    __mul__(float pM, Position3D pPos1) -> Position3D
-    __mul__(float pM, Velocity3D pVel1) -> Velocity3D
-    __mul__(float pVal, Velocity6D pVel) -> Velocity6D
-    __mul__(Transform pT, Position3D pPos) -> Position3D
-    __mul__(Rotation pRot, Position3D pPos) -> Position3D
-    __mul__(float pVal, Position6D pPos) -> Velocity6D
     """
-  return _almath.__mul__(*args)
+      __mul__(float pM, Position2D pPos1) -> Position2D
+      __mul__(float pM, Position3D pPos1) -> Position3D
+      __mul__(float pM, Velocity3D pVel1) -> Velocity3D
+      __mul__(float pVal, Velocity6D pVel) -> Velocity6D
+      __mul__(Transform pT, Position3D pPos) -> Position3D
+      __mul__(Rotation pRot, Position3D pPos) -> Position3D
+      __mul__(float pVal, Position6D pPos) -> Velocity6D
+      """
+    return _almath.__mul__(*args)
+
 
 def rotationFromAngleDirection(*args):
-  """
-    rotationFromAngleDirection(float pAngle, float pX, float pY, float pZ) -> Rotation
-    rotationFromAngleDirection(float pTheta, Position3D pPos) -> Rotation
     """
-  return _almath.rotationFromAngleDirection(*args)
-
+      rotationFromAngleDirection(float pAngle, float pX, float pY, float pZ) -> Rotation
+      rotationFromAngleDirection(float pTheta, Position3D pPos) -> Rotation
+      """
+    return _almath.rotationFromAngleDirection(*args)

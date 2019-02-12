@@ -19,13 +19,13 @@ from time import time, sleep, gmtime, strftime
 from utility_functions import flatten
 
 try:
-  path.insert(0, "hidlibs") # Insert encoder path.
-  from pynaoqi.naoqi import ALProxy
-  import top_encoder.encoder_functions as BigEncoder
-  import bottom_encoder.hingeencoder as LittleEncoders
-  encoders_available = True
-  print "Modules loaded successfully"
-  
+    path.insert(0, "hidlibs")  # Insert encoder path.
+    from pynaoqi.naoqi import ALProxy
+    import top_encoder.encoder_functions as BigEncoder
+    import bottom_encoder.hingeencoder as LittleEncoders
+    encoders_available = True
+    print "Modules loaded successfully"
+
 except Exception as e:
     training = True
     print "Exception", e
@@ -39,12 +39,11 @@ except Exception as e:
         encoders_available = True
 
 
-
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
     """
-  
+
     def __init__(self, ip="192.168.1.3", port=9559, initial_position="Stand"):
         """
         Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
@@ -66,14 +65,13 @@ class Robot():
         #self.posture = ALProxy("ALRobotPosture", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
-
         # Set up encoders, if available.
         if encoders_available:
             LittleEncoders.calibrate()
             BigEncoder.calibrate()
 
-
-        #self.posture.goToPosture(initial_position, 1.0) # Set initial position.
+        # self.posture.goToPosture(initial_position, 1.0) # Set initial
+        # position.
 
     def get_gyro(self):
         """
@@ -111,7 +109,7 @@ class Robot():
             encoder1 = LittleEncoders.getAngle1()
             encoder2 = LittleEncoders.getAngle2()
             encoder3 = LittleEncoders.getAngle3()
-            
+
             return [encoder0, encoder1, encoder2, encoder3]
 
     @staticmethod
@@ -141,25 +139,29 @@ class Robot():
         # print time, acc, gyro, l_encoder, b_encoder
         pass
 
-
     def run(self, t, period):
         """
         t: time to run for
         period: period of cycle time
         """
-        max_runs = t * 1/period
+        max_runs = t * 1 / period
         file_name = strftime("%d-%m-%Y %H:%M:%S", gmtime())
 
-        with open('Output_data/'+file_name, 'w') as f:
+        with open('Output_data/' + file_name, 'w') as f:
             counter = 0
             while counter < max_runs:
                 start_time = time()
 
-                # needs to be list of lists for easy flattening for storage while retaining ease of use for 
+                # needs to be list of lists for easy flattening for storage while retaining ease of use for
                 # putting into algorithm
-                values = [start_time, self.get_acc(), self.get_gyro(), self.get_little_encoders(), self.get_big_encoder()]
+                values = [
+                    start_time,
+                    self.get_acc(),
+                    self.get_gyro(),
+                    self.get_little_encoders(),
+                    self.get_big_encoder()]
                 self.algorithm(*values)
-                
+
                 flat_values = flatten(values)
                 self.store(f, flat_values)
 
@@ -168,22 +170,14 @@ class Robot():
                 cycle_time = time() - start_time
                 if cycle_time < period:
                     sleep(period - cycle_time)
-                    
+
             f.close()
-        if  cycle_time > period:
+        if cycle_time > period:
             print('Ran behind schedule')
         else:
             print('Ran on time')
         print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
-      
+
+
 robot = Robot()
 robot.run(5, 0.1)
-      
-  
-  
-  
-  
-  
-  
-  
-  

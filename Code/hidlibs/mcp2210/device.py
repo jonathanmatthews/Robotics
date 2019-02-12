@@ -6,24 +6,34 @@ import sys
 import os
 import ctypes
 
-HID_SEND_BUFFER_OFFSET = 1  # always for direct use of hidapi # (1 if 'nt' in os.name or 'windows' in os.name else 0)
+# always for direct use of hidapi # (1 if 'nt' in os.name or 'windows' in
+# os.name else 0)
+HID_SEND_BUFFER_OFFSET = 1
 #PY_PRE_2_6 = (True if sys.version_info[0] <= 2 and sys.version_info[1] < 6 else False)
 
-#buf should be an iterable of bytes with len <= 63
+# buf should be an iterable of bytes with len <= 63
+
+
 def shift_buf(buf):
-    shifted = bytearray(len(buf)+HID_SEND_BUFFER_OFFSET)
+    shifted = bytearray(len(buf) + HID_SEND_BUFFER_OFFSET)
     for i in range(len(buf)):
-        shifted[HID_SEND_BUFFER_OFFSET+i] = buf[i]
+        shifted[HID_SEND_BUFFER_OFFSET + i] = buf[i]
     return shifted
+
 
 def commandbuffer(struct):
     return shift_buf(bytearray(struct))
+
 
 class CommandException(Exception):
     """Thrown when the MCP2210 returns an error status code."""
 
     def __init__(self, code):
-        super(CommandException, self).__init__("Got error code from device: 0x%.2x" % code)
+        super(
+            CommandException,
+            self).__init__(
+            "Got error code from device: 0x%.2x" %
+            code)
 
 
 class GPIOSettings(object):
@@ -91,14 +101,17 @@ class EEPROMData(object):
         if isinstance(key, slice):
             return ''.join(self[i] for i in range(*key.indices(255)))
         else:
-            return chr(self._device.sendCommand(commands.ReadEEPROMCommand(key)).header.reserved)
+            return chr(self._device.sendCommand(
+                commands.ReadEEPROMCommand(key)).header.reserved)
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
             for i, j in enumerate(range(*key.indices(255))):
                 self[j] = value[i]
         else:
-            self._device.sendCommand(commands.WriteEEPROMCommand(key, ord(value)))
+            self._device.sendCommand(
+                commands.WriteEEPROMCommand(
+                    key, ord(value)))
 
 
 class MCP2210(object):
@@ -124,6 +137,7 @@ class MCP2210(object):
     See the MCP2210 datasheet (http://ww1.microchip.com/downloads/en/DeviceDoc/22288A.pdf) for full details
     on available commands and arguments.
     """
+
     def __init__(self, vid, pid):
         """Constructor.
 
@@ -134,8 +148,14 @@ class MCP2210(object):
         #self.hid = hid.device()
         #self.hid.open(vid, pid)
         self.hid = hid.Device(vid, pid)
-        self.gpio_direction = GPIOSettings(self, commands.GetGPIODirectionCommand, commands.SetGPIODirectionCommand)
-        self.gpio = GPIOSettings(self, commands.GetGPIOValueCommand, commands.SetGPIOValueCommand)
+        self.gpio_direction = GPIOSettings(
+            self,
+            commands.GetGPIODirectionCommand,
+            commands.SetGPIODirectionCommand)
+        self.gpio = GPIOSettings(
+            self,
+            commands.GetGPIOValueCommand,
+            commands.SetGPIOValueCommand)
         self.eeprom = EEPROMData(self)
         self.cancel_transfer()
 
@@ -152,9 +172,9 @@ class MCP2210(object):
         buf = ctypes.create_string_buffer(len(command_data))
         for n in range(len(command_data)):
             buf[n] = chr(command_data[n])
-        
-	print 'Here is one line before segmentation fault, "hidlibs/mcp2210/device.py"'
-	print 'This line goes to "hiblibs/hid/__init__.py"'
+
+        print 'Here is one line before segmentation fault, "hidlibs/mcp2210/device.py"'
+        print 'This line goes to "hiblibs/hid/__init__.py"'
         self.hid.write(buf)
         dat = self.hid.read(64)
         response_data = bytearray(x for x in dat)
@@ -235,8 +255,9 @@ class MCP2210(object):
 
         response = ''
         for i in range(0, len(data), 60):
-            response += self.sendCommand(commands.SPITransferCommand(data[i:i + 60])).data
-            ##msc just waste for 2 byte messages time.sleep(0.01)
+            response += self.sendCommand(
+                commands.SPITransferCommand(data[i:i + 60])).data
+            # msc just waste for 2 byte messages time.sleep(0.01)
 
         while len(response) < len(data):
             response += self.sendCommand(commands.SPITransferCommand('')).data

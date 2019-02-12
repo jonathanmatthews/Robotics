@@ -26,7 +26,15 @@ class EmptyResponse(Response):
 
 class Command(Structure):
     def __init__(self, *args, **kwargs):
-        super(Command, self).__init__((self.COMMAND, self.SUBCOMMAND, 0x00, 0x00), *args, **kwargs)
+        super(
+            Command,
+            self).__init__(
+            (self.COMMAND,
+             self.SUBCOMMAND,
+             0x00,
+             0x00),
+            *args,
+            **kwargs)
 
 
 class SetBootSettingsCommand(Command):
@@ -92,7 +100,8 @@ class SetUSBStringCommand(SetBootSettingsCommand):
 
     @property
     def string(self):
-        return ''.join(chr(x) for x in self.str[:self.str_len - 2]).decode('utf16')
+        return ''.join(chr(x)
+                       for x in self.str[:self.str_len - 2]).decode('utf16')
 
     @string.setter
     def string(self, value):
@@ -149,7 +158,8 @@ class GetUSBSettingsResponse(Response):
 
     @property
     def settings(self):
-        return USBSettings(self.vid, self.pid, self.power_option, self.current_request)
+        return USBSettings(self.vid, self.pid,
+                           self.power_option, self.current_request)
 
 
 class GetBootUSBSettingsCommand(GetBootSettingsCommand):
@@ -167,7 +177,8 @@ class GetUSBStringResponse(Response):
 
     @property
     def string(self):
-        return ''.join(chr(x) for x in self.str[:self.str_len - 2]).decode('utf16')
+        return ''.join(chr(x)
+                       for x in self.str[:self.str_len - 2]).decode('utf16')
 
 
 class GetUSBProductCommand(GetBootSettingsCommand):
@@ -309,7 +320,13 @@ class SPITransferCommand(Structure):
 
     def __init__(self, data):
         data = SPIBuffer(*(ord(x) for x in data))
-        super(SPITransferCommand, self).__init__(self.COMMAND, len(data), 0x0000, data)
+        super(
+            SPITransferCommand,
+            self).__init__(
+            self.COMMAND,
+            len(data),
+            0x0000,
+            data)
 
 
 class DeviceStatusResponse(Response):

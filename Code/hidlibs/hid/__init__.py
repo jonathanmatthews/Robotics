@@ -5,7 +5,7 @@ __all__ = ['HIDException', 'DeviceInfo', 'Device', 'enumerate']
 
 
 hidapi = None
-#These files are in /usr/local/lib which is on path in ~/.bashrc
+# These files are in /usr/local/lib which is on path in ~/.bashrc
 library_paths = (
     'libhidapi-hidraw.so',
     'libhidapi-hidraw.so.0',
@@ -46,6 +46,7 @@ class DeviceInfo(ctypes.Structure):
             ret[name] = getattr(self, name, None)
 
         return ret
+
 
 DeviceInfo._fields_ = [
     ('path', ctypes.c_char_p),
@@ -97,16 +98,18 @@ class Device(object):
     def __hidcall(self, function, *args, **kwargs):
         if self.__dev == 0:
             raise HIDException('device closed')
-<<<<<<< HEAD
+
+
+<< << << < HEAD
 
         ret = function(*args, **kwargs)
-=======
-	
+== == == =
+
 	print 'Before segmentation fault __init__'
 	print dir(hidapi)
         ret = function(*args, **kwargs)
 	print 'After segmentation fault __init__'
->>>>>>> master
+>>>>>> > master
 
         if ret == -1:
             err = hidapi.hid_error(self.__dev)
