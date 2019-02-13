@@ -20,7 +20,7 @@ L1 = 0.6  # length of pendulum 1 in m
 L2 = 0.2  # length of pendulum 2 in m
 L3 = 0.1  # length of pendulum 3 in m
 
-angles = read_csv('../Output_data/13-02-2019 10:16:23')
+angles = read_csv('../Output_data/stitched-data.txt')
 
 angle1 = angles['BE']
 angle2 = angles['SE0']
@@ -68,7 +68,7 @@ def animate(i):
     return line1, line2, line3, time_text
 
 ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
-                              interval=100, blit=True, init_func=init)
+                              interval=400, blit=True, init_func=init)
 
 # ani.save('double_pendulum.mp4', fps=15)
 plt.show()
