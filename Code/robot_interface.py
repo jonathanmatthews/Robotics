@@ -13,19 +13,11 @@ Requires:
   encoder_functions
 """
 
-# Begin additional imports from robotcontrol2...
-import os
-import sys
-from change_stiffness import *
-from positionvalues import extended, seated
-# End additional imports form robotcontrol2.
-
-
+from positions import extended, seated
 from sys import path
-from datanames import values
+from limb_data import values
 import time as tme
 from utility_functions import flatten
-from shlex import split
 from pandas import DataFrame, read_csv
 
 ###
@@ -33,30 +25,31 @@ from pandas import DataFrame, read_csv
 ### Developing for running through real code away from encoders
 ### Testing for seeing how algorithm reacts to old dataset
 ### Real for in lab running from lab PC
+### Other two are self explanatory
 ###
-setup = 'Testing'
-if setup == 'Testing':
-    print "Starting test mode, will run data through algorithm"
-    path.insert(0, "Training_functions")
-    from naoqi import ALProxy
-    encoders_available = False
-elif setup == 'Developing':
-    print "Using developer mode, encoders will return fake values"
-    path.insert(0, "Training_functions")
-    from naoqi import ALProxy
-    import BigEncoder
-    import SmallEncoders
-    encoders_available = True
-    print "Fake encoders connected"
-elif setup == 'Real':
-    print "Using real mode"
+setup = 'Encoders_no_robot'
+setups = {
+    'Testing': [False, False],
+    'Developing': [False, False],
+    'Real': [True, True],
+    'Robot_no_encoders': [True, False],
+    'Encoders_no_robot': [False, True]
+}
+robot, encoders = setups[setup]
+if robot:
     path.insert(0, "hidlibs")  # Insert encoder path.
     from pynaoqi.naoqi import ALProxy
+else:
+    path.insert(0, "Training_functions")
+    from naoqi import ALProxy
+if encoders:
+    path.insert(0, "hidlibs")  # Insert encoder path.
     import top_encoder.encoder_functions as BigEncoder
     import bottom_encoder.hingeencoder as SmallEncoders
-    encoders_available = True
-    print "Encoders connected"
-
+else:
+    path.insert(0, "Training_functions")
+    import BigEncoder
+    import SmallEncoders
 
 class Robot():
     """
@@ -86,10 +79,9 @@ class Robot():
         #self.posture = ALProxy("ALRobotPosture", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
-        # Set up encoders, if available.
-        if encoders_available:
-            SmallEncoders.calibrate()
-            BigEncoder.calibrate()
+        # Set up encoders
+        SmallEncoders.calibrate()
+        BigEncoder.calibrate()
 
         # self.posture.goToPosture(initial_position, 1.0) # Set initial
         # position.
@@ -125,13 +117,12 @@ class Robot():
         Returns a tuple, where the index of each value is the same as numbered in the source file from previous years.
         """
 
-        if encoders_available:
-            encoder0 = SmallEncoders.getAngle0()
-            encoder1 = SmallEncoders.getAngle1()
-            encoder2 = SmallEncoders.getAngle2()
-            encoder3 = SmallEncoders.getAngle3()
+        encoder0 = SmallEncoders.getAngle0()
+        encoder1 = SmallEncoders.getAngle1()
+        encoder2 = SmallEncoders.getAngle2()
+        encoder3 = SmallEncoders.getAngle3()
 
-            return [encoder0, encoder1, encoder2, encoder3]
+        return [encoder0, encoder1, encoder2, encoder3]
 
     @staticmethod
     def get_big_encoder():
@@ -140,16 +131,15 @@ class Robot():
         *without* producing an error.
         """
 
-        if encoders_available:
-            return BigEncoder.getAngle()
+        return BigEncoder.getAngle()
 
     def get_angle(self, nameofpart):
-		"""
-		Get the current angle of the named part. (Taken from robotcontrol2.py)
-		Requires:
-		
-		nameofpart : the name of the part.
-		"""
+        """
+        Get the current angle of the named part. (Taken from robotcontrol2.py)
+        Requires:
+
+        nameofpart : the name of the part.
+        """
         a = self.memory.getData(values[str(nameofpart)][1])
         name = values[str(nameofpart)][0]
         return a, name
