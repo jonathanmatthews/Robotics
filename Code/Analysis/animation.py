@@ -31,11 +31,11 @@ dt = t.iloc[-1] - t.iloc[-2]
 x1 = L1*sin(angle1)
 y1 = -L1*cos(angle1)
 
-x2 = L2*sin(angle2) + x1
-y2 = -L2*cos(angle2) + y1
+x2 = L2*sin(angle1 + angle2) + x1
+y2 = -L2*cos(angle1 + angle2) + y1
 
-x3 = L2*sin(angle3) + x2
-y3 = -L2*cos(angle3) + y2
+x3 = L2*sin(angle1 + angle2 + angle3) + x2
+y3 = -L2*cos(angle1+ angle2 + angle3) + y2
 
 fig = plt.figure()
 ax = fig.add_subplot(111, autoscale_on=False, xlim=(-1, 1), ylim=(-1, 0))
