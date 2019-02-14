@@ -79,6 +79,20 @@ class Robotcontrol():
 
         print "Results written to", output
 
+
+
+    def normalisespeed(nameofpart):
+        '''Normalise speed of NAO's based on the knee range and speed which is the slowest part'''
+        knee_speed = 1
+        knee_range = 
+        part_range =
+        partspeed = knee_speed*(part_range/knee_range)
+        return part_speed
+
+
+
+
+
     def test_move_part(self):
         self.motion.setStiffnesses("RLeg", 1.0)
         self.motion.setStiffnesses("LLeg", 1.0)
