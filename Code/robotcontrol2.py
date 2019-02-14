@@ -1,12 +1,13 @@
-from sys import path
+import os
+import sys
 import time
 from datanames import values
+from naoqi import ALProxy
+from change_stiffness import *
 from positionvalues import extended, seated
 ROBOT_IP = "192.168.1.3"
 PORT = 9559
 
-path.insert(0, "hidlibs")
-from pynaoqi.naoqi import ALProxy
 
 class Robotcontrol():
     def __init__(self, ROBOT_IP="192.168.1.2", PORT=9559):
@@ -51,7 +52,7 @@ class Robotcontrol():
         parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
         final_angle_names = [values[name][0] for name in angle_names]
         #speed =       [normalise_speed()]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+        self.move_part(parts, final_angle_names, angles, 0.3, rest_time)
 
     def seated_position(self):
         rest_time = 0
@@ -59,7 +60,7 @@ class Robotcontrol():
         angle_names = seated.keys()
         angles = seated.values()
         final_angle_names = [values[name][0] for name in angle_names]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+        self.move_part(parts, final_angle_names, angles, 0.3, rest_time)
 
     def record_data(self, nameofpart):
         """ records the data from ALMemory.
@@ -68,7 +69,7 @@ class Robotcontrol():
         """
         print "Recording data from NAO..."
 
-        output = 'Output_data/record_data.csv'
+        output = os.path.abspath('Output_data/record_data.csv')
 
         with open(output, "w") as fp:
             for i in range(1, 100):
@@ -78,6 +79,9 @@ class Robotcontrol():
 
         print "Results written to", output
 
+
+
+
     def test_move_part(self):
         self.motion.setStiffnesses("RLeg", 1.0)
         self.motion.setStiffnesses("LLeg", 1.0)
@@ -85,18 +89,20 @@ class Robotcontrol():
         # motion.setAngles("LAnklePitch",-1.18943989277,0.1)
         self.motion.setAngles("RKneePitch", 0.800258815289, 0.1)
         # motion.setAngles("RAnklePitch",-1.18943989277,0.1)
+    def summary(self):
+        print self.motion.getSummary()
 
-
-print 6
+#print 6
 r = Robotcontrol(ROBOT_IP="192.168.1.3", PORT=9559)
-print 1
-r.extended_position()
-try:
-    while True:
-        a = raw_input("extend")
+#r.move_part("Body", "LHand", 0,0.5, 0)
+#print 1
+#r.extended_position()
+#try:
+#    while True:
+#        a = raw_input("extend")
+#        b = raw_input("sit")
+#        r.seated_position()
 
-        b = raw_input("sit")
-        r.seated_position()
-
-except KeyboardInterrupt:
-    pass
+#except KeyboardInterrupt:
+ #   pass
+r.summary()

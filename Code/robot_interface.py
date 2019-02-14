@@ -27,7 +27,7 @@ from pandas import DataFrame, read_csv
 ### Real for in lab running from lab PC
 ### Other two are self explanatory
 ###
-setup = 'Testing'
+setup = 'Robot_no_encoders'
 setups = {
     'Testing': [False, False],
     'Developing': [False, False],
@@ -144,6 +144,7 @@ class Robot():
     def initial_seated_position(self):
         """
         Sets the robot to the initial seated position. (Taken from robotcontrol2.py)
+        Code is void, superseeded by set_posture, will remove on 18/02/19
         """
         parts = ["Head", "RLeg", "LLeg"]
         self.motion.setStiffnesses(parts, 1.0)  # stiffen
@@ -158,14 +159,15 @@ class Robot():
         self.motion.setAngles(angle_names, angles, speed)
         self.position = 'initial_seated'
 
+
     def move_part(self, parts, angle_names, angles, speed, rest_time):
         """
-        Moves the specified parts. (Taken from robotcontrol2.py)
+        Moves the specified parts. (Taken from robotcontrol2.py) delete on 18/02/19 void code
         """
         self.motion.setStiffnesses(parts, 1.0)
         self.motion.setAngles(angle_names, angles, speed)
 
-    def set_posture(self, name_posture, speed=1.0):
+    def set_posture(self, name_posture, max_speed):
         """
         Sets the robot's posture. Posture should be described with a name corresponding to a dictionary, as with
         'positions.extended'. To set the extended/seated position, use set_posture('extended')
@@ -176,9 +178,13 @@ class Robot():
         """
         
         posture = positions[name_posture] 
+        print posture
         names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
-        self.motion.setStiffness(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
-        self.motion.setAngles(names, list(posture.values()), speed)
+        speed = [max_speed*(values[named_part_range][4]/values['HY'][4]) for named_part_range in posture.keys()]
+        self.motion.setStiffnesses(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
+        for i in range(len(speed)):
+            
+            self.motion.setAngles(names[i], list(posture.values())[i], speed[i])
         self.position = name_posture
 
     def store(self, filename):
