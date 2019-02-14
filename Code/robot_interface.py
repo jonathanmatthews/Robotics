@@ -27,7 +27,7 @@ from pandas import DataFrame, read_csv
 ### Real for in lab running from lab PC
 ### Other two are self explanatory
 ###
-setup = 'Encoders_no_robot'
+setup = 'Developing'
 setups = {
     'Testing': [False, False],
     'Developing': [False, False],
@@ -202,14 +202,15 @@ class Robot():
         print 'Data saved to {}'.format(filename)
 
     def algorithm(self, time, acc, gyro, l_encoder, b_encoder):
-        recent_data = self.collect_old_data(5)
+        recent_data = self.collect_old_data(5, ['BE', 'SE0'])
         print recent_data
 
-    def collect_old_data(self, last_n_results):
+    def collect_old_data(self, last_n_results, columns):
         """
-        Returns dataframe of last_n_results INCLUDING latest
+        Returns dataframe of last_n_results including latest
         """
-        return self.all_data.tail(last_n_results)
+
+        return self.all_data[columns].tail(last_n_results)
 
     def __run_real(self, t, period, filename=None):
         self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE'])
