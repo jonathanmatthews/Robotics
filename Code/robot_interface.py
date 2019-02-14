@@ -50,6 +50,7 @@ else:
     path.insert(0, "Training_functions")
     import BigEncoder
     import SmallEncoders
+import numpy
 
 class Robot():
     """
@@ -83,6 +84,12 @@ class Robot():
         SmallEncoders.calibrate()
         BigEncoder.calibrate()
 
+
+        self.position_names = {
+            'extended': 1,
+            'seated': 0,
+            'initial_seated': -1
+        }
         # self.posture.goToPosture(initial_position, 1.0) # Set initial
         # position.
 
@@ -156,7 +163,7 @@ class Robot():
         angles = [-0.6, -0.51, -0.51, -0.09, -0.09]
         speed = 0.5
         self.motion.setAngles(angle_names, angles, speed)
-        self.position = 'initial_seated'
+        self.position = self.position_names['initial_seated']
 
     def move_part(self, parts, angle_names, angles, speed, rest_time):
         """
@@ -179,7 +186,7 @@ class Robot():
         names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
         self.motion.setStiffness(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
         self.motion.setAngles(names, list(posture.values()), speed)
-        self.position = name_posture
+        self.position = self.position_names[name_posture]
 
     def store(self, filename):
         """
@@ -187,35 +194,36 @@ class Robot():
         filename: name of file to store to
         """
 
-        self.all_data.to_csv('Output_data/' + filename)
+        # self.all_data.to_csv('Output_data/' + filename)  # This line should be commented out, but I don't know the key to do this.
+        print self.all_data
+        numpy.savetxt("Output_data/" + filename, self.all_data) #All data should be a numpy array
         print 'Data saved to {}'.format(filename)
 
-    def algorithm(self, time, acc, gyro, l_encoder, b_encoder):
+    def algorithm(self, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, pos):
         # can access current position like this
-        print self.position
+        # print self.position
         # can collect old data like this
-        recent_data = self.collect_old_data(5, ['BE', 'SE0'])
-        print recent_data
+        # recent_data = self.collect_old_data(5)
+        # print recent_data
         # can move to new position like this
-        self.set_posture('extended')
+        # self.set_posture('extended')
+        print time
 
-    def collect_old_data(self, last_n_results, columns):
+    def collect_old_data(self, last_n_results):
         """
         Returns dataframe of last_n_results including latest
         """
-        if columns != None:
-            return self.all_data[columns].tail(last_n_results)
-        else:
-            return self.all_data.tail(last_n_results)
+        return self.all_data[:, -last_n_results]
 
     def __run_real(self, t, period):
-        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE', 'POS'])
-        self.all_data.index.name = 'Time'
+        # self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE', 'POS'])
+        # self.all_data.index.name = 'Time'
 
         max_runs = t * 1 / period
+        self.all_data = numpy.empty((int(max_runs), 13))
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
-        for _ in range(int(max_runs)):
+        for t in range(int(max_runs)):
             start_time = tme.time()
 
             # needs to be list of lists for easy flattening for storage while retaining ease of use for
@@ -231,7 +239,7 @@ class Robot():
             flat_values = flatten(values)
             flat_values.append(self.position)
             # Computationally expensive but incredibly useful for quick data manipulation
-            self.all_data.loc[start_time, :] = flat_values[1:]
+            self.all_data[t, :] = flat_values
 
             self.algorithm(*values)
 
@@ -250,12 +258,11 @@ class Robot():
         data = self.read(filename)
         print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
 
-        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE', 'POS'])
-        self.all_data.index.name = 'Time'
+        self.all_data = numpy.empty((1, 13))
 
-        for index, row in data.iterrows():
-            self.all_data.loc[index, :] = row
-            self.algorithm(index, row[['AX', 'AY', 'AZ']], row[['GX', 'GY', 'GZ']], row[['SE0', 'SE1', 'SE2', 'SE3']], row['BE'])
+        for i in xrange(len(data)):
+            self.all_data = numpy.append(self.all_data, data[i])
+            self.algorithm(*data[i])
 
 
     def run(self, t, period, **kwargs):
@@ -266,7 +273,7 @@ class Robot():
         """
         self.initial_seated_position()
         if self.setup == 'Testing':
-            filename = kwargs.get('filename', '14-02-2019 10:01:38')
+            filename = kwargs.get('filename', '14-02-2019 17:11:08')
             self.__run_test(t, period, filename)
         else:
             self.__run_real(t, period)
@@ -275,7 +282,7 @@ class Robot():
         """
         Reads old data
         """
-        return read_csv('Output_data/' + filename, sep=',', index_col='Time')
+        return numpy.loadtxt('Output_data/' + filename)
 
 if __name__ == "__main__":
     robot = Robot(setup)
