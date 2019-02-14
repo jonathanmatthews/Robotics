@@ -141,25 +141,6 @@ class Robot():
         name = limb_info[0]
         return a, name
 
-    def initial_seated_position(self):
-        """
-        Sets the robot to the initial seated position. (Taken from robotcontrol2.py)
-        Code is void, superseeded by set_posture, will remove on 18/02/19
-        """
-        parts = ["Head", "RLeg", "LLeg"]
-        self.motion.setStiffnesses(parts, 1.0)  # stiffen
-        angle_names = [
-            values['HP'][0],
-            values['RHP'][0],
-            values['LHP'][0],
-            values['RKP'][0],
-            values['LKP'][0]]
-        angles = [-0.6, -0.51, -0.51, -0.09, -0.09]
-        speed = 0.5
-        self.motion.setAngles(angle_names, angles, speed)
-        self.position = 'initial_seated'
-
-
     def move_part(self, parts, angle_names, angles, speed, rest_time):
         """
         Moves the specified parts. (Taken from robotcontrol2.py) delete on 18/02/19 void code
@@ -269,7 +250,7 @@ class Robot():
         period: period of cycle time
         filename : string, location of the file to read from if training. Ignore if not training.
         """
-        self.initial_seated_position()
+        self.set_posture('seated')
         if self.setup == 'Testing':
             filename = kwargs.get('filename', '14-02-2019 10:01:38')
             self.__run_test(t, period, filename)
