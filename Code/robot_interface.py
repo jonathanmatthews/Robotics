@@ -179,7 +179,7 @@ class Robot():
         """
         names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
         self.motion.setStiffness(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
-        self.motion.setAngles(names, posture.values(), speed)
+        self.motion.setAngles(names, list(posture.values()), speed)
 
     def test_move_part(self):
         """
