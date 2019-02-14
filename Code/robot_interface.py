@@ -140,15 +140,14 @@ class Robot():
 
         nameofpart : the name of the part.
         """
-        a = self.memory.getData(values[str(nameofpart)][1])
-        name = values[str(nameofpart)][0]
+        a = self.memory.getData(values[nameofpart][1])
+        name = values[nameofpart][0]
         return a, name
 
     def initial_seated_position(self):
         """
-        Sets the robot to the initial seated position.
+        Sets the robot to the initial seated position. (Taken from robotcontrol2.py)
         """
-    
         parts = ["Head", "RLeg", "LLeg"]
         self.motion.setStiffnesses(parts, 1.0)  # stiffen
         angle_names = [
@@ -163,39 +162,28 @@ class Robot():
 
     def move_part(self, parts, angle_names, angles, speed, rest_time):
         """
-        Moves the specified parts.
+        Moves the specified parts. (Taken from robotcontrol2.py)
         """
         self.motion.setStiffnesses(parts, 1.0)
         self.motion.setAngles(angle_names, angles, speed)
         tme.sleep(rest_time)
 
+    def set_posture(self, posture, speed=1.0):
+        """
+        Sets the robot's posture. Posture should be described by a dictionary, as with
+        'positions.extended'. To set the extended/seated position, use set_posture(extended)
+        or set_posture(seated). Requires:
 
-    def extended_position(self):
+        posture : dictionary. The angles to set joints at, eg: {'HP':-0.6, 'RSR':0.02}.
+        speed : float, optional. The speed to move at. Default 1.0.
         """
-        Sets the extended position for when on swing.
-        """
-        angle_names = extended.keys()
-        angles = extended.values()
-        rest_time = 0
-        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-        final_angle_names = [values[name][0] for name in angle_names]
-        #speed =       [normalise_speed()]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
-
-    def seated_position(self):
-        """
-        Sets the seated position for when on swing.
-        """
-        rest_time = 0
-        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-        angle_names = seated.keys()
-        angles = seated.values()
-        final_angle_names = [values[name][0] for name in angle_names]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+        names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
+        self.motion.setStiffness(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
+        self.motion.setAngles(names, posture.values(), speed)
 
     def test_move_part(self):
         """
-        Movement test.
+        Movement test. (Taken from robotcontrol2.py)
         """
         self.motion.setStiffnesses("RLeg", 1.0)
         self.motion.setStiffnesses("LLeg", 1.0)
@@ -270,7 +258,7 @@ class Robot():
         for index, row in data.iterrows():
             self.all_data.loc[index, :] = row
             self.algorithm(row['Time'], row[['AX', 'AY', 'AZ']], row[['GX', 'GY', 'GZ']], row[['SE1', 'SE2', 'SE3', 'SE4']], row['BE'])
-            
+
 
     def run(self, t, period, filename=None):
         """
@@ -287,11 +275,9 @@ class Robot():
     def read(self, filename):
         """
         Reads old data
-        """ 
+        """
         return read_csv('Output_data/' + filename, sep=',')
 
 if __name__ == "__main__":
     robot = Robot(setup)
     robot.run(10, 0.1)
-
-
