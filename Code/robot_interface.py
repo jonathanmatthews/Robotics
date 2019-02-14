@@ -178,7 +178,6 @@ class Robot():
         """
         
         posture = positions[name_posture] 
-        print posture
         names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
         speed = [max_speed*(values[named_part_range][4]/values['HY'][4]) for named_part_range in posture.keys()]
         self.motion.setStiffnesses(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
