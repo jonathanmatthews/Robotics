@@ -2,13 +2,12 @@
 """
 record sensor values from the head (yaw) movement and output them to a file.
 """
-
-import os
 import sys
+import os
 import time
-from naoqi import ALProxy
-from change_stiffness import change_stiffness
-from datanames import values
+sys.path.insert(0, "hidlibs")
+from pynaoqi.naoqi import ALProxy
+from limb_data import values
 
 ALMEMORY_KEY_NAMES = [
     values['HY'][1],
@@ -47,7 +46,7 @@ def main():
         nao_ip = sys.argv[1]
 
     motion = ALProxy("ALMotion", nao_ip, 9559)
-    change_stiffness("Stiffen", "Head")
+    motion.set_stiffness("Head", 0)
     # Will go to 1.0 then 0 radian
     # in two seconds
     motion.post.angleInterpolation(
@@ -60,7 +59,7 @@ def main():
 
     recordData(nao_ip, output_path)
     # Gently set stiff off for Head motors
-    change_stiffness("Unstiffen", 'Head')
+    motion.set_stiffness('Head')
 
 
 if __name__ == "__main__":

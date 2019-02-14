@@ -1,13 +1,12 @@
-import os
-import sys
+from sys import path
 import time
 from datanames import values
-from naoqi import ALProxy
-from change_stiffness import *
 from positionvalues import extended, seated
 ROBOT_IP = "192.168.1.3"
 PORT = 9559
 
+path.insert(0, "hidlibs")
+from pynaoqi.naoqi import ALProxy
 
 class Robotcontrol():
     def __init__(self, ROBOT_IP="192.168.1.2", PORT=9559):
@@ -69,7 +68,7 @@ class Robotcontrol():
         """
         print "Recording data from NAO..."
 
-        output = os.path.abspath('Output_data/record_data.csv')
+        output = 'Output_data/record_data.csv'
 
         with open(output, "w") as fp:
             for i in range(1, 100):

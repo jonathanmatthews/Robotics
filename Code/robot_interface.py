@@ -13,11 +13,11 @@ Requires:
   encoder_functions
 """
 
+from positions import extended, seated
 from sys import path
-from datanames import values
+from limb_data import values
 import time as tme
 from utility_functions import flatten
-from shlex import split
 from pandas import DataFrame, read_csv
 
 ###
@@ -25,30 +25,31 @@ from pandas import DataFrame, read_csv
 ### Developing for running through real code away from encoders
 ### Testing for seeing how algorithm reacts to old dataset
 ### Real for in lab running from lab PC
+### Other two are self explanatory
 ###
-setup = 'Testing'
-if setup == 'Testing':
-    print "Starting test mode, will run data through algorithm"
-    path.insert(0, "Training_functions")
-    from naoqi import ALProxy
-    encoders_available = False
-elif setup == 'Developing':
-    print "Using developer mode, encoders will return fake values"
-    path.insert(0, "Training_functions")
-    from naoqi import ALProxy
-    import BigEncoder
-    import SmallEncoders
-    encoders_available = True
-    print "Fake encoders connected"
-elif setup == 'Real':
-    print "Using real mode"
+setup = 'Encoders_no_robot'
+setups = {
+    'Testing': [False, False],
+    'Developing': [False, False],
+    'Real': [True, True],
+    'Robot_no_encoders': [True, False],
+    'Encoders_no_robot': [False, True]
+}
+robot, encoders = setups[setup]
+if robot:
     path.insert(0, "hidlibs")  # Insert encoder path.
     from pynaoqi.naoqi import ALProxy
+else:
+    path.insert(0, "Training_functions")
+    from naoqi import ALProxy
+if encoders:
+    path.insert(0, "hidlibs")  # Insert encoder path.
     import top_encoder.encoder_functions as BigEncoder
     import bottom_encoder.hingeencoder as SmallEncoders
-    encoders_available = True
-    print "Encoders connected"
-
+else:
+    path.insert(0, "Training_functions")
+    import BigEncoder
+    import SmallEncoders
 
 class Robot():
     """
@@ -74,14 +75,13 @@ class Robot():
         self.speech.say("Connected")
 
         # Set up proxies to robot.
-        #self.motion = ALProxy("ALMotion", ip, port)
+        self.motion = ALProxy("ALMotion", ip, port)
         #self.posture = ALProxy("ALRobotPosture", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
-        # Set up encoders, if available.
-        if encoders_available:
-            SmallEncoders.calibrate()
-            BigEncoder.calibrate()
+        # Set up encoders
+        SmallEncoders.calibrate()
+        BigEncoder.calibrate()
 
         # self.posture.goToPosture(initial_position, 1.0) # Set initial
         # position.
@@ -117,13 +117,12 @@ class Robot():
         Returns a tuple, where the index of each value is the same as numbered in the source file from previous years.
         """
 
-        if encoders_available:
-            encoder0 = SmallEncoders.getAngle0()
-            encoder1 = SmallEncoders.getAngle1()
-            encoder2 = SmallEncoders.getAngle2()
-            encoder3 = SmallEncoders.getAngle3()
+        encoder0 = SmallEncoders.getAngle0()
+        encoder1 = SmallEncoders.getAngle1()
+        encoder2 = SmallEncoders.getAngle2()
+        encoder3 = SmallEncoders.getAngle3()
 
-            return [encoder0, encoder1, encoder2, encoder3]
+        return [encoder0, encoder1, encoder2, encoder3]
 
     @staticmethod
     def get_big_encoder():
@@ -132,8 +131,78 @@ class Robot():
         *without* producing an error.
         """
 
-        if encoders_available:
-            return BigEncoder.getAngle()
+        return BigEncoder.getAngle()
+
+    def get_angle(self, nameofpart):
+        """
+        Get the current angle of the named part. (Taken from robotcontrol2.py)
+        Requires:
+
+        nameofpart : the name of the part.
+        """
+        a = self.memory.getData(values[str(nameofpart)][1])
+        name = values[str(nameofpart)][0]
+        return a, name
+
+    def initial_seated_position(self):
+        """
+        Sets the robot to the initial seated position.
+        """
+    
+        parts = ["Head", "RLeg", "LLeg"]
+        self.motion.setStiffnesses(parts, 1.0)  # stiffen
+        angle_names = [
+            values['HP'][0],
+            values['RHP'][0],
+            values['LHP'][0],
+            values['RKP'][0],
+            values['LKP'][0]]
+        angles = [-0.6, -0.51, -0.51, -0.09, -0.09]
+        speed = 0.5
+        self.motion.setAngles(angle_names, angles, speed)
+
+    def move_part(self, parts, angle_names, angles, speed, rest_time):
+        """
+        Moves the specified parts.
+        """
+        self.motion.setStiffnesses(parts, 1.0)
+        self.motion.setAngles(angle_names, angles, speed)
+        tme.sleep(rest_time)
+
+
+    def extended_position(self):
+        """
+        Sets the extended position for when on swing.
+        """
+        angle_names = extended.keys()
+        angles = extended.values()
+        rest_time = 0
+        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
+        final_angle_names = [values[name][0] for name in angle_names]
+        #speed =       [normalise_speed()]
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+
+    def seated_position(self):
+        """
+        Sets the seated position for when on swing.
+        """
+        rest_time = 0
+        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
+        angle_names = seated.keys()
+        angles = seated.values()
+        final_angle_names = [values[name][0] for name in angle_names]
+        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
+
+    def test_move_part(self):
+        """
+        Movement test.
+        """
+        self.motion.setStiffnesses("RLeg", 1.0)
+        self.motion.setStiffnesses("LLeg", 1.0)
+        self.motion.setAngles("LKneePitch", 0.800258815289, 0.1)
+        # motion.setAngles("LAnklePitch",-1.18943989277,0.1)
+        self.motion.setAngles("RKneePitch", 0.800258815289, 0.1)
+        # motion.setAngles("RAnklePitch",-1.18943989277,0.1)
 
     def store(self, filename):
         """
@@ -224,3 +293,5 @@ class Robot():
 if __name__ == "__main__":
     robot = Robot(setup)
     robot.run(10, 0.1)
+
+
