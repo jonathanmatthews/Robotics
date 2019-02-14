@@ -41,7 +41,23 @@ def initial_seated_position():
 # print motion.getSummary()
 
 
-# part_name = angle_name, angle_extend, range, angle seat
+hipRange = 0.472
+kneeRange = 1.64
+headRange = 1.18
+RelbowRollRange = 1.33135
+RelbowYawRange = 0.00921
+RshoulderPitchRange = 0.52310
+RshoulderRollRange = 0.27612
+RwristYawRange = 0.02148
+LelbowRollRange = 1.27621
+LelbowYawRange = 0.00460
+LshoulderPitchRange = 0.35589
+LshoulderRollRange = 0.42952
+LwristYawRange = 0.01994
+handRange = 0.001
+
+
+# part_name = angle_name, angle_extend, range, angle seat, speed
 HP = ["HeadPitch", -0.6685, 1.18, 0.4974, ]
 RSR = ["RShoulderRoll", 0.01837, 0.27612, -0.25775, ]
 LSR = ["LShoulderRoll", 0.08279, 0.42952, 0.51231, ]
