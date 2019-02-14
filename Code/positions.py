@@ -1,5 +1,6 @@
-extended = {
-
+positions = {
+'extended': {
+    
     #'HY':  0,
     'HP':  -0.6685,
     'RSR': 0.01837,
@@ -26,11 +27,9 @@ extended = {
     'LKP': -0.09208,
     #'LAP': 0,
     #'LAR': 0
-}
+},
 
-
-
-seated = {
+'seated': {
 
     #'HY':  0,
     'HP':  0.49740,
@@ -57,4 +56,5 @@ seated = {
     'LKP': 1.48334,
     #'LAP': 0,
     #'LAR': 0
+}
 }

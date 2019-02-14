@@ -13,7 +13,7 @@ Requires:
   encoder_functions
 """
 
-from positions import extended, seated
+from positions import positions
 from sys import path
 from limb_data import values
 import time as tme
@@ -27,7 +27,7 @@ from pandas import DataFrame, read_csv
 ### Real for in lab running from lab PC
 ### Other two are self explanatory
 ###
-setup = 'Encoders_no_robot'
+setup = 'Testing'
 setups = {
     'Testing': [False, False],
     'Developing': [False, False],
@@ -112,9 +112,7 @@ class Robot():
     @staticmethod
     def get_small_encoders():
         """
-        Return the angles recorded by the small hinge encoders, at the base of the sqing, at the time of calling.
-        If encoders are not available, will return None *without* producing an error.
-        Returns a tuple, where the index of each value is the same as numbered in the source file from previous years.
+        Return the angles recorded by the small hinge encoders, at the base of the swing, at the time of calling.
         """
 
         encoder0 = SmallEncoders.getAngle0()
@@ -127,28 +125,26 @@ class Robot():
     @staticmethod
     def get_big_encoder():
         """
-        Returns the numerical value read from the large encoder at the top of the swing, if available. Else returns None,
-        *without* producing an error.
+        Returns the numerical value read from the large encoder at the top of the swing.
         """
 
         return BigEncoder.getAngle()
 
     def get_angle(self, nameofpart):
         """
-        Get the current angle of the named part. (Taken from robotcontrol2.py)
+        Get the current angle of the named part.
         Requires:
-
         nameofpart : the name of the part.
         """
-        a = self.memory.getData(values[str(nameofpart)][1])
-        name = values[str(nameofpart)][0]
+        limb_info = values[nameofpart]
+        a = self.memory.getData(limb_info[1])
+        name = limb_info[0]
         return a, name
 
     def initial_seated_position(self):
         """
-        Sets the robot to the initial seated position.
+        Sets the robot to the initial seated position. (Taken from robotcontrol2.py)
         """
-    
         parts = ["Head", "RLeg", "LLeg"]
         self.motion.setStiffnesses(parts, 1.0)  # stiffen
         angle_names = [
@@ -160,49 +156,30 @@ class Robot():
         angles = [-0.6, -0.51, -0.51, -0.09, -0.09]
         speed = 0.5
         self.motion.setAngles(angle_names, angles, speed)
+        self.position = 'initial_seated'
 
     def move_part(self, parts, angle_names, angles, speed, rest_time):
         """
-        Moves the specified parts.
+        Moves the specified parts. (Taken from robotcontrol2.py)
         """
         self.motion.setStiffnesses(parts, 1.0)
         self.motion.setAngles(angle_names, angles, speed)
-        tme.sleep(rest_time)
 
+    def set_posture(self, name_posture, speed=1.0):
+        """
+        Sets the robot's posture. Posture should be described with a name corresponding to a dictionary, as with
+        'positions.extended'. To set the extended/seated position, use set_posture('extended')
+        or set_posture('seated'). Requires:
 
-    def extended_position(self):
+        name_posture : name, corresponds to dictionary in positions.py.
+        speed : float, optional. The speed to move at. Default 1.0.
         """
-        Sets the extended position for when on swing.
-        """
-        angle_names = extended.keys()
-        angles = extended.values()
-        rest_time = 0
-        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-        final_angle_names = [values[name][0] for name in angle_names]
-        #speed =       [normalise_speed()]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
-
-    def seated_position(self):
-        """
-        Sets the seated position for when on swing.
-        """
-        rest_time = 0
-        parts = ["Head", "RArm", "LArm", "RLeg", "LLeg"]
-        angle_names = seated.keys()
-        angles = seated.values()
-        final_angle_names = [values[name][0] for name in angle_names]
-        self.move_part(parts, final_angle_names, angles, 0.6, rest_time)
-
-    def test_move_part(self):
-        """
-        Movement test.
-        """
-        self.motion.setStiffnesses("RLeg", 1.0)
-        self.motion.setStiffnesses("LLeg", 1.0)
-        self.motion.setAngles("LKneePitch", 0.800258815289, 0.1)
-        # motion.setAngles("LAnklePitch",-1.18943989277,0.1)
-        self.motion.setAngles("RKneePitch", 0.800258815289, 0.1)
-        # motion.setAngles("RAnklePitch",-1.18943989277,0.1)
+        
+        posture = positions[name_posture] 
+        names = [values[name][0] for name in posture.keys()] # Convert to correct name format.
+        self.motion.setStiffness(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
+        self.motion.setAngles(names, list(posture.values()), speed)
+        self.position = name_posture
 
     def store(self, filename):
         """
@@ -214,22 +191,29 @@ class Robot():
         print 'Data saved to {}'.format(filename)
 
     def algorithm(self, time, acc, gyro, l_encoder, b_encoder):
-        recent_data = self.collect_old_data(5)
+        # can access current position like this
+        print self.position
+        # can collect old data like this
+        recent_data = self.collect_old_data(5, ['BE', 'SE0'])
         print recent_data
+        # can move to new position like this
+        self.set_posture('extended')
 
-    def collect_old_data(self, last_n_results):
+    def collect_old_data(self, last_n_results, columns):
         """
-        Returns dataframe of last_n_results INCLUDING latest
+        Returns dataframe of last_n_results including latest
         """
-        return self.all_data.tail(last_n_results)
+        if columns != None:
+            return self.all_data[columns].tail(last_n_results)
+        else:
+            return self.all_data.tail(last_n_results)
 
-    def __run_real(self, t, period, filename=None):
-        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE'])
+    def __run_real(self, t, period):
+        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE', 'POS'])
         self.all_data.index.name = 'Time'
 
         max_runs = t * 1 / period
-        if filename == None:
-            filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
+        filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
         for _ in range(int(max_runs)):
             start_time = tme.time()
@@ -243,7 +227,9 @@ class Robot():
                 self.get_small_encoders(),
                 self.get_big_encoder()]
 
+            
             flat_values = flatten(values)
+            flat_values.append(self.position)
             # Computationally expensive but incredibly useful for quick data manipulation
             self.all_data.loc[start_time, :] = flat_values[1:]
 
@@ -260,38 +246,37 @@ class Robot():
             print('Ran on time')
         self.store(filename)
 
-    def __run_test(self, t, period, filename=None):
+    def __run_test(self, t, period, filename):
+        data = self.read(filename)
         print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
-        data = self.read('TestData')
 
-        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE'])
+        self.all_data = DataFrame(columns=['AX', 'AY', 'AZ', 'GX', 'GY', 'GZ', 'SE0', 'SE1', 'SE2', 'SE3', 'BE', 'POS'])
         self.all_data.index.name = 'Time'
 
         for index, row in data.iterrows():
             self.all_data.loc[index, :] = row
-            self.algorithm(row['Time'], row[['AX', 'AY', 'AZ']], row[['GX', 'GY', 'GZ']], row[['SE1', 'SE2', 'SE3', 'SE4']], row['BE'])
-            
+            self.algorithm(index, row[['AX', 'AY', 'AZ']], row[['GX', 'GY', 'GZ']], row[['SE0', 'SE1', 'SE2', 'SE3']], row['BE'])
 
-    def run(self, t, period, filename=None):
+
+    def run(self, t, period, **kwargs):
         """
         t: time to run for
         period: period of cycle time
         filename : string, location of the file to read from if training. Ignore if not training.
         """
-
+        self.initial_seated_position()
         if self.setup == 'Testing':
+            filename = kwargs.get('filename', '14-02-2019 10:01:38')
             self.__run_test(t, period, filename)
         else:
-            self.__run_real(t, period, filename)
+            self.__run_real(t, period)
 
     def read(self, filename):
         """
         Reads old data
-        """ 
-        return read_csv('Output_data/' + filename, sep=',')
+        """
+        return read_csv('Output_data/' + filename, sep=',', index_col='Time')
 
 if __name__ == "__main__":
     robot = Robot(setup)
-    robot.run(10, 0.1)
-
-
+    robot.run(3, 0.1)
