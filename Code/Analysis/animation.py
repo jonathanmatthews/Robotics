@@ -14,19 +14,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 import matplotlib.animation as animation
-from pandas import read_csv
 
-L1 = 0.6  # length of pendulum 1 in m
-L2 = 0.2  # length of pendulum 2 in m
-L3 = 0.1  # length of pendulum 3 in m
+L1 = 1.5  # length of pendulum 1 in m
+L2 = 0.12  # length of pendulum 2 in m
+L3 = 0.20 # length of pendulum 3 in m
 
-angles = read_csv('../Output_data/stitched-data.txt')
+angles = np.loadtxt('../Output_data/14-02-2019 17:31:40')
 
-angle1 = angles['BE']
-angle2 = angles['SE0']
-angle3 = angles['SE1']
-t = angles['Time']
-dt = t.iloc[-1] - t.iloc[-2]
+angle1 = angles[:, 11]
+angle1 = angle1 * np.pi/180.0
+print len(angle1)
+print angle1
+angle2 = angles[:, 7]
+angle2 = angle2 * np.pi/180.0
+print angle2
+angle3 = angles[:, 8]
+angle3 = angle3 * np.pi/180.0
+print angle3
+t = angles[:, 0]
+dt = 0.1
 
 x1 = L1*sin(angle1)
 y1 = -L1*cos(angle1)
@@ -68,7 +74,9 @@ def animate(i):
     return line1, line2, line3, time_text
 
 ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
-                              interval=400, blit=True, init_func=init)
+                              interval=100, blit=True, init_func=init)
+plt.ylim([-4, 0])
+plt.xlim([-2, 2])
 
 # ani.save('double_pendulum.mp4', fps=15)
 plt.show()

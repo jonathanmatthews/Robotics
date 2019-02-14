@@ -18,7 +18,7 @@ from sys import path
 from limb_data import values
 import time as tme
 from utility_functions import flatten
-from pandas import DataFrame, read_csv
+path.insert(0, '/usr/lib64/python2.7/site-packages/')
 
 ###
 ### Set mode to run here
@@ -27,7 +27,7 @@ from pandas import DataFrame, read_csv
 ### Real for in lab running from lab PC
 ### Other two are self explanatory
 ###
-setup = 'Robot_no_encoders'
+setup = 'Real'
 setups = {
     'Testing': [False, False],
     'Developing': [False, False],
@@ -92,6 +92,7 @@ class Robot():
         }
         # self.posture.goToPosture(initial_position, 1.0) # Set initial
         # position.
+        self.position = 1
 
     def get_gyro(self):
         """
@@ -246,7 +247,7 @@ class Robot():
             # Computationally expensive but incredibly useful for quick data manipulation
             self.all_data[t, :] = flat_values
 
-            self.algorithm(*values)
+            self.algorithm(*flat_values)
 
             cycle_time = tme.time() - start_time
             if cycle_time < period:
@@ -276,7 +277,7 @@ class Robot():
         period: period of cycle time
         filename : string, location of the file to read from if training. Ignore if not training.
         """
-        self.initial_seated_position()
+        #self.initial_seated_position()
         if self.setup == 'Testing':
             filename = kwargs.get('filename', '14-02-2019 17:11:08')
             self.__run_test(t, period, filename)
@@ -291,4 +292,4 @@ class Robot():
 
 if __name__ == "__main__":
     robot = Robot(setup)
-    robot.run(3, 0.1)
+    robot.run(20, 0.1)
