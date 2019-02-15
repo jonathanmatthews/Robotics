@@ -18,7 +18,6 @@ from sys import path
 from limb_data import values
 import time as tme
 from utility_functions import flatten
-from pandas import DataFrame, read_csv
 
 ###
 ### Set mode to run here
@@ -27,7 +26,7 @@ from pandas import DataFrame, read_csv
 ### Real for in lab running from lab PC
 ### Other two are self explanatory
 ###
-setup = 'Testing'
+setup = 'Developing'
 setups = {
     'Testing': [False, False],
     'Developing': [False, False],
@@ -57,7 +56,7 @@ class Robot():
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
     """
 
-    def __init__(self, setup, ip="192.168.1.3", port=9559, initial_position="Stand"):
+    def __init__(self, setup, ip="192.168.1.3", port=9559):
         """
         Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
         Requires arguments:
@@ -69,15 +68,11 @@ class Robot():
         self.setup = setup
 
         # Set up connection manager.
-        #self.connection = ALProxy("ALConnectionManager", ip, port)
-        #print("Network state: " + self.connection.state())
-
         self.speech = ALProxy("ALTextToSpeech", ip, port)
         self.speech.say("Connected")
 
         # Set up proxies to robot.
         self.motion = ALProxy("ALMotion", ip, port)
-        #self.posture = ALProxy("ALRobotPosture", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
         # Set up encoders
@@ -90,8 +85,6 @@ class Robot():
             'seated': 0,
             'initial_seated': -1
         }
-        # self.posture.goToPosture(initial_position, 1.0) # Set initial
-        # position.
 
     def get_gyro(self):
         """
@@ -238,10 +231,9 @@ class Robot():
             
             flat_values = flatten(values)
             flat_values.append(self.position)
-            # Computationally expensive but incredibly useful for quick data manipulation
             self.all_data[t, :] = flat_values
 
-            self.algorithm(*values)
+            self.algorithm(*flat_values)
 
             cycle_time = tme.time() - start_time
             if cycle_time < period:
