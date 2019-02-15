@@ -183,4 +183,4 @@ class Interface(Robot, Encoders):
 
 if __name__ == "__main__":
     interface = Interface(setup)
-    interface.run(30, 0.1)
+    interface.run(10, 0.1)

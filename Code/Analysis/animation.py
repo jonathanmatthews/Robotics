@@ -93,5 +93,9 @@ ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
+plt.ylim([-4, 0])
+plt.xlim([-2, 2])
+
+
 # ani.save('double_pendulum.mp4', fps=15)
 plt.show()

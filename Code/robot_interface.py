@@ -6,7 +6,6 @@ Contains class:
   Robot
 """
 
-
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
