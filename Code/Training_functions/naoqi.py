@@ -1,3 +1,12 @@
+"""
+Contains class that mocks how naoqi connects to robot etc, then interface
+can run away from robot if this is imported as substitute for naoqi.
+
+Contains:
+    ALProxy
+"""
+
+
 class ALProxy():
     def __init__(self, name, ip, port):
         pass
