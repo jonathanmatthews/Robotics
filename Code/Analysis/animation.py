@@ -14,12 +14,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 import matplotlib.animation as animation
+import os
 
 L1 = 1.5  # length of pendulum 1 in m
 L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
-filename = '15-02-2019 10:29:57'
+
+files = os.listdir('../Output_data/')
+files.sort()
+filename = files[-1]
+
+# filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
 try:
     angles = loadtxt('../Output_data/' + filename)
