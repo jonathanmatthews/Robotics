@@ -24,7 +24,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -83,6 +83,10 @@ class Interface(Robot, Encoders):
         pos will be name of current position
         """
         pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
+        if b_encoder > 20 and pos == 'extended':
+             self.set_posture('seated')
+        if b_encoder < -20 and pos == 'seated':
+            self.set_posture('extended')
         print time, pos
 
     def __run_real(self, t, period):

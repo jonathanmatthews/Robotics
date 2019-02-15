@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 import matplotlib.animation as animation
 
-L1 = 1.65  # length of pendulum 1 in m
-L2 = 0.1  # length of pendulum 2 in m
-L3 = 0.2  # length of pendulum 3 in m
+L1 = 1.5  # length of pendulum 1 in m
+L2 = 0.12  # length of pendulum 2 in m
+L3 = 0.20  # length of pendulum 3 in m
 
 filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
@@ -51,7 +51,6 @@ x3 = L2 * sin(angle1 + angle2 + angle3) + x2
 y3 = -L2 * cos(angle1 + angle2 + angle3) + y2
 
 # Add figure
-plt.style.use('ggplot')
 fig = plt.figure()
 ax = fig.add_subplot(111, autoscale_on=False,
                      xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
