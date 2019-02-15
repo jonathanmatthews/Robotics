@@ -26,21 +26,6 @@ This formats all the code so it's the same style everywhere
 2. Run Makefile if has been installed:  
 > `pymake format`  
 
-# Running tests:
-> `pymake test`    
-
-Alternatively:  
-1. Navigate to root folder  
-> e.g. `cd ~Documents/{foldername}`
-
-2. Run test script  
-> `python scripts/test.py`    
-
-will run all tests.
-
-# Writing tests:
-Add 'test_' prefix to all test files
-
 # Using git:  
 Check what branch you are on and other info  
 > `git status`  
@@ -55,11 +40,14 @@ Push all changes to cloud for everyone
 > `git push`  
 
 Create a branch to work on  
-> `git branch {replace_with_branch_name}`  
+> `git branch replace_with_branch_name`    
 
 Move to a different branch  
-> `git checkout {branch_to_look_at}`  
+> `git checkout branch_to_look_at`    
 
 Pull down any changes other people have pushed  
 > `git pull`  
+
+To put code onto master branch go to github, find your branch, and click create pull request,  
+then get someone else to approve your code and after that it can be merged.  
 

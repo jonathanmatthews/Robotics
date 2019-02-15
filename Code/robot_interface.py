@@ -1,78 +1,50 @@
 # python2.7
 """
-Author: Jonathan Matthews.
-
 A modules containing a class with which to access data about the robot and control it.
 
 Contains class:
   Robot
-
-Requires:
-  naoqi
-  hingeencoder
-  encoder_functions
 """
-
-from sys import path
-from datanames import values
-import time as tme
-from utility_functions import flatten
-from shlex import split
-
-try:
-    path.insert(0, "hidlibs")  # Insert encoder path.
-    from pynaoqi.naoqi import ALProxy
-    import top_encoder.encoder_functions as BigEncoder
-    import bottom_encoder.hingeencoder as LittleEncoders
-    encoders_available = True
-    print "Modules loaded successfully"
-
-except Exception as e:
-    training = False
-    print "Exception", e
-    print "Error: unable to load encoder functions, encoder data will be unavailable"
-    encoders_available = False
-    if training:
-        path.insert(0, "Training_functions")
-        import BigEncoder
-        import LittleEncoders
-        from naoqi import ALProxy
-        encoders_available = True
-
 
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
     """
 
-    def __init__(self, ip="192.168.1.3", port=9559, initial_position="Stand"):
+    def __init__(self, values, positions, ALProxy,
+                 ip="192.168.1.3", port=9559):
         """
         Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
         Requires arguments:
 
+        values: dictionary containing information of robot limb data
+        positions: dictionary containing different preset positions
         ip : string, contains the IPv4 address of the robot to connect to.
         port : int, contains the port number through which to access the robot.
         """
+        # Store for later
+        self.values = values
+        self.positions = positions
 
-        # Set up connection manager.
-        #self.connection = ALProxy("ALConnectionManager", ip, port)
-        #print("Network state: " + self.connection.state())
-
+        # Set up connection
         self.speech = ALProxy("ALTextToSpeech", ip, port)
         self.speech.say("Connected")
 
-        # Set up proxies to robot.
-        #self.motion = ALProxy("ALMotion", ip, port)
-        #self.posture = ALProxy("ALRobotPosture", ip, port)
+        # Set up proxies to robot
+        self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
-        # Set up encoders, if available.
-        if encoders_available:
-            LittleEncoders.calibrate()
-            BigEncoder.calibrate()
-
-        # self.posture.goToPosture(initial_position, 1.0) # Set initial
-        # position.
+        # Not as easy to store text in numpy so numbers correspond to positions
+        ### THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
+        self.position_names = {
+            'extended': 1,
+            'seated': 0,
+            'initial_seated': -1,
+            1: 'extended',
+            0: 'seated',
+            -1: 'initial_seated'
+        }
+        self.position = self.position_names['seated']
 
     def get_gyro(self):
         """
@@ -80,9 +52,9 @@ class Robot():
         in rad/s.
         """
 
-        x_data = self.memory.getData(values['GX'][1])
-        y_data = self.memory.getData(values['GY'][1])
-        z_data = self.memory.getData(values['GZ'][1])
+        x_data = self.memory.getData(self.values['GX'][1])
+        y_data = self.memory.getData(self.values['GY'][1])
+        z_data = self.memory.getData(self.values['GZ'][1])
 
         return [x_data, y_data, z_data]
 
@@ -91,147 +63,50 @@ class Robot():
         Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
-        x_data = self.memory.getData(values['AX'][1])
-        y_data = self.memory.getData(values['AY'][1])
-        z_data = self.memory.getData(values['AZ'][1])
+        x_data = self.memory.getData(self.values['AX'][1])
+        y_data = self.memory.getData(self.values['AY'][1])
+        z_data = self.memory.getData(self.values['AZ'][1])
 
         return [x_data, y_data, z_data]
 
-    @staticmethod
-    def get_little_encoders():
+    def get_angle(self, nameofpart):
         """
-        Return the angles recorded by the small hinge encoders, at the base of the sqing, at the time of calling.
-        If encoders are not available, will return None *without* producing an error.
-        Returns a tuple, where the index of each value is the same as numbered in the source file from previous years.
+        Get the current angle of the named part.
+        Requires:
+        nameofpart : the name of the part as written in the values dictionary.
+        Example:
+        angle, name = self.get_angle('HY')
         """
+        limb_info = self.values[nameofpart]
+        angle = self.memory.getData(limb_info[1])
+        name = limb_info[0]
+        return angle, name
 
-        if encoders_available:
-            encoder0 = LittleEncoders.getAngle0()
-            encoder1 = LittleEncoders.getAngle1()
-            encoder2 = LittleEncoders.getAngle2()
-            encoder3 = LittleEncoders.getAngle3()
-
-            return [encoder0, encoder1, encoder2, encoder3]
-
-    @staticmethod
-    def get_big_encoder():
+    def set_posture(self, name_posture, max_speed=1.0):
         """
-        Returns the numerical value read from the large encoder at the top of the swing, if available. Else returns None,
-        *without* producing an error.
+        Sets the robot's posture. Posture should be described with a name corresponding to a dictionary.
+        Requires:
+        name_posture : name, corresponds to dictionary in positions.py.
+        max_speed : float, optional. The speed to move at. Default 1.0.
+        Examples:
+        set_posture('extended')
+        set_posture('seated')
         """
-
-        if encoders_available:
-            return BigEncoder.getAngle()
-
-    @staticmethod
-    def store(f, values):
-        """
-        Stores list of values
-        f: reference to file (with open() as f)
-        values: list of values to store
-        """
-
-        values = [str(x) for x in values]
-        f.write(", ".join(values) + "\n")
-        return
-
-    @staticmethod
-    def algorithm(time, acc, gyro, l_encoder, b_encoder):
-        # print time, acc, gyro, l_encoder, b_encoder
-        pass
-
-    def run(self, t, period, filename=None):
-        """
-        t: time to run for
-        period: period of cycle time
-        filename : string, location of the file to read from if training. Ignore if not training.
-        """
-
-        if training:
-            self.parser(filename)
-
-            for line in self.data:
-                time = line[0]
-                acc = line[1:4]
-                gyro = line[4:7]
-                little_encoders = line[7:11]
-                big_encoder = line[11]
-
-                self.algorithm(time, acc, gyro, little_encoders, big_encoder)
-
-        else:
-
-            max_runs = t * 1 / period
-            file_name = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-
-            with open('Output_data/' + file_name, 'w') as f:
-                counter = 0
-                while counter < max_runs:
-                    start_time = tme.time()
-
-                    # needs to be list of lists for easy flattening for storage while retaining ease of use for
-                    # putting into algorithm
-                    values = [
-                        start_time,
-                        self.get_acc(),
-                        self.get_gyro(),
-                        self.get_little_encoders(),
-                        self.get_big_encoder()]
-                    self.algorithm(*values)
-
-                    flat_values = flatten(values)
-                    self.store(f, flat_values)
-
-                    counter += 1
-
-                    cycle_time = tme.time() - start_time
-                    if cycle_time < period:
-                        tme.sleep(period - cycle_time)
-
-                f.close()
-            if cycle_time > period:
-                print('Ran behind schedule')
-            else:
-                print('Ran on time')
-            print('Stored {:.0f} lines in {}'.format(max_runs, file_name))
-
-    class _parser(list):
-        """
-        Defines an inner class to act as a parser for output files. Not intended to be instantiated
-        from outside Class 'Robot'.
-        """
-
-        def __init__(self, filename):
-            """
-            Read the data from a given file and store as a list (self) of lists.
-            Takes arguments:
-
-            filename : string, the location of the file to read.
-            """
-
-            data_file = open(filename, "r")
-
-            for line in data_file:
-                curr_line = list(split(line))
-                # val[:-1] because cast to float can't handle comma.
-                head = [float(val[:-1]) for val in curr_line[:-1]]
-                # There's no comma on the last entry, so handle separately.
-                tail = [float(curr_line[-1])]
-                self.append(head + tail)
-
-            data_file.close()
-
-    def parser(self, filename):
-        """
-        Create a parser and store as the 'data' member. Will need to be called again to update data,
-        if it has changed.
-        Takes arguments:
-
-        filename : string, the location of the data to read from disk.
-        """
-        self.data = self._parser(filename)
-
-
-if __name__ == "__main__":
-    robot = Robot()
-    robot.run(10, 0.1)
+        # Extract dictionary corresponding to name_posture
+        posture = self.positions[name_posture]
+        # Use names in dictionary to collect longer name that naoqi uses
+        names = [self.values[name][0] for name in posture.keys()]
+        # Create list of speeds such that movements finish at same time
+        speed = [max_speed *
+                 (self.values[named_part_range][4] /
+                  self.values['HY'][4]) for named_part_range in posture.keys()]
+        # Need stiffness set to 1.0 before can move
+        self.motion.setStiffnesses(
+            ["Head", "RArm", "LArm", "RLeg", "LLeg"], 1.0)
+        # Start movement of each part
+        for i in range(len(speed)):
+            self.motion.setAngles(
+                names[i], list(
+                    posture.values())[i], speed[i])
+        # Update current position
+        self.position = name_posture
