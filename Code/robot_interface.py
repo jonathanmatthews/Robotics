@@ -45,7 +45,7 @@ class Robot():
             0: 'seated',
             -1: 'initial_seated'
         }
-        self.position = self.position_names['seated']
+        self.position = 'seated'
 
     def get_gyro(self):
         """
