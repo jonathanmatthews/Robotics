@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 naoqi = "1.14.5"
+numpy = "*"
 
 [dev-packages]
 py-make = "*"

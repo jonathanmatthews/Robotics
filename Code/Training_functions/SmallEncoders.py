@@ -1,3 +1,8 @@
+"""
+Contains fake functions for small encoders so can be used from home.
+"""
+
+
 def calibrate():
     pass
 

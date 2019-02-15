@@ -1,3 +1,8 @@
+"""
+Contain fake functions for big encoder so that can still see how interface runs at home.
+"""
+
+
 def calibrate():
     pass
 
