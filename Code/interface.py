@@ -83,6 +83,10 @@ class Interface(Robot, Encoders):
         pos will be name of current position
         """
         pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
+        if b_encoder < -10 and pos == 'extended':
+             self.set_posture('seated')
+        if b_encoder > 10 and pos == 'seated':
+            self.set_posture('extended')
         print time, pos
 
     def __run_real(self, t, period):
@@ -109,9 +113,9 @@ class Interface(Robot, Encoders):
             # (better for storage) and add current position
             flat_values = flatten(values)
             # run new data through algorithm
-            self.algorithm(self.position_names[self.position], *flat_values)
+            self.algorithm(self.position, *flat_values)
 
-            flat_values.append(self.position)
+            flat_values.append(self.position_names[self.position])
             # add data to row of numpy matrix
             self.all_data[t, :] = flat_values
 

@@ -12,23 +12,22 @@ This code should be run from inside the Analysis directory, otherwise the import
 from numpy import sin, cos, loadtxt, pi
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.integrate as integrate
 import matplotlib.animation as animation
+import os
+from graph_format import format_graph
 
-L1 = 1.65  # length of pendulum 1 in m
-L2 = 0.1  # length of pendulum 2 in m
-L3 = 0.2  # length of pendulum 3 in m
+L1 = 1.5  # length of pendulum 1 in m
+L2 = 0.12  # length of pendulum 2 in m
+L3 = 0.20  # length of pendulum 3 in m
 
-filename = '15-02-2019 10:29:57'
+
+files = os.listdir('../Output_data/')
+files.sort()
+filename = files[-1]
+
+# filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
-try:
-    angles = loadtxt('../Output_data/' + filename)
-except IOError:
-    try:
-        angles = loadtxt('Output_data/' + filename)
-    except IOError as e:
-        print "Are you sure this file exists? Not an directory error"
-        raise e
+angles = loadtxt('../Output_data/' + filename)
 
 # Extract data
 angle1 = angles[:, 11]
@@ -53,15 +52,17 @@ y3 = -L2 * cos(angle1 + angle2 + angle3) + y2
 # Add figure
 fig = plt.figure()
 ax = fig.add_subplot(111, autoscale_on=False,
-                     xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
+                    xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
+ax = format_graph(ax)
 ax.grid()
+plt.sca(ax)
 
 # Setup lines for later
 line1, = ax.plot([], [], 'o-', lw=2, color='b')
 line2, = ax.plot([], [], 'o-', lw=2, color='r')
 line3, = ax.plot([], [], 'o-', lw=2, color='g')
 time_template = 'time = %.1fs'
-time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
+time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, size=14)
 
 
 def init():
@@ -88,7 +89,10 @@ def animate(i):
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
-                              interval=100, blit=True, init_func=init)
+                            interval=100, blit=True, init_func=init)
+plt.xlabel('x coordinate')
+plt.ylabel('y coordinate')
+plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
 plt.ylim([-4, 0])
 plt.xlim([-2, 2])
 

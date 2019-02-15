@@ -98,7 +98,7 @@ class Device(object):
     def __hidcall(self, function, *args, **kwargs):
         if self.__dev == 0:
             raise HIDException('device closed')
-            
+
         ret = function(*args, **kwargs)
 
         if ret == -1:
