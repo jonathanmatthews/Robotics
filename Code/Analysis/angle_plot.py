@@ -57,5 +57,6 @@ plt.grid()
 plt.legend(loc='upper left')
 plt.show()
 
-# eps is vector graphic doesn't get worse in quality when in latex
+# eps is vector graphic doesn't get worse in quality when in latex, apparently isn't working with overleaf???
 # fig.savefig('Figures/AnglePlot{}.eps'.format(filename), format='eps')
+fig.savefig('Figures/AnglePlot{}.png'.format(filename), format='png')
