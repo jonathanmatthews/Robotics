@@ -21,13 +21,13 @@ L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
 
-files = os.listdir('../Output_data/')
+files = os.listdir('Output_data/')
 files.sort()
 filename = files[-1]
 
 # filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
-angles = loadtxt('../Output_data/' + filename)
+angles = loadtxt('Output_data/' + filename)
 
 # Extract data
 angle1 = angles[:, 11]
@@ -93,9 +93,9 @@ ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
-plt.ylim([-4, 0])
-plt.xlim([-2, 2])
+plt.ylim([-3, 0])
+plt.xlim([-1.5, 1.5])
 
 
-# ani.save('double_pendulum.mp4', fps=15)
+# ani.save('Analysis/Figures/double_pendulum.mp4', fps=15)
 plt.show()

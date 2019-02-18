@@ -12,11 +12,11 @@ from graph_format import format_graph
 
 
 # access latest file if underneath file name is blanked out
-files = os.listdir('../Output_data/')
+files = os.listdir('Output_data/')
 files.sort()
 filename = files[-1]
 # filename = '15-02-2019 10:29:57'
-angles = loadtxt('../Output_data/' + filename)
+angles = loadtxt('Output_data/' + filename)
 
 position_names = {
     1: 'extended',
@@ -25,8 +25,6 @@ position_names = {
 }
 
 # Extract data
-angle1 = angles[:, 11]
-position = angles[:, -1]
 t = angles[:, 0]
 accx = angles[:, 1]
 accy = angles[:, 2]
@@ -34,6 +32,8 @@ accz = angles[:, 3]
 gx = angles[:, 4]
 gy = angles[:, 5]
 gz = angles[:, 6]
+angle1 = angles[:, 11]
+position = angles[:, -1]
 
 # setup figure
 fig, ax = plt.subplots(
@@ -81,4 +81,4 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig('Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
+fig.savefig('Analysis/Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
