@@ -28,10 +28,16 @@ position_names = {
 angle1 = angles[:, 11]
 position = angles[:, -1]
 t = angles[:, 0]
+accx = angles[:, 1]
+accy = angles[:, 2]
+accz = angles[:, 3]
+gx = angles[:, 4]
+gy = angles[:, 5]
+gz = angles[:, 6]
 
 # setup figure
 fig, ax = plt.subplots(
-    2, 1, figsize=(
+    2, 2, figsize=(
         8, 6), gridspec_kw={
             'height_ratios': [
                 1, 1]}, sharex=True)
@@ -39,7 +45,7 @@ fig, ax = plt.subplots(
 # use this to format graphs, keeps everything looking the same
 ax = format_graph(ax)
 
-# editing top plot
+# editing top left plot
 plt.sca(ax[0])
 plt.title('Plot of angle against seat position')
 plt.plot(t, position, label='Position of Nao')
@@ -47,14 +53,31 @@ plt.yticks([-1, 0, 1], ['initial_seated', 'seated', 'extended'])
 plt.ylabel('Named position')
 plt.ylim([min(position)-0.1, max(position)+0.1])
 
-# editing bottom plot
-plt.sca(ax[1])
+# editing bottom left plot
+plt.sca(ax[2])
 plt.plot(t, angle1, label='Big Encoder')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle (' + r'$^o)$')
 plt.grid()
 
 plt.legend(loc='upper left')
+
+# upper right plot
+plt.sca(ax[1])
+plt.title('Plot of accelerometer values')
+plt.plot(t, accx, label='Acceleration x')
+plt.plot(t, accy, label='Acceleration y')
+plt.plot(t, accz, label='Acceleration z')
+plt.legend(loc='lower left')
+
+# lower right plot
+plt.sca(ax[3])
+plt.title('Plot of gyrometer values')
+plt.plot(t, gx, label='Gyro x')
+plt.plot(t, gy, label='Gyro y')
+plt.plot(t, gz, label='Gyro z')
+plt.legend(loc='best')
+
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
