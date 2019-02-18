@@ -3,7 +3,7 @@ import numpy
 
 def format_graph(axis):
     if type(axis) == numpy.ndarray:
-        return [format_axis(ax) for ax in axis]
+        return [format_axis(ax) for ax in axis.flat]
     else:
         return format_axis(axis)
 
