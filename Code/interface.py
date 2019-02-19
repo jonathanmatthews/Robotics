@@ -41,7 +41,8 @@ try:
     if robot:
         # Add path to real naoqi if connecting to real robot
         path.insert(0, "hidlibs")
-        from pynaoqiwebots.naoqi import ALProxy
+        from naoqi import ALProxy
+        #from pynaoqi.naoqi import ALProxy
     else:
         # Add path to fake naoqi if not connecting to robot
         path.insert(0, "Training_functions")
@@ -85,10 +86,7 @@ class Interface(Robot, Encoders):
         pos will be name of current position
         """
         pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        if b_encoder < -10 and pos == 'extended':
-             self.set_posture('seated')
-        if b_encoder > 10 and pos == 'seated':
-            self.set_posture('extended')
+        self.set_posture("seated")
         print time, pos
 
     def __run_real(self, t, period):
