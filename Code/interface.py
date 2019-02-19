@@ -24,7 +24,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -72,7 +72,10 @@ class Interface(Robot, Encoders):
 
         # Store setup mode for later
         self.setup = setup
-
+        
+    def algorithm_setup(self):
+        self.max_angle = 0
+    
     def algorithm(self, *args):
         """
         Defines how robot moves with swinging.
@@ -83,11 +86,13 @@ class Interface(Robot, Encoders):
         pos will be name of current position
         """
         pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        if b_encoder < -10 and pos == 'extended':
-             self.set_posture('seated')
-        if b_encoder > 10 and pos == 'seated':
+        if b_encoder < -self.max_angle + 1 and pos == 'extended':
+            self.set_posture('seated')
+            self.max_angle = abs(b_encoder)
+        if b_encoder > self.max_angle - 1 and pos == 'seated':
             self.set_posture('extended')
-        print time, pos
+            self.max_angle = abs(b_encoder)
+        print time, b_encoder, self.max_angle
 
     def __run_real(self, t, period):
         max_runs = t * 1 / period
@@ -97,6 +102,10 @@ class Interface(Robot, Encoders):
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
         initial_time = tme.time()
+        
+        self.algorithm_setup()
+        self.speech.say('Increase angle of swing')
+        tme.sleep(3)
 
         for t in range(int(max_runs)):
             start_time = tme.time()
@@ -183,4 +192,4 @@ class Interface(Robot, Encoders):
 
 if __name__ == "__main__":
     interface = Interface(setup)
-    interface.run(10, 0.1)
+    interface.run(60, 0.1)

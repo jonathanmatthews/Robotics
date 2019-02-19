@@ -12,11 +12,11 @@ from graph_format import format_graph
 
 
 # access latest file if underneath file name is blanked out
-files = os.listdir('Output_data/')
+files = os.listdir('../Output_data/')
 files.sort()
 filename = files[-1]
 # filename = '15-02-2019 10:29:57'
-angles = loadtxt('Output_data/' + filename)
+angles = loadtxt('../Output_data/' + filename)
 
 position_names = {
     1: 'extended',
@@ -38,9 +38,7 @@ position = angles[:, -1]
 # setup figure
 fig, ax = plt.subplots(
     2, 2, figsize=(
-        8, 6), gridspec_kw={
-            'height_ratios': [
-                1, 1]}, sharex=True)
+        8, 6), sharex=True)
 
 # use this to format graphs, keeps everything looking the same
 ax = format_graph(ax)

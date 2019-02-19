@@ -9,7 +9,7 @@ def format_graph(axis):
 
 def format_axis(ax):
     plt.sca(ax)
-    ax.set_facecolor('#eeeeee')
+    #ax.set_facecolor('#eeeeee')
     plt.rcParams.update({'axes.titlesize': 18,
                         'legend.fontsize': 14,
                         'font.serif': 'Computer Modern Roman', })
