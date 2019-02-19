@@ -12,8 +12,8 @@ from sys import path
 import time as tme
 from utility_functions import flatten
 from encoder_interface import Encoders
-#from robot_interface import Robot
-from robot_interface_webots import Robot
+from robot_interface import Robot
+#from robot_interface_webots import Robot
 # Different positions of robot
 from positions import positions
 # Information of robot limbs (max angle etc)
@@ -41,8 +41,8 @@ try:
     if robot:
         # Add path to real naoqi if connecting to real robot
         path.insert(0, "hidlibs")
-        from naoqi import ALProxy
-        #from pynaoqi.naoqi import ALProxy
+        #from naoqi import ALProxy
+        from pynaoqi.naoqi import ALProxy
     else:
         # Add path to fake naoqi if not connecting to robot
         path.insert(0, "Training_functions")
