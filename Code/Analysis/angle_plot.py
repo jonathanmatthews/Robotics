@@ -79,4 +79,4 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig('Analysis/Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
+fig.savefig('Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')

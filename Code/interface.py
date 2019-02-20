@@ -6,16 +6,26 @@ A module containing an interface that connects the robot and encoders to algorit
 Contains class:
     Interface
 """
+from os import listdir
+from re import compile
 
-from sys import path
-import time as tme
-from utility_functions import flatten
+files = listdir('.')
+r = compile("algorithm_")
+list_algorithms = filter(r.match, files)
+text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
+algorithm = str(input('Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format("\n".join(text))))
+algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
+Algorithm = __import__(algorithm_import).Algorithm
+
 from encoder_interface import Encoders
 from robot_interface import Robot
+from sys import path
+from utility_functions import flatten
 # Different positions of robot
 from positions import positions
 # Information of robot limbs (max angle etc)
 from limb_data import values
+import time as tme
 
 """
 Set mode to run here
@@ -24,7 +34,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -58,23 +68,18 @@ except ImportError as e:
     print "Couldn't import, you are most likely in the wrong directory, try again from Code directory"
     raise e
 
-class Interface(Robot, Encoders):
+class Interface(Algorithm):
     """
     This class ties together the Robot and the Encoders, and adds functionality such as storing, and running tests
     on old data. It inherits from Robot and Encoders so has access to all their methods in the normal way (self.get_gyro() etc).
     """
 
     def __init__(self, setup):
-        # Initialise encoder
-        Encoders.__init__(self, BigEncoder, SmallEncoders)
-        # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy)
+        # Initialise algorithm
+        Algorithm.__init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy)
 
         # Store setup mode for later
         self.setup = setup
-        
-    def algorithm_setup(self):
-        self.max_angle = 0
     
     def get_ang_vel(self, event_number):
       """
@@ -93,24 +98,7 @@ class Interface(Robot, Encoders):
       delta_angle = curr_data[-2] - prev_data[-2]
       
       return delta_angle/delta_time
-    
-    def algorithm(self, *args):
-        """
-        Defines how robot moves with swinging.
-        Can collect old data via:
-        print self.all_data
-        Can move to new position via:
-        self.set_posture('extended')
-        pos will be name of current position
-        """
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        if b_encoder < -self.max_angle + 1 and pos == 'extended':
-            self.set_posture('seated')
-            self.max_angle = abs(b_encoder)
-        if b_encoder > self.max_angle - 1 and pos == 'seated':
-            self.set_posture('extended')
-            self.max_angle = abs(b_encoder)
-        print time, b_encoder, self.max_angle
+
 
     def __run_real(self, t, period):
         max_runs = t * 1 / period
@@ -119,12 +107,12 @@ class Interface(Robot, Encoders):
         self.all_data = numpy.empty((int(max_runs), 13))
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-        initial_time = tme.time()
         
-        self.algorithm_setup()
-        self.speech.say('Increase angle of swing')
-        tme.sleep(3)
+        wait = 3
+        self.speech.say('Increase angle of swing, waiting {} seconds'.format(wait))
+        tme.sleep(wait)
 
+        initial_time = tme.time()
         for t in range(int(max_runs)):
             start_time = tme.time()
 
@@ -185,8 +173,11 @@ class Interface(Robot, Encoders):
         filename : string, location of the file to read from if testing. Ignore if not testing.
         """
         if self.setup == 'Testing':
-            # If filename isn't passed through takes this default file
-            filename = kwargs.get('filename', '15-02-2019 10:29:57')
+            # access latest file if underneath file name is blanked out
+            files = listdir('Output_data/')
+            files.sort()
+            latest = files[-1]
+            filename = kwargs.get('filename', latest)
             self.__run_test(t, period, filename)
         else:
             self.__run_real(t, period)
@@ -207,7 +198,6 @@ class Interface(Robot, Encoders):
         numpy.savetxt("Output_data/" + filename, self.all_data)
         print 'Data saved to {}'.format(filename)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(60, 0.1)
+    interface.run(20, 0.2)
