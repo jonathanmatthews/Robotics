@@ -15,6 +15,7 @@ list_algorithms = filter(r.match, files)
 text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
 algorithm = str(input('Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format("\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
+print algorithm_import
 Algorithm = __import__(algorithm_import).Algorithm
 
 from encoder_interface import Encoders
