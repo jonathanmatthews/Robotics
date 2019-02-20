@@ -6,6 +6,7 @@ Contains class:
   Robot
 """
 
+
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
@@ -35,7 +36,7 @@ class Robot():
         self.memory = ALProxy("ALMemory", ip, port)
 
         # Not as easy to store text in numpy so numbers correspond to positions
-        ### THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
+        # THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
         self.position_names = {
             'extended': 1,
             'seated': 0,

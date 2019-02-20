@@ -7,8 +7,10 @@ def flatten(values):
             final_list.append(list_value)
     return final_list
 
+
 def change_stiffness(stiffness, part):
-    if stiffness in ['stiffen', 'Stiffen', 'stiff', 'Stiff', 'stif', 'Stiff', 'STIFF']:
+    if stiffness in ['stiffen', 'Stiffen', 'stiff',
+                     'Stiff', 'stif', 'Stiff', 'STIFF']:
         motion.setStiffnesses(part, 1.0)
         return 'Stiffening'
     else:
