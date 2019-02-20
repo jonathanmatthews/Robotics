@@ -62,9 +62,9 @@ class Robot():
         Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
-        x_data = self.memory.getData(self.values['AX'][1])
-        y_data = self.memory.getData(self.values['AY'][1])
-        z_data = self.memory.getData(self.values['AZ'][1])
+        x_data = self.memory.getData(self.values['ACX'][1])
+        y_data = self.memory.getData(self.values['ACY'][1])
+        z_data = self.memory.getData(self.values['ACZ'][1])
 
         return [x_data, y_data, z_data]
 
