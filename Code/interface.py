@@ -76,6 +76,24 @@ class Interface(Robot, Encoders):
     def algorithm_setup(self):
         self.max_angle = 0
     
+    def get_ang_vel(self, event_number):
+      """
+      Function to get the current angular velocity, accessing the last two data
+      values recorded. Returns None if not enough data exists yet.
+      Requires arguments:
+      event_number : int, the row within self.all_data at whcih to calculate.
+      """
+      if len(self.all_data) < 2:
+	    return None
+      
+      prev_data = self.all_data[event_number - 1]
+      curr_data = self.all_data[event_number]
+      
+      delta_time = curr_data[0] - prev_data[0]
+      delta_angle = curr_data[-2] - prev_data[-2]
+      
+      return delta_angle/delta_time
+    
     def algorithm(self, *args):
         """
         Defines how robot moves with swinging.
