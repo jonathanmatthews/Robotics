@@ -1,4 +1,11 @@
 # python2.7
+import time as tme
+from limb_data import values
+from positions import positions
+from utility_functions import flatten
+from sys import path
+from robot_interface import Robot
+from encoder_interface import Encoders
 import numpy
 """
 A module containing an interface that connects the robot and encoders to algorithm and storage.
@@ -13,20 +20,16 @@ files = listdir('.')
 r = compile("algorithm_")
 list_algorithms = filter(r.match, files)
 text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
-algorithm = str(input('Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format("\n".join(text))))
+algorithm = str(
+    input(
+        'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
+            "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
 print algorithm_import
 Algorithm = __import__(algorithm_import).Algorithm
 
-from encoder_interface import Encoders
-from robot_interface import Robot
-from sys import path
-from utility_functions import flatten
 # Different positions of robot
-from positions import positions
 # Information of robot limbs (max angle etc)
-from limb_data import values
-import time as tme
 
 """
 Set mode to run here
@@ -69,6 +72,7 @@ except ImportError as e:
     print "Couldn't import, you are most likely in the wrong directory, try again from Code directory"
     raise e
 
+
 class Interface(Algorithm):
     """
     This class ties together the Robot and the Encoders, and adds functionality such as storing, and running tests
@@ -77,29 +81,34 @@ class Interface(Algorithm):
 
     def __init__(self, setup):
         # Initialise algorithm
-        Algorithm.__init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy)
+        Algorithm.__init__(
+            self,
+            BigEncoder,
+            SmallEncoders,
+            values,
+            positions,
+            ALProxy)
 
         # Store setup mode for later
         self.setup = setup
-    
-    def get_ang_vel(self, event_number):
-      """
-      Function to get the current angular velocity, accessing the last two data
-      values recorded. Returns None if not enough data exists yet.
-      Requires arguments:
-      event_number : int, the row within self.all_data at whcih to calculate.
-      """
-      if len(self.all_data) < 2:
-	    return None
-      
-      prev_data = self.all_data[event_number - 1]
-      curr_data = self.all_data[event_number]
-      
-      delta_time = curr_data[0] - prev_data[0]
-      delta_angle = curr_data[-2] - prev_data[-2]
-      
-      return delta_angle/delta_time
 
+    def get_ang_vel(self, event_number):
+        """
+        Function to get the current angular velocity, accessing the last two data
+        values recorded. Returns None if not enough data exists yet.
+        Requires arguments:
+        event_number : int, the row within self.all_data at whcih to calculate.
+        """
+        if len(self.all_data) < 2:
+            return None
+
+        prev_data = self.all_data[event_number - 1]
+        curr_data = self.all_data[event_number]
+
+        delta_time = curr_data[0] - prev_data[0]
+        delta_angle = curr_data[-2] - prev_data[-2]
+
+        return delta_angle / delta_time
 
     def __run_real(self, t, period):
         max_runs = t * 1 / period
@@ -108,9 +117,10 @@ class Interface(Algorithm):
         self.all_data = numpy.empty((int(max_runs), 13))
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-        
+
         wait = 3
-        self.speech.say('Increase angle of swing, waiting {} seconds'.format(wait))
+        self.speech.say(
+            'Increase angle of swing, waiting {} seconds'.format(wait))
         tme.sleep(wait)
 
         initial_time = tme.time()
@@ -161,7 +171,8 @@ class Interface(Algorithm):
         self.all_data = numpy.empty((1, 13))
 
         for i in xrange(len(data)):
-            # Put new data through algorithm not including position as want to test algo
+            # Put new data through algorithm not including position as want to
+            # test algo
             self.algorithm(self.position_names[self.position], *data[i, :-1])
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, data[i])
@@ -175,8 +186,7 @@ class Interface(Algorithm):
         """
         if self.setup == 'Testing':
             # access latest file if underneath file name is blanked out
-            files = listdir('Output_data/')
-            files.sort()
+            files = sorted(listdir('Output_data/'))
             latest = files[-1]
             filename = kwargs.get('filename', latest)
             self.__run_test(t, period, filename)
@@ -198,6 +208,7 @@ class Interface(Algorithm):
         # All data should be a numpy array
         numpy.savetxt("Output_data/" + filename, self.all_data)
         print 'Data saved to {}'.format(filename)
+
 
 if __name__ == '__main__':
     interface = Interface(setup)

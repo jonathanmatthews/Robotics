@@ -12,8 +12,7 @@ from graph_format import format_graph
 
 
 # access latest file if underneath file name is blanked out
-files = os.listdir('../Output_data/')
-files.sort()
+files = sorted(os.listdir('../Output_data/'))
 filename = files[-1]
 # filename = '15-02-2019 10:29:57'
 angles = loadtxt('../Output_data/' + filename)
@@ -49,7 +48,7 @@ plt.title('Plot of angle against seat position')
 plt.plot(t, position, label='Position of Nao')
 plt.yticks([-1, 0, 1], ['initial_seated', 'seated', 'extended'])
 plt.ylabel('Named position')
-plt.ylim([min(position)-0.1, max(position)+0.1])
+plt.ylim([min(position) - 0.1, max(position) + 0.1])
 
 # editing bottom left plot
 plt.sca(ax[2])
@@ -79,4 +78,5 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig('Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
+fig.savefig(
+    'Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
