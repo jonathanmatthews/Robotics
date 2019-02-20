@@ -1,7 +1,7 @@
 # python2.7
 import numpy
 """
-A module containing interface that connects robot and encoders to algorithm and storage.
+A module containing an interface that connects the robot and encoders to algorithm and storage.
 
 Contains class:
     Interface
@@ -181,7 +181,7 @@ class Interface(Robot, Encoders):
 
     def store(self, filename):
         """
-        Saves numpy matric as txt file
+        Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
 
