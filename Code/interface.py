@@ -38,7 +38,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Robot_no_encoders'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -118,10 +118,10 @@ class Interface(Algorithm):
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
-        wait = 3
-        self.speech.say(
-            'Increase angle of swing, waiting {} seconds'.format(wait))
-        tme.sleep(wait)
+        #wait = 3
+        #self.speech.say(
+         #   'Increase angle of swing, waiting {} seconds'.format(wait))
+        #tme.sleep(wait)
 
         initial_time = tme.time()
         for t in range(int(max_runs)):
@@ -212,4 +212,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.2)
+    #interface.run(20, 0.2)
+    # interface.set_posture("extended")
+    interface.run(1.0, 1.0)
