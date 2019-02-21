@@ -13,6 +13,9 @@ A module containing an interface that connects the robot and encoders to algorit
 Contains class:
     Interface
 """
+"""To change from webots to real world, change import below."""
+
+#from robot_interface_webots import Robot
 from os import listdir
 from re import compile
 
@@ -37,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Robot_no_encoders'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -52,6 +55,7 @@ try:
     if robot:
         # Add path to real naoqi if connecting to real robot
         path.insert(0, "hidlibs")
+        #from naoqi import ALProxy
         from pynaoqi.naoqi import ALProxy
     else:
         # Add path to fake naoqi if not connecting to robot
