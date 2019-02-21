@@ -7,7 +7,6 @@ class Algorithm(Robot, Encoders):
     This is an example algorithm class, as everyone will be working on different algorithms
     """
 
-
     def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders)
@@ -18,7 +17,7 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Another algorithm")
         self.set_posture("extended")
         self.max_angle = 0
-    
+
     def algorithm(self, *args):
         """
         Defines how robot moves with swinging.

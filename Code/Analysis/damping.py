@@ -49,7 +49,7 @@ plt.scatter(time_max, angle_max, color='r', label='Local maxima')
 time_between_max = np.sum(np.diff(time_max))/(len(time_max)-1)
 w_d = 2 * np.pi / time_between_max
 
-def damping_fit(t, a, b, c):
+def damping_fit(t, a, b):
     # Function that curve_fit will attempt to fit to
     return a * np.exp(-b * t)
 
