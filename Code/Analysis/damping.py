@@ -9,7 +9,6 @@ from numpy import loadtxt
 import os
 import matplotlib.pyplot as plt
 from graph_format import format_graph
-from scipy.signal import argrelextrema
 from scipy.optimize import curve_fit
 
 # access latest file if underneath file name is blanked out
@@ -39,7 +38,10 @@ plt.ylabel('Angle ' + r"$(^o)$")
 plt.plot(t, angle, label='Collected data')
 
 # finds indexes corresponding to local maxima
-angle_max_index = argrelextrema(angle, np.greater)
+# angle_max_index = argrelextrema(angle, np.greater)
+t = t[20:]
+angle = angle[20:]
+angle_max_index = (np.diff(np.sign(np.diff(angle))) < 0).nonzero()[0] + 1
 # extracts value corresponding to those indexes
 time_max = t[angle_max_index]
 angle_max = angle[angle_max_index]
@@ -79,15 +81,15 @@ text_params = [
         popt,
         perr)]
 # adds all parameters to plot in the bottom right hand corner
-plt.text(0.95, 0.05, r'$ae^{-bt} + c$' + '\n' + "\n".join(text_params) + "\n" + r"$\zeta: $" + "{:.2f}".format(zeta(popt[1], w_d)) +
-        "\n" + r"$\omega_d: $" + "{:.2f}".format(w_d) + 
-        "\n" + r"$\omega_0: $" + "{:.2f}".format(omega_0(popt[1], w_d)), horizontalalignment='right',
+plt.text(0.95, 0.05, r'$ae^{-bt} + c$' + '\n' + "\n".join(text_params) + "\n" + r"$\zeta: $" + "{:.4f}".format(zeta(popt[1], w_d)) +
+        "\n" + r"$\omega_d: $" + "{:.4f}".format(w_d) + 
+        "\n" + r"$\omega_0: $" + "{:.4f}".format(omega_0(popt[1], w_d)), horizontalalignment='right',
          verticalalignment='bottom',
-         transform=ax.transAxes, size=14, bbox=dict(facecolor='lightgrey', alpha=0.9))
+         transform=ax.transAxes, size=17, bbox=dict(facecolor='lightgrey', alpha=0.9))
 
 plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
 fig.savefig(
-    'Figures/DampingPlot{}.eps'.format(filename.replace(" ", "")), format='eps')
+    'Figures/DampingPlot{}.png'.format(filename.replace(" ", "")), format='png')

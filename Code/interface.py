@@ -25,7 +25,6 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-print algorithm_import
 Algorithm = __import__(algorithm_import).Algorithm
 
 # Different positions of robot
@@ -118,10 +117,17 @@ class Interface(Algorithm):
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
+<<<<<<< HEAD
         #wait = 3
         #self.speech.say(
          #   'Increase angle of swing, waiting {} seconds'.format(wait))
         #tme.sleep(wait)
+=======
+        # wait = 3
+        # self.speech.say(
+            # 'Increase angle of swing, waiting {} seconds'.format(wait))
+        # tme.sleep(wait)
+>>>>>>> master
 
         initial_time = tme.time()
         for t in range(int(max_runs)):
@@ -138,6 +144,8 @@ class Interface(Algorithm):
             # use flatten in utility functions to reduce to one long list
             # (better for storage) and add current position
             flat_values = flatten(values)
+
+
             # run new data through algorithm
             self.algorithm(self.position, *flat_values)
 
