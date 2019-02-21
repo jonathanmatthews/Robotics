@@ -39,7 +39,10 @@ plt.ylabel('Angle ' + r"$(^o)$")
 plt.plot(t, angle, label='Collected data')
 
 # finds indexes corresponding to local maxima
-angle_max_index = argrelextrema(angle, np.greater)
+# angle_max_index = argrelextrema(angle, np.greater)
+t = t[50:]
+angle = angle[50:]
+angle_max_index = (np.diff(np.sign(np.diff(angle))) < 0).nonzero()[0] + 1
 # extracts value corresponding to those indexes
 time_max = t[angle_max_index]
 angle_max = angle[angle_max_index]
