@@ -1,4 +1,6 @@
 # python2.7
+from re import compile
+from os import listdir
 import time as tme
 from limb_data import values
 from positions import positions
@@ -16,8 +18,6 @@ Contains class:
 """To change from webots to real world, change import below."""
 
 #from robot_interface_webots import Robot
-from os import listdir
-from re import compile
 
 files = listdir('.')
 r = compile("algorithm_")
@@ -119,11 +119,13 @@ class Interface(Algorithm):
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
         L3 = 0.20  # length of pendulum 3 in m
-        a1 = angle1 * numpy.pi/180
-        a2 = angle2 * numpy.pi/180
-        a3 = angle3 * numpy.pi/180
-        x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
-        y_seat = L3 * numpy.cos(a1 + a2 + a3) + L2 * numpy.cos(a1 + a2) + L1 * numpy.cos(a1)
+        a1 = angle1 * numpy.pi / 180
+        a2 = angle2 * numpy.pi / 180
+        a3 = angle3 * numpy.pi / 180
+        x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * \
+            numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
+        y_seat = L3 * numpy.cos(a1 + a2 + a3) + L2 * \
+            numpy.cos(a1 + a2) + L1 * numpy.cos(a1)
         if self.position == "seated":
             x_com = x_seat + 0.00065
             y_com = y_seat + 0.1166
@@ -137,9 +139,10 @@ class Interface(Algorithm):
     def __run_real(self, t, period):
         max_runs = t * 1 / period + 1.0
 
-        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'), 
-                            ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2', 'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'), 
-                            ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
+                     ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
+                                                                  'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
+                     ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
         # Data will be added to this with time
         self.all_data = numpy.empty((0, ), dtype=data_type)
 
@@ -158,9 +161,13 @@ class Interface(Algorithm):
                 self.get_gyro(),
                 self.get_small_encoders(),
                 self.get_big_encoder()]
-            
+
             values.append(self.get_ang_vel(values[0], values[-1]))
-            values.append(self.centre_of_mass(values[5], values[4][0], values[4][1]))
+            values.append(
+                self.centre_of_mass(
+                    values[5],
+                    values[4][0],
+                    values[4][1]))
 
             # use flatten in utility functions to reduce to one long list
             # (better for storage) and add current position
@@ -170,8 +177,8 @@ class Interface(Algorithm):
             self.algorithm(self.position, *flat_values)
             flat_values.append(self.position)
 
-
-            self.all_data = numpy.append(self.all_data, numpy.array([tuple(flat_values)], dtype=data_type), axis=0)
+            self.all_data = numpy.append(self.all_data, numpy.array(
+                [tuple(flat_values)], dtype=data_type), axis=0)
 
             # wait until end of cycle time before running again
             cycle_time = tme.time() - start_time
@@ -197,9 +204,10 @@ class Interface(Algorithm):
 
         # Needs to update line by line so only have access to data you would if
         # running real time
-        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'), 
-                            ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2', 'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'), 
-                            ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
+                     ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
+                                                                  'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
+                     ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
         # Data will be added to this with time
         self.all_data = numpy.empty((0, ), dtype=data_type)
 
@@ -209,7 +217,8 @@ class Interface(Algorithm):
             self.algorithm(self.position, *row)
             # Add new data to available data
             line_data = numpy.append(row, [self.position], axis=0)
-            self.all_data = numpy.append(self.all_data, numpy.array([tuple(line_data)], dtype=data_type), axis=0)
+            self.all_data = numpy.append(self.all_data, numpy.array(
+                [tuple(line_data)], dtype=data_type), axis=0)
 
     def run(self, t, period, **kwargs):
         """
@@ -232,11 +241,13 @@ class Interface(Algorithm):
         Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
-        with open('Output_data/' + filename,'w') as f:
-                rows = [[str(i) for i in list(line)[:-1]] + [line[-1]] for line in self.all_data]
-                for row in rows:
-                    f.write(','.join(row) + '\n')
+        with open('Output_data/' + filename, 'w') as f:
+            rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
+                    for line in self.all_data]
+            for row in rows:
+                f.write(','.join(row) + '\n')
         print 'Data saved to {}'.format(filename)
+
 
 if __name__ == '__main__':
     interface = Interface(setup)

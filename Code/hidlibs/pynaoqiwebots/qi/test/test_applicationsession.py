@@ -5,6 +5,7 @@ import qi
 isconnected = False
 isdisconnected = False
 
+
 def test_applicationsession():
     def callback_conn():
         global isconnected
@@ -36,8 +37,10 @@ def test_applicationsession():
 
     assert isdisconnected is True
 
+
 def main():
     test_applicationsession()
+
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+from utility_functions import read_file, convert_read_numpy
 """
 ===========================
 The double pendulum problem
@@ -17,7 +18,6 @@ import os
 from graph_format import format_graph
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy
 
 L1 = 1.5  # length of pendulum 1 in m
 L2 = 0.12  # length of pendulum 2 in m
@@ -29,7 +29,7 @@ filename = files[-1]
 
 # filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
-angles = read_file(output_data_directory +filename)
+angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 
 # Extract data

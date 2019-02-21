@@ -1,3 +1,4 @@
+from utility_functions import read_file, convert_read_numpy
 """
 This plot shows the angle against time, along with the position of the robot against time.
 
@@ -11,14 +12,13 @@ import matplotlib.pyplot as plt
 from graph_format import format_graph
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy
 
 # access latest file if underneath file name is blanked out
 output_data_directory = '../Output_data/'
 files = sorted(os.listdir(output_data_directory))
 filename = files[-1]
-# filename = 
-angles = read_file(output_data_directory +filename)
+# filename =
+angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 
 # Extract data

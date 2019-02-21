@@ -1,3 +1,4 @@
+from utility_functions import read_file, convert_read_numpy
 """
 This plot shows the angle against time, along with the position of the robot against time.
 
@@ -12,25 +13,28 @@ from graph_format import format_graph
 from scipy.optimize import curve_fit
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy
 
 # access latest file if underneath file name is blanked out
 output_data_directory = '../Output_data/'
 files = sorted(os.listdir(output_data_directory))
 filename = files[-1]
-# filename = 
-angles = read_file(output_data_directory +filename)
+# filename =
+angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 t = angles['time']
 angle = angles['be']
 
-# taking last position in data and assuming it is same throughout, then extracting name to put in title
+# taking last position in data and assuming it is same throughout, then
+# extracting name to put in title
 position_name = angles['pos'][-1]
 
 fig, ax = plt.subplots(1, 1)
 ax = format_graph(ax)
 
-plt.title('Damping plot for {} position, taken from data in \n{}'.format(position_name, filename))
+plt.title(
+    'Damping plot for {} position, taken from data in \n{}'.format(
+        position_name,
+        filename))
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 
@@ -47,8 +51,9 @@ angle_max = angle[angle_max_index]
 plt.scatter(time_max, angle_max, color='r', label='Local maxima')
 
 # calculate period of swing
-time_between_max = np.sum(np.diff(time_max))/(len(time_max)-1)
+time_between_max = np.sum(np.diff(time_max)) / (len(time_max) - 1)
 w_d = 2 * np.pi / time_between_max
+
 
 def damping_fit(t, a, b):
     # Function that curve_fit will attempt to fit to
@@ -67,8 +72,13 @@ plt.plot(time, angle_fitted, label='Fitted curve')
 
 # calculates omega without damping and damping coefficient given b and w_d,
 # maths taken from wikipedia damping_ratio page on underdamped section
-omega_0 = lambda b, w_d: np.sqrt(b**2 + w_d**2)
-zeta = lambda b, w_d: b/np.sqrt(b**2 + w_d**2)
+
+
+def omega_0(b, w_d): return np.sqrt(b**2 + w_d**2)
+
+
+def zeta(b, w_d): return b / np.sqrt(b**2 + w_d**2)
+
 
 # turns values into list to be added to plot
 text_params = [
@@ -81,8 +91,8 @@ text_params = [
         perr)]
 # adds all parameters to plot in the bottom right hand corner
 plt.text(0.95, 0.05, r'$ae^{-bt} + c$' + '\n' + "\n".join(text_params) + "\n" + r"$\zeta: $" + "{:.4f}".format(zeta(popt[1], w_d)) +
-        "\n" + r"$\omega_d: $" + "{:.4f}".format(w_d) + 
-        "\n" + r"$\omega_0: $" + "{:.4f}".format(omega_0(popt[1], w_d)), horizontalalignment='right',
+         "\n" + r"$\omega_d: $" + "{:.4f}".format(w_d) +
+         "\n" + r"$\omega_0: $" + "{:.4f}".format(omega_0(popt[1], w_d)), horizontalalignment='right',
          verticalalignment='bottom',
          transform=ax.transAxes, size=17, bbox=dict(facecolor='lightgrey', alpha=0.9))
 

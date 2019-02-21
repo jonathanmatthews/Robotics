@@ -1,12 +1,16 @@
 #! /usr/bin/python2
 
+import time
 import qi
+
 
 def add(a, b):
     return a + b
 
+
 def fail():
     assert(False)
+
 
 def err():
     raise RuntimeError("sdsd")
@@ -22,6 +26,7 @@ def test_async_error():
     assert(f.hasError() == True)
     assert(f.error().startswith("RuntimeError: sdsd"))
 
+
 class Adder:
     def __init__(self):
         self.v = 0
@@ -33,6 +38,7 @@ class Adder:
     def val(self):
         return self.v
 
+
 def test_async_meth():
     ad = Adder()
     f = qi.async(ad.add, 21)
@@ -42,14 +48,18 @@ def test_async_meth():
     f = qi.async(ad.val)
     assert(f.value() == 42)
 
+
 def test_async_delay():
-    f = qi.async(add, 21,  21, delay=1000)
+    f = qi.async(add, 21, 21, delay=1000)
     assert(f.value() == 42)
 
+
 result = 0
-import time
+
+
 def test_periodic_task():
     t = qi.PeriodicTask()
+
     def add():
         global result
         result += 1
@@ -58,10 +68,11 @@ def test_periodic_task():
     t.start(True)
     time.sleep(1)
     t.stop()
-    assert result > 5 #how to find 5: plouf plouf plouf
+    assert result > 5  # how to find 5: plouf plouf plouf
     cur = result
     time.sleep(1)
     assert cur == result
+
 
 def test_async_cancel():
     f = qi.async(fail, delay=1000000)
@@ -71,6 +82,7 @@ def test_async_cancel():
     assert(not f.hasError())
     assert(f.isCanceled())
 
+
 def main():
     test_async_fun()
     test_async_error()
@@ -78,6 +90,7 @@ def main():
     test_async_delay()
     test_periodic_task()
     test_async_cancel()
+
 
 if __name__ == "__main__":
     main()
