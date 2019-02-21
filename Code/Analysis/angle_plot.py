@@ -12,11 +12,10 @@ from graph_format import format_graph
 
 
 # access latest file if underneath file name is blanked out
-files = os.listdir('Output_data/')
-files.sort()
+files = sorted(os.listdir('../Output_data/'))
 filename = files[-1]
 # filename = '15-02-2019 10:29:57'
-angles = loadtxt('Output_data/' + filename)
+angles = loadtxt('../Output_data/' + filename)
 
 position_names = {
     1: 'extended',
@@ -38,9 +37,7 @@ position = angles[:, -1]
 # setup figure
 fig, ax = plt.subplots(
     2, 2, figsize=(
-        8, 6), gridspec_kw={
-            'height_ratios': [
-                1, 1]}, sharex=True)
+        8, 6), sharex=True)
 
 # use this to format graphs, keeps everything looking the same
 ax = format_graph(ax)
@@ -51,7 +48,7 @@ plt.title('Plot of angle against seat position')
 plt.plot(t, position, label='Position of Nao')
 plt.yticks([-1, 0, 1], ['initial_seated', 'seated', 'extended'])
 plt.ylabel('Named position')
-plt.ylim([min(position)-0.1, max(position)+0.1])
+plt.ylim([min(position) - 0.1, max(position) + 0.1])
 
 # editing bottom left plot
 plt.sca(ax[2])
@@ -81,4 +78,5 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig('Analysis/Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')
+fig.savefig(
+    'Figures/AnglePlot{}.eps'.format(filename.replace(" ", "")), format='eps')

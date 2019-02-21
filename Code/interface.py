@@ -1,23 +1,37 @@
 # python2.7
+import time as tme
+from limb_data import values
+from positions import positions
+from utility_functions import flatten
+from sys import path
+from robot_interface import Robot
+from encoder_interface import Encoders
 import numpy
 """
-A module containing interface that connects robot and encoders to algorithm and storage.
+A module containing an interface that connects the robot and encoders to algorithm and storage.
 
 Contains class:
     Interface
 """
 """To change from webots to real world, change import below."""
 
-from sys import path
-import time as tme
-from utility_functions import flatten
-from encoder_interface import Encoders
-from robot_interface import Robot
 #from robot_interface_webots import Robot
+from os import listdir
+from re import compile
+
+files = listdir('.')
+r = compile("algorithm_")
+list_algorithms = filter(r.match, files)
+text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
+algorithm = str(
+    input(
+        'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
+            "\n".join(text))))
+algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
+Algorithm = __import__(algorithm_import).Algorithm
+
 # Different positions of robot
-from positions import positions
 # Information of robot limbs (max angle etc)
-from limb_data import values
 
 """
 Set mode to run here
@@ -61,33 +75,43 @@ except ImportError as e:
     print "Couldn't import, you are most likely in the wrong directory, try again from Code directory"
     raise e
 
-class Interface(Robot, Encoders):
+
+class Interface(Algorithm):
     """
     This class ties together the Robot and the Encoders, and adds functionality such as storing, and running tests
     on old data. It inherits from Robot and Encoders so has access to all their methods in the normal way (self.get_gyro() etc).
     """
 
     def __init__(self, setup):
-        # Initialise encoder
-        Encoders.__init__(self, BigEncoder, SmallEncoders)
-        # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy)
+        # Initialise algorithm
+        Algorithm.__init__(
+            self,
+            BigEncoder,
+            SmallEncoders,
+            values,
+            positions,
+            ALProxy)
 
         # Store setup mode for later
         self.setup = setup
 
-    def algorithm(self, *args):
+    def get_ang_vel(self, event_number):
         """
-        Defines how robot moves with swinging.
-        Can collect old data via:
-        print self.all_data
-        Can move to new position via:
-        self.set_posture('extended')
-        pos will be name of current position
+        Function to get the current angular velocity, accessing the last two data
+        values recorded. Returns None if not enough data exists yet.
+        Requires arguments:
+        event_number : int, the row within self.all_data at whcih to calculate.
         """
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        self.set_posture("seated")
-        print time, pos
+        if len(self.all_data) < 2:
+            return None
+
+        prev_data = self.all_data[event_number - 1]
+        curr_data = self.all_data[event_number]
+
+        delta_time = curr_data[0] - prev_data[0]
+        delta_angle = curr_data[-2] - prev_data[-2]
+
+        return delta_angle / delta_time
 
     def __run_real(self, t, period):
         max_runs = t * 1 / period
@@ -96,8 +120,13 @@ class Interface(Robot, Encoders):
         self.all_data = numpy.empty((int(max_runs), 13))
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-        initial_time = tme.time()
 
+        # wait = 3
+        # self.speech.say(
+            # 'Increase angle of swing, waiting {} seconds'.format(wait))
+        # tme.sleep(wait)
+
+        initial_time = tme.time()
         for t in range(int(max_runs)):
             start_time = tme.time()
 
@@ -112,6 +141,8 @@ class Interface(Robot, Encoders):
             # use flatten in utility functions to reduce to one long list
             # (better for storage) and add current position
             flat_values = flatten(values)
+
+
             # run new data through algorithm
             self.algorithm(self.position, *flat_values)
 
@@ -145,7 +176,8 @@ class Interface(Robot, Encoders):
         self.all_data = numpy.empty((1, 13))
 
         for i in xrange(len(data)):
-            # Put new data through algorithm not including position as want to test algo
+            # Put new data through algorithm not including position as want to
+            # test algo
             self.algorithm(self.position_names[self.position], *data[i, :-1])
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, data[i])
@@ -158,8 +190,10 @@ class Interface(Robot, Encoders):
         filename : string, location of the file to read from if testing. Ignore if not testing.
         """
         if self.setup == 'Testing':
-            # If filename isn't passed through takes this default file
-            filename = kwargs.get('filename', '15-02-2019 10:29:57')
+            # access latest file if underneath file name is blanked out
+            files = sorted(listdir('Output_data/'))
+            latest = files[-1]
+            filename = kwargs.get('filename', latest)
             self.__run_test(t, period, filename)
         else:
             self.__run_real(t, period)
@@ -172,7 +206,7 @@ class Interface(Robot, Encoders):
 
     def store(self, filename):
         """
-        Saves numpy matric as txt file
+        Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
 
@@ -181,6 +215,6 @@ class Interface(Robot, Encoders):
         print 'Data saved to {}'.format(filename)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(10, 0.1)
+    interface.run(20, 0.2)

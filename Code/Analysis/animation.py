@@ -21,8 +21,7 @@ L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
 
-files = os.listdir('Output_data/')
-files.sort()
+files = sorted(os.listdir('Output_data/'))
 filename = files[-1]
 
 # filename = '15-02-2019 10:29:57'
@@ -31,11 +30,11 @@ angles = loadtxt('Output_data/' + filename)
 
 # Extract data
 angle1 = angles[:, 11]
-angle1 = angle1 * pi/180
+angle1 = angle1 * pi / 180
 angle2 = angles[:, 7]
-angle2 = angle2 * pi/180
+angle2 = angle2 * pi / 180
 angle3 = angles[:, 8]
-angle3 = angle3 * pi/180
+angle3 = angle3 * pi / 180
 t = angles[:, 0]
 dt = 0.1
 
@@ -52,7 +51,7 @@ y3 = -L2 * cos(angle1 + angle2 + angle3) + y2
 # Add figure
 fig = plt.figure()
 ax = fig.add_subplot(111, autoscale_on=False,
-                    xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
+                     xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
 ax = format_graph(ax)
 ax.grid()
 plt.sca(ax)
@@ -89,7 +88,7 @@ def animate(i):
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(1, len(t)),
-                            interval=100, blit=True, init_func=init)
+                              interval=100, blit=True, init_func=init)
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
@@ -97,5 +96,5 @@ plt.ylim([-3, 0])
 plt.xlim([-1.5, 1.5])
 
 
-# ani.save('Analysis/Figures/double_pendulum.mp4', fps=15)
+# ani.save('Figures/double_pendulum.mp4', fps=15)
 plt.show()

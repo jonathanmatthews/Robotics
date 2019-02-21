@@ -6,6 +6,7 @@ Contains class:
   Robot
 """
 
+
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
@@ -35,7 +36,7 @@ class Robot():
         self.memory = ALProxy("ALMemory", ip, port)
 
         # Not as easy to store text in numpy so numbers correspond to positions
-        ### THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
+        # THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
         self.position_names = {
             'extended': 1,
             'seated': 0,
@@ -51,7 +52,6 @@ class Robot():
         Obtain the current gyroscope data. Returns a tuple containing the (x, y, z) gyroscope data,
         in rad/s.
         """
-
         x_data = self.memory.getData(self.values['GX'][1])
         y_data = self.memory.getData(self.values['GY'][1])
         z_data = self.memory.getData(self.values['GZ'][1])
@@ -63,21 +63,21 @@ class Robot():
         Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
-        x_data = self.memory.getData(self.values['AX'][1])
-        y_data = self.memory.getData(self.values['AY'][1])
-        z_data = self.memory.getData(self.values['AZ'][1])
+        x_data = self.memory.getData(self.values['ACX'][1])
+        y_data = self.memory.getData(self.values['ACY'][1])
+        z_data = self.memory.getData(self.values['ACZ'][1])
 
         return [x_data, y_data, z_data]
 
-    def get_angle(self, nameofpart):
+    def get_angle(self, part_name):
         """
         Get the current angle of the named part.
         Requires:
-        nameofpart : the name of the part as written in the values dictionary.
+        part_name : the name of the part as written in the values dictionary.
         Example:
         angle, name = self.get_angle('HY')
         """
-        limb_info = self.values[nameofpart]
+        limb_info = self.values[part_name]
         angle = self.memory.getData(limb_info[1])
         name = limb_info[0]
         return angle, name
