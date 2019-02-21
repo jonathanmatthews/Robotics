@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -109,7 +109,7 @@ class Interface(Algorithm):
         curr_data = self.all_data[event_number]
 
         delta_time = curr_data[0] - prev_data[0]
-        delta_angle = curr_data[-2] - prev_data[-2]
+        delta_angle = curr_data[-5] - prev_data[-5]
 
         return delta_angle / delta_time
 
@@ -123,28 +123,23 @@ class Interface(Algorithm):
         a3 = angle3 * numpy.pi/180
         x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
         y_seat = L3 * numpy.cos(a1 + a2 + a3) + L2 * numpy.cos(a1 + a2) + L1 * numpy.cos(a1)
-        if self.posture == "seated":
+        if self.position == "seated":
             x_com = x_seat + 0.00065
             y_com = y_seat + 0.1166
-        elif self.posture == "extended":
+        elif self.position == "extended":
             x_com = x_seat + 0.0183
             y_com = y_seat + 0.1494
         else:
             raise ValueError("Position not found")
-        return x_com, y_com
-        
+        return [x_com, y_com]
+
     def __run_real(self, t, period):
         max_runs = t * 1 / period
 
         # Data will be added to this with time
-        self.all_data = numpy.empty((int(max_runs), 13))
+        self.all_data = numpy.empty((int(max_runs), 17))
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-
-        # wait = 3
-        # self.speech.say(
-            # 'Increase angle of swing, waiting {} seconds'.format(wait))
-        # tme.sleep(wait)
 
         initial_time = tme.time()
         for t in range(int(max_runs)):
@@ -160,7 +155,7 @@ class Interface(Algorithm):
                 self.get_big_encoder(),
                 self.get_ang_vel(t)]
             
-            values.append(self.centre_of_mass(values[7] values[8], values[11]))
+            values.append(self.centre_of_mass(values[5], values[4][0], values[4][1]))
 
             # use flatten in utility functions to reduce to one long list
             # (better for storage) and add current position
@@ -196,14 +191,16 @@ class Interface(Algorithm):
 
         # Needs to update line by line so only have access to data you would if
         # running real time
-        self.all_data = numpy.empty((1, 13))
+        self.all_data = numpy.empty((len(data), 17))
 
         for i in xrange(len(data)):
             # Put new data through algorithm not including position as want to
             # test algo
             self.algorithm(self.position_names[self.position], *data[i, :-1])
             # Add new data to available data
-            self.all_data = numpy.append(self.all_data, data[i])
+            line_data = numpy.append(data[i, :-1], [self.position_names[self.position]], axis=0)
+            self.all_data[i] = line_data
+            #self.all_data = numpy.append(self.all_data, line_data, axis=0)
 
     def run(self, t, period, **kwargs):
         """
