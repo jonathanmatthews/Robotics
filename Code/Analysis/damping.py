@@ -17,7 +17,7 @@ filename = files[-1]
 # filename = '15-02-2019 10:29:57'
 angles = loadtxt('../Output_data/' + filename)
 t = angles[:, 0]
-angle = angles[:, 11]
+angle = angles[:, 12]
 
 # taking last position in data and assuming it is same throughout, then extracting name to put in title
 position = angles[:, -1]
