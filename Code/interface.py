@@ -25,7 +25,6 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-print algorithm_import
 Algorithm = __import__(algorithm_import).Algorithm
 
 # Different positions of robot
