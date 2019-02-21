@@ -10,23 +10,22 @@ import os
 import matplotlib.pyplot as plt
 from graph_format import format_graph
 from scipy.optimize import curve_fit
+from sys import path
+path.insert(0, '..')
+from utility_functions import read_file, convert_read_numpy
 
 # access latest file if underneath file name is blanked out
-files = sorted(os.listdir('../Output_data/'))
+output_data_directory = '../Output_data/'
+files = sorted(os.listdir(output_data_directory))
 filename = files[-1]
-# filename = '15-02-2019 10:29:57'
-angles = loadtxt('../Output_data/' + filename)
-t = angles[:, 0]
-angle = angles[:, 12]
+# filename = 
+angles = read_file(output_data_directory +filename)
+angles = convert_read_numpy(angles)
+t = angles['time']
+angle = angles['be']
 
 # taking last position in data and assuming it is same throughout, then extracting name to put in title
-position = angles[:, -1]
-position_names = {
-    1: 'extended',
-    0: 'seated',
-    -1: 'initial_seated'
-}
-position_name = position_names[position[-1]]
+position_name = angles['pos'][-1]
 
 fig, ax = plt.subplots(1, 1)
 ax = format_graph(ax)

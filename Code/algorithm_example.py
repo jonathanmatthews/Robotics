@@ -34,7 +34,7 @@ class Algorithm(Robot, Encoders):
         # this switches algorithm after time is greater than 10
         if time > 10:
             self.algorithm = self.algorithm_increase
-        print self.all_data
+        print time
 
     def algorithm_increase(self, *args):
         pos, time, event, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, av, cmx, cmy = args

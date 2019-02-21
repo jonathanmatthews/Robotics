@@ -2,7 +2,7 @@
 import time as tme
 from limb_data import values
 from positions import positions
-from utility_functions import flatten
+from utility_functions import flatten, read_file
 from sys import path
 from robot_interface import Robot
 from encoder_interface import Encoders
@@ -95,21 +95,22 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
-    def get_ang_vel(self, event_number):
+    def get_ang_vel(self, time, current_angle):
         """
-        Function to get the current angular velocity, accessing the last two data
-        values recorded. Returns None if not enough data exists yet.
+        Function to get the current angular velocity, taking last recorded value and new
+        value. Returns None if not enough data exists yet.
         Requires arguments:
-        event_number : int, the row within self.all_data at whcih to calculate.
+        time: time since start of algorithm
+        current_angle: current big encoder value
         """
-        if len(self.all_data) < 2:
-            return None
+        if len(self.all_data) == 0:
+            return 0
 
-        prev_data = self.all_data[event_number - 1]
-        curr_data = self.all_data[event_number]
+        time_data = self.all_data['time']
+        angle_data = self.all_data['be']
 
-        delta_time = curr_data[0] - prev_data[0]
-        delta_angle = curr_data[-5] - prev_data[-5]
+        delta_time = time - time_data[-1]
+        delta_angle = current_angle - angle_data[-1]
 
         return delta_angle / delta_time
 
@@ -134,10 +135,14 @@ class Interface(Algorithm):
         return [x_com, y_com]
 
     def __run_real(self, t, period):
-        max_runs = t * 1 / period
+        max_runs = t * 1 / period + 1.0
 
+        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'), 
+                            ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2', 'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'), 
+                            ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
         # Data will be added to this with time
-        self.all_data = numpy.empty((int(max_runs), 17))
+        self.all_data = numpy.empty((0, ), dtype=data_type)
+
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
@@ -152,9 +157,9 @@ class Interface(Algorithm):
                 self.get_acc(),
                 self.get_gyro(),
                 self.get_small_encoders(),
-                self.get_big_encoder(),
-                self.get_ang_vel(t)]
+                self.get_big_encoder()]
             
+            values.append(self.get_ang_vel(values[0], values[-1]))
             values.append(self.centre_of_mass(values[5], values[4][0], values[4][1]))
 
             # use flatten in utility functions to reduce to one long list
@@ -163,10 +168,10 @@ class Interface(Algorithm):
 
             # run new data through algorithm
             self.algorithm(self.position, *flat_values)
+            flat_values.append(self.position)
 
-            flat_values.append(self.position_names[self.position])
-            # add data to row of numpy matrix
-            self.all_data[t, :] = flat_values
+
+            self.all_data = numpy.append(self.all_data, numpy.array([tuple(flat_values)], dtype=data_type), axis=0)
 
             # wait until end of cycle time before running again
             cycle_time = tme.time() - start_time
@@ -178,6 +183,7 @@ class Interface(Algorithm):
             print('RAN BEHIND SCHEDULE')
         else:
             print('Ran on time')
+        # print self.all_data
         # store data in txt file
         self.store(filename)
 
@@ -186,21 +192,24 @@ class Interface(Algorithm):
         Runs old data line by line through algorithm so that algorithm can be tested
         """
         # Read old data
-        data = self.read(filename)
+        data = read_file('Output_data/' + filename)
         print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
 
         # Needs to update line by line so only have access to data you would if
         # running real time
-        self.all_data = numpy.empty((len(data), 17))
+        data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'), 
+                            ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2', 'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'), 
+                            ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+        # Data will be added to this with time
+        self.all_data = numpy.empty((0, ), dtype=data_type)
 
         for i in xrange(len(data)):
+            row = list(data[i])[:-1]
             # Put new data through algorithm not including position as want to
-            # test algo
-            self.algorithm(self.position_names[self.position], *data[i, :-1])
+            self.algorithm(self.position, *row)
             # Add new data to available data
-            line_data = numpy.append(data[i, :-1], [self.position_names[self.position]], axis=0)
-            self.all_data[i] = line_data
-            #self.all_data = numpy.append(self.all_data, line_data, axis=0)
+            line_data = numpy.append(row, [self.position], axis=0)
+            self.all_data = numpy.append(self.all_data, numpy.array([tuple(line_data)], dtype=data_type), axis=0)
 
     def run(self, t, period, **kwargs):
         """
@@ -218,23 +227,17 @@ class Interface(Algorithm):
         else:
             self.__run_real(t, period)
 
-    def read(self, filename):
-        """
-        Reads old data
-        """
-        return numpy.loadtxt('Output_data/' + filename)
-
     def store(self, filename):
         """
         Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
-
-        # All data should be a numpy array
-        numpy.savetxt("Output_data/" + filename, self.all_data)
+        with open('Output_data/' + filename,'w') as f:
+                rows = [[str(i) for i in list(line)[:-1]] + [line[-1]] for line in self.all_data]
+                for row in rows:
+                    f.write(','.join(row) + '\n')
         print 'Data saved to {}'.format(filename)
-
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.2)
+    interface.run(1, 0.2)

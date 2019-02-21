@@ -15,28 +15,32 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import os
 from graph_format import format_graph
+from sys import path
+path.insert(0, '..')
+from utility_functions import read_file, convert_read_numpy
 
 L1 = 1.5  # length of pendulum 1 in m
 L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
-
-files = sorted(os.listdir('../Output_data/'))
+output_data_directory = '../Output_data/'
+files = sorted(os.listdir(output_data_directory))
 filename = files[-1]
 
 # filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
-angles = loadtxt('../Output_data/' + filename)
+angles = read_file(output_data_directory +filename)
+angles = convert_read_numpy(angles)
 
 # Extract data
-angle1 = angles[:, 12]
+angle1 = angles['be']
 angle1 = angle1 * pi / 180
-angle2 = angles[:, 8]
+angle2 = angles['se0']
 angle2 = angle2 * pi / 180
-angle3 = angles[:, 9]
+angle3 = angles['se1']
 angle3 = angle3 * pi / 180
-t = angles[:, 0]
-dt = 0.1
+t = angles['time']
+dt = t[-1] - t[-2]
 
 # Convert angles to cartesian coordinates
 x1 = L1 * sin(angle1)
