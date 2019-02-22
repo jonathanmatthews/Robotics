@@ -29,6 +29,13 @@ gy = angles['gy']
 gz = angles['gz']
 angle1 = angles['be']
 position = angles['pos']
+print position
+
+position_numbers = {
+    'extended': 1,
+    'seated': 0
+}
+position_number = [position_numbers[i] for i in position]
 
 # setup figure
 fig, ax = plt.subplots(
@@ -41,8 +48,9 @@ ax = format_graph(ax)
 # editing top left plot
 plt.sca(ax[0])
 plt.title('Plot of angle against seat position')
-plt.plot(t, position, label='Position of Nao')
+plt.plot(t, position_number, label='Position of Nao')
 plt.ylabel('Named position')
+plt.xlim([0, 30])
 
 # editing bottom left plot
 plt.sca(ax[2])
