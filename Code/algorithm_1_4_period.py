@@ -33,7 +33,7 @@ class Algorithm(Robot, Encoders):
         #print time
 
         try:
-    	  self.prev, self.curr = self.curr, self. b_encoder
+    	  self.prev, self.curr = self.curr, self.b_encoder
     	  self.prev_time, self.curr_time = self.curr_time, time
 
     	except: # if don't exist yet
