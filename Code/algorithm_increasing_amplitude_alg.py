@@ -1,6 +1,7 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
 import time
+import numpy as np
 
 class Algorithm(Robot, Encoders):
     """
@@ -15,32 +16,25 @@ class Algorithm(Robot, Encoders):
 
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
+<<<<<<< HEAD
         self.speech.say("\\rspd=100\\Time to swing")
         self.set_posture("seated")
         time.sleep(2)
         self.set_posture("extended")
+=======
+        self.speech.say("Time to swing")
+        self.set_posture("extended")
+        time.sleep(2)
+        self.previous_be = 0
+        self.algorithm = self.algorithm_startup
+        self.next_position = 'seated'
+>>>>>>> baf7841f5378b438589cf83d2b31d587cc4ecb62
 
-
-        print 2
-        self.max_angle = 0
-        self.algorithm = self.algorithm_start
-
-    def algorithm_start(self, *args):
-        """
-        Defines how robot moves with swinging.
-        Can collect old data via:
-        print self.all_data
-        Can move to new position via:
-        self.set_posture('extended')
-        pos will be name of current position
-        """
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        print time
-        # this switches algorithm after time is greater than 10
-        if time > 10:
+    def algorithm_startup(self, values):
+        if values['time'] > 5:
             self.algorithm = self.algorithm_increase
 
-    def algorithm(self, *args):
+    def algorithm_increase(self, values):
         """
         Defines how robot moves with swinging.
         Can collect old data via:
@@ -49,11 +43,26 @@ class Algorithm(Robot, Encoders):
         self.set_posture('extended')
         pos will be name of current position
         """
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        if b_encoder < -self.max_angle + 1 and pos == 'extended':
-            self.set_posture('seated')
-            self.max_angle = abs(b_encoder)
-        if b_encoder > self.max_angle - 1 and pos == 'seated':
-            self.set_posture('extended')
-            self.max_angle = abs(b_encoder)
-        print time, b_encoder, self.max_angle
+        current_be = values['be']
+        # print  np.sign(current_be) != np.sign(self.previous_be)
+        if np.sign(current_be) != np.sign(self.previous_be):
+            self.min_time = values['time']
+
+            be = np.abs(self.all_data['be'][-60:])
+            time = self.all_data['time'][-60:]
+            angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
+            self.max_time = time[angle_max_index[-1]]
+
+            self.quart_period = np.abs(self.min_time - self.max_time)
+            self.time_switch = self.min_time + self.quart_period
+            print self.quart_period, self.min_time, self.time_switch
+        self.previous_be = current_be
+        if values['time'] >= self.time_switch:
+            self.set_posture(self.next_position)
+            if values['pos'] == 'seated':
+                self.next_position = 'seated'
+            elif values['pos'] == 'extended':
+                self.next_position = 'extended'
+            self.time_switch += 2
+
+

@@ -28,7 +28,7 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import).Algorithm
+Algorithm = __import__(algorithm_import[:-3]).Algorithm
 
 # Different positions of robot
 # Information of robot limbs (max angle etc)
@@ -40,7 +40,8 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Robot_no_encoders'
+
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -198,9 +199,15 @@ class Interface(Algorithm):
             # test algo
             self.algorithm(self.position_names[self.position], *data[i, :-1])
             # Add new data to available data
+<<<<<<< HEAD
             line_data = numpy.append(data[i, :-1], [self.position_names[self.position]], axis=0)
             self.all_data[i] = line_data
             #self.all_data = numpy.append(self.all_data, line_data, axis=0)
+=======
+            self.all_data = numpy.append(self.all_data, numpy.array(
+                [tuple(current_values.values())], dtype=data_type), axis=0)
+        self.store(filename)
+>>>>>>> baf7841f5378b438589cf83d2b31d587cc4ecb62
 
     def run(self, t, period, **kwargs):
         """
@@ -237,6 +244,10 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
+<<<<<<< HEAD
     #interface.run(20, 0.2)
     # interface.set_posture("extended")
     interface.run(1.0, 1.0)
+=======
+    interface.run(20, 0.15)
+>>>>>>> baf7841f5378b438589cf83d2b31d587cc4ecb62
