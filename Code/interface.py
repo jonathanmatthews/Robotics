@@ -234,4 +234,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.2)
+    interface.run(20, 0.1)

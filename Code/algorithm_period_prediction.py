@@ -38,15 +38,16 @@ class Algorithm(Robot, Encoders):
         time = values['time']
         b_encoder = values['be']
         # this switches algorithm after time is greater than 10
+        print("b_encoder")
         print(b_encoder)
-        if time > 10 and b_encoder<0.5 and b_encoder>-0.5:
+        if time > 5 and b_encoder<2 and b_encoder>-2:
             print("switching algorithm")
             self.algorithm = self.algorithm_increase
         else:
             pass
 
     def algorithm_increase(self, values):
-        pos = values['position']
+        pos = values['pos']
         angular_v = values['av']
         t = values['event']
         b_encoder = values['be']
@@ -54,6 +55,7 @@ class Algorithm(Robot, Encoders):
         #check if the robot start to kick for the first time, for the first kick, we check the angular velocity
         #for different postures to change the posture
         if(self.first_kick == True):
+            print('first kick done')
             self.first_kick = False
             if(pos == 'extended' and angular_v >= 0):
                 #The t here means the turn not the time!!!
@@ -69,14 +71,16 @@ class Algorithm(Robot, Encoders):
                     
                     self.recording_mode = True
                     if(pos  == 'extended'):
+                        print('change position seated')
                         self.set_posture('seated')
                     else:
+                        print('change position extended')
                         self.set_posture('extended')
             
-            elif(b_encoder<0.5 and b_encoder>-0.5 and self.recording_mode == True):
+            elif(b_encoder<2 and b_encoder>-2 and self.recording_mode == True):
                 
                 recording_mode = False
                 self.period = t - self.record_start
                 self.next_kick_turn = t + self.period-math.ceil(self.change_pos_time/0.1)
                 self.record_start = t+self.period
-                print(r'{t} + {self.period}')
+                print(r'{t} + ///{self.period}')
