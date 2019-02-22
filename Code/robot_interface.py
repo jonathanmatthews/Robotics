@@ -35,16 +35,6 @@ class Robot():
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
 
-        # Not as easy to store text in numpy so numbers correspond to positions
-        # THIS WILL BE CHANGED IT IS A TEMPORARY FIX I KNOW IT'S A PAIN
-        self.position_names = {
-            'extended': 1,
-            'seated': 0,
-            'initial_seated': -1,
-            1: 'extended',
-            0: 'seated',
-            -1: 'initial_seated'
-        }
         self.position = 'seated'
 
     def get_gyro(self):
