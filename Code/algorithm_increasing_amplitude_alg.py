@@ -41,16 +41,14 @@ class Algorithm(Robot, Encoders):
         if np.sign(current_be) != np.sign(self.previous_be):
             self.min_time = values['time']
 
-            be = self.all_data['be'][-60:]
+            be = np.abs(self.all_data['be'][-60:])
             time = self.all_data['time'][-60:]
             angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-            angle_min_index =  (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1
-            latest_index = max(np.append(angle_max_index, angle_min_index))
-            self.max_time = time[latest_index]
+            self.max_time = time[angle_max_index[-1]]
 
             self.quart_period = np.abs(self.min_time - self.max_time)
-            print self.quart_period
             self.time_switch = self.min_time + self.quart_period
+            print self.quart_period, self.min_time, self.time_switch
         self.previous_be = current_be
         if values['time'] >= self.time_switch:
             self.set_posture(self.next_position)
@@ -58,6 +56,6 @@ class Algorithm(Robot, Encoders):
                 self.next_position = 'seated'
             elif values['pos'] == 'extended':
                 self.next_position = 'extended'
-            self.time_switch += 5
+            self.time_switch += 2
 
 

@@ -203,6 +203,7 @@ class Interface(Algorithm):
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
+        self.store(filename)
 
     def run(self, t, period, **kwargs):
         """
