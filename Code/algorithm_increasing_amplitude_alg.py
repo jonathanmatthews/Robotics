@@ -20,7 +20,11 @@ class Algorithm(Robot, Encoders):
         self.set_posture("seated")
         time.sleep(2)
         self.previous_be = 0
-        self.algorithm = self.algorithm
+        self.algorithm = self.algorithm_startup
+
+    def algorithm_startup(self, values):
+        if values['time'] > 5:
+            self.algorithm = self.algorithm_increase
 
     def algorithm_increase(self, values):
         """
