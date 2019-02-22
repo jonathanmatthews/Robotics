@@ -1,5 +1,5 @@
 """
-This plot shows the angle against time, along with the position of the robot against time.
+This plot shows the angle against time, along with the position of the robot against time, along with gyrometer and accelerometer values.
 
 This code should be run from inside the Analysis directory, otherwise the imports will NOT work.
 """
@@ -9,30 +9,33 @@ from numpy import loadtxt
 import os
 import matplotlib.pyplot as plt
 from graph_format import format_graph
+from sys import path
+path.insert(0, '..')
+from utility_functions import read_file, convert_read_numpy, get_latest_file
 
 
 # access latest file if underneath file name is blanked out
-files = sorted(os.listdir('../Output_data/'))
-filename = files[-1]
-# filename = '15-02-2019 10:29:57'
-angles = loadtxt('../Output_data/' + filename)
-
-position_names = {
-    1: 'extended',
-    0: 'seated',
-    -1: 'initial_seated'
-}
+filename, output_data_directory = get_latest_file('Analysis')
+angles = read_file(output_data_directory + filename)
+angles = convert_read_numpy(angles)
 
 # Extract data
-t = angles[:, 0]
-accx = angles[:, 2]
-accy = angles[:, 3]
-accz = angles[:, 4]
-gx = angles[:, 5]
-gy = angles[:, 6]
-gz = angles[:, 7]
-angle1 = angles[:, 12]
-position = angles[:, -1]
+t = angles['time']
+accx = angles['ax']
+accy = angles['ay']
+accz = angles['az']
+gx = angles['gx']
+gy = angles['gy']
+gz = angles['gz']
+angle1 = angles['be']
+position = angles['pos']
+print position
+
+position_numbers = {
+    'extended': 1,
+    'seated': 0
+}
+position_number = [position_numbers[i] for i in position]
 
 # setup figure
 fig, ax = plt.subplots(
@@ -45,10 +48,9 @@ ax = format_graph(ax)
 # editing top left plot
 plt.sca(ax[0])
 plt.title('Plot of angle against seat position')
-plt.plot(t, position, label='Position of Nao')
-plt.yticks([-1, 0, 1], ['initial_seated', 'seated', 'extended'])
+plt.plot(t, position_number, label='Position of Nao')
 plt.ylabel('Named position')
-plt.ylim([min(position) - 0.1, max(position) + 0.1])
+plt.xlim([0, 30])
 
 # editing bottom left plot
 plt.sca(ax[2])

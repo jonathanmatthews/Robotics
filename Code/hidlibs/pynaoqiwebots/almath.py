@@ -1,3 +1,4 @@
+from almathswig import *
 """ Helper module to make sure
 almath.py works in a relocatable Python
 SDK
@@ -22,7 +23,5 @@ def load_almath():
 if sys.platform.startswith("linux"):
     try:
         load_almath()
-    except Exception, e:
+    except Exception as e:
         print e
-
-from almathswig import *

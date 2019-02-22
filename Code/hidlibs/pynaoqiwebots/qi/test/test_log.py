@@ -3,6 +3,7 @@
 import qi
 import qi.logging
 
+
 def test_directlog():
     qi.fatal("test.logger", "log fatal")
     qi.error("test.logger", "log error")
@@ -15,6 +16,7 @@ def test_directlog():
     qi.warning("test.logger", "log warning", 1)
     qi.info("test.logger", "log info", 1)
     qi.verbose("test.logger", "log verbose", 1)
+
 
 def test_loggingLevel():
     logger = qi.logging.Logger("test.logging")
@@ -30,6 +32,7 @@ def test_loggingLevel():
     logger.warning("log warning", 1)
     logger.info("log info", 1)
 
+
 def test_loggingFilters():
     logger = qi.logging.Logger("test.logging")
     qi.logging.setContext(254)
@@ -44,10 +47,12 @@ def test_loggingFilters():
     logger.warning("log warning", 1)
     logger.info("log info", 1)
 
+
 def main():
     test_directlog()
     test_loggingLevel()
     test_loggingFilters()
+
 
 if __name__ == "__main__":
     main()

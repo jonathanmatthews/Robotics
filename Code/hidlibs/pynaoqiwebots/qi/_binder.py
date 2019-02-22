@@ -1,8 +1,8 @@
 ##
-## Author(s):
-##  - Julien Freche <jfreche@aldebaran-robotics.com>
+# Author(s):
+# - Julien Freche <jfreche@aldebaran-robotics.com>
 ##
-## Copyright (C) 2010, 2011, 2012, 2013 Aldebaran Robotics
+# Copyright (C) 2010, 2011, 2012, 2013 Aldebaran Robotics
 ##
 
 """ Those class are meant to be used as a decorator.
@@ -26,21 +26,23 @@ import types
 import inspect
 from ._type import AnyArguments
 
+
 class bind():
     """ bind(returnType = None, paramsType = Node, methodName = None)
 
     This function decorator allows specifying types for bound methods. You can use methodName to rename the method.
     """
-    def __init__(self, returnType = None, paramsType = None, methodName = None):
+
+    def __init__(self, returnType=None, paramsType=None, methodName=None):
         """ bind constructor
         """
-        #return value
+        # return value
         if returnType is None:
             self._retsig = None
         else:
             self._retsig = str(returnType)
 
-        #parameters
+        # parameters
         if paramsType is None:
             self._sig = None
         elif isinstance(paramsType, (list, tuple)):
@@ -59,6 +61,7 @@ class bind():
         f.__qi_return_signature__ = self._retsig
         return f
 
+
 def nobind(func):
     """ nobind()
 
@@ -66,6 +69,7 @@ def nobind(func):
     """
     func.__qi_signature__ = "DONOTBIND"
     return func
+
 
 class singleThreaded():
     """ singleThreaded()
@@ -75,6 +79,7 @@ class singleThreaded():
         So you dont have to care about thread safeness.
         This is the default.
     """
+
     def __init(self, _):
         pass
 
@@ -88,12 +93,14 @@ class singleThreaded():
         f.__qi_threading__ = "single"
         return f
 
+
 class multiThreaded():
     """ multiThreaded()
 
         This class decorator specifies that all methods in the class can be run concurrently.
         You will have to protect your methods for threadsafety.
     """
+
     def __init(self, _):
         pass
 

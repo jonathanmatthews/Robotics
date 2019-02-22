@@ -1,27 +1,30 @@
 #!/usr/bin/env python
 ##
-## Author(s):
-##  - Cedric GESTES <gestes@aldebaran-robotics.com>
-##  - Vincent Barbaresi <vbarbaresi@aldebaran-robotics.com>
+# Author(s):
+# - Cedric GESTES <gestes@aldebaran-robotics.com>
+# - Vincent Barbaresi <vbarbaresi@aldebaran-robotics.com>
 ##
-## Copyright (C) 2013 Aldebaran Robotics
+# Copyright (C) 2013 Aldebaran Robotics
 
 import time
 import threading
 
 from qi import Promise
 
+
 def waiterSetValue(promise, waiter):
-    #time.sleep(t)
+    # time.sleep(t)
     waiter.wait()
     try:
         promise.setValue("mjolk")
-    except:
+    except BaseException:
         pass
+
 
 def waitSetValue(p, t=0.01):
     time.sleep(t)
     p.setValue("mjolk")
+
 
 def test_many_futures_create():
     def wait(p):
@@ -32,6 +35,7 @@ def test_many_futures_create():
     for f in fs:
         assert f.hasValue()
         assert f.value() == 1337
+
 
 def test_future_wait():
     p = Promise()
@@ -46,14 +50,16 @@ def test_many_futures_wait_cancel():
     def cancel(p):
         try:
             p.setValue("Kappa")
-        except:
-            pass #ok: cancel called many times
+        except BaseException:
+            pass  # ok: cancel called many times
 
-    waiter = Promise();
+    waiter = Promise()
     ps = [Promise(cancel) for _ in range(50)]
     fs = [p.future() for p in ps]
     for p in ps:
-        threading.Thread(target=waiterSetValue, args=[p, waiter.future()]).start()
+        threading.Thread(
+            target=waiterSetValue, args=[
+                p, waiter.future()]).start()
     # Cancel only one future
     fs[25].cancel()
     waiter.setValue(None)
@@ -69,14 +75,16 @@ def test_many_promises_wait_cancel():
     def cancel(p):
         try:
             p.setValue("Kappa")
-        except:
-            pass #ok: cancel called many times
+        except BaseException:
+            pass  # ok: cancel called many times
 
-    waiter = Promise();
+    waiter = Promise()
     ps = [Promise(cancel) for _ in range(50)]
     fs = [p.future() for p in ps]
     for p in ps:
-        threading.Thread(target=waiterSetValue, args=[p, waiter.future()]).start()
+        threading.Thread(
+            target=waiterSetValue, args=[
+                p, waiter.future()]).start()
     # Cancel only one promise
     ps[25].setCanceled()
     waiter.setValue(None)
@@ -170,10 +178,13 @@ def test_future_callback():
 
 
 called1, called2 = "", ""
+
+
 def test_future_two_callbacks():
 
     result1 = Promise()
     result2 = Promise()
+
     def callback1(f):
         global called1
         called1 = "1"
@@ -231,7 +242,9 @@ def test_future_exception():
 
 # This test doesn't assert, it's only segfault check
 # No segfault => no bug
-def test_future_many_callback(nbr_fut = 10000):
+
+
+def test_future_many_callback(nbr_fut=10000):
     def callback(f):
         pass
 
@@ -241,13 +254,17 @@ def test_future_many_callback(nbr_fut = 10000):
         f.addCallback(callback)
         p.setValue(0)
 
+
 # This test is ok
-import threading
+
+
 def test_many_callback_threaded():
     nbr_threads = 100
     thr_list = list()
     for i in range(nbr_threads):
-        thr = threading.Thread(target=test_future_many_callback, kwargs={"nbr_fut": 10})
+        thr = threading.Thread(
+            target=test_future_many_callback, kwargs={
+                "nbr_fut": 10})
         thr_list.append(thr)
 
     for i in range(nbr_threads):
@@ -278,7 +295,8 @@ def main():
     test_future_two_callbacks()
     test_future_callback_noargs()
     test_future_many_callback()
-    #test_many_callback_threaded()
+    # test_many_callback_threaded()
+
 
 if __name__ == "__main__":
     main()

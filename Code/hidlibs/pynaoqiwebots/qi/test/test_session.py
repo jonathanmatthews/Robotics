@@ -39,5 +39,6 @@ def test_session_callbacks():
 def main():
     test_session_callbacks()
 
+
 if __name__ == "__main__":
     main()
