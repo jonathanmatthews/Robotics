@@ -19,3 +19,4 @@ def change_stiffness(stiffness, part):
     else:
         motion.setStiffnesses(part, 0.0)
         return 'Loosening'
+
