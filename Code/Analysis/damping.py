@@ -1,6 +1,5 @@
-from utility_functions import read_file, convert_read_numpy
 """
-This plot shows the angle against time, along with the position of the robot against time.
+This plot calculates the maximum values recorded from the big encoder and calculates the damping coefficient.
 
 This code should be run from inside the Analysis directory, otherwise the imports will NOT work.
 """
@@ -13,12 +12,9 @@ from graph_format import format_graph
 from scipy.optimize import curve_fit
 from sys import path
 path.insert(0, '..')
+from utility_functions import read_file, convert_read_numpy, get_latest_file
 
-# access latest file if underneath file name is blanked out
-output_data_directory = '../Output_data/'
-files = sorted(os.listdir(output_data_directory))
-filename = files[-1]
-# filename =
+filename, output_data_directory = get_latest_file('Analysis')
 angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 t = angles['time']

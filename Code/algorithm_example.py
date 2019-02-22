@@ -16,11 +16,10 @@ class Algorithm(Robot, Encoders):
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
         self.set_posture("seated")
-        self.max_angle = 0
 
         self.algorithm = self.algorithm_start
 
-    def algorithm_start(self, *args):
+    def algorithm_start(self, values):
         """
         Defines how robot moves with swinging.
         Can collect old data via:
@@ -29,13 +28,15 @@ class Algorithm(Robot, Encoders):
         self.set_posture('extended')
         pos will be name of current position
         """
-        pos, time, event, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, av, cmx, cmy = args
+        time = values['time']
         # print time
         # this switches algorithm after time is greater than 10
-        if time > 10:
+        if time > 5:
             self.algorithm = self.algorithm_increase
+        print self.all_data['time']
         print time
 
-    def algorithm_increase(self, *args):
-        pos, time, event, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, av, cmx, cmy = args
+    def algorithm_increase(self, values):
+        time = values['time']
+        print self.all_data['time']
         print time, 'algo has changed'

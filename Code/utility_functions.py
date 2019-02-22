@@ -1,6 +1,7 @@
 from numpy import sin, cos, pi
 import numpy
-
+from os import listdir
+from collections import OrderedDict
 
 def flatten(values):
     final_list = []
@@ -26,10 +27,7 @@ def read_file(filename):
     """
     Reads old data
     """
-    data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
-                 ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
-                                                              'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
-                 ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+    data_type = current_data_types()
 
     # Data will be added to this with time
     all_data = numpy.empty((0, ), dtype=data_type)
@@ -44,10 +42,7 @@ def read_file(filename):
 
 
 def convert_read_numpy(data):
-    data_type = [('time', 'f4'), ('event', 'f4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
-                 ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
-                                                              'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
-                 ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+    data_type = current_data_types()
     # Data will be added to this with time
     all_data = numpy.empty((0, ), dtype=data_type)
 
@@ -56,3 +51,38 @@ def convert_read_numpy(data):
         all_data = numpy.append(all_data, numpy.array(
             [tuple(row)], dtype=data_type), axis=0)
     return all_data
+
+
+def current_data_types():
+    return [('time', 'f4'), ('event', 'i4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
+            ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
+                                                         'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
+            ('cmx', 'f4'), ('cmy', 'f4'), ('pos', '|S10')]
+
+
+def get_latest_file(current_dir):
+    if current_dir == 'Code':
+        output_directory = 'Output_data/'
+        files = sorted(listdir(output_directory))
+        latest = files[-1]
+    else:
+        output_directory = '../Output_data/'
+        files = sorted(listdir(output_directory))
+        latest = files[-1]
+    return latest, output_directory
+
+def convert_list_dict(current_values):
+    """
+    Converts list of values into a dictionary with keys of names current_data_types(), this way data
+    can be accessed via values['time'] etc
+    current_values: list of values with same length as current_data_types()
+    """
+
+    data_types = current_data_types()
+    if len(current_values) != len(data_types):
+        raise ValueError('Length of values not equal to data types length')
+    values = OrderedDict()
+    data_names = [key_pair[0] for key_pair in data_types]
+    for i, name in enumerate(data_names):
+        values[name] = current_values[i]
+    return values
