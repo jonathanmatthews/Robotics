@@ -30,7 +30,7 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import).Algorithm
+Algorithm = __import__(algorithm_import[:-3]).Algorithm
 
 
 """
@@ -40,11 +40,8 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-<<<<<<< HEAD
-setup = 'Robot_no_encoders'
-=======
+
 setup = 'Real'
->>>>>>> master
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -238,4 +235,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(0, 0.2)
+    interface.run(20, 0.15)

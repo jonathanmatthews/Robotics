@@ -17,10 +17,10 @@ class Algorithm(Robot, Encoders):
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
         self.speech.say("Time to swing")
-        self.set_posture("seated")
+        self.set_posture("extended")
         time.sleep(2)
         self.previous_be = 0
-        self.algorithm = self.algorithm
+        self.algorithm = self.algorithm_increase
 
     def algorithm_increase(self, values):
         """
@@ -38,6 +38,10 @@ class Algorithm(Robot, Encoders):
             be = self.all_data['be'][-40:]
             time = self.all_data['time'][-40:]
             angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
+            if len(angle_max_index) == 0:
+                angle_max_index = [0]
+                print angle_max_index
+            print angle_max_index
             self.max_time = time[angle_max_index[-1]]
 
             self.quart_period = np.abs(self.min_time - self.max_time)
