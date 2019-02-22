@@ -3,6 +3,9 @@ import numpy
 
 
 def format_graph(axis):
+    """
+    Works out if axis is a list of axis' or not, and if so individually formats each one
+    """
     if isinstance(axis, numpy.ndarray):
         return [format_axis(ax) for ax in axis.flat]
     else:
@@ -10,6 +13,9 @@ def format_graph(axis):
 
 
 def format_axis(ax):
+    """
+    This formats an axis according to the style guidelines set below
+    """
     plt.sca(ax)
     # ax.set_facecolor('#eeeeee')
     plt.rcParams.update({'axes.titlesize': 18,

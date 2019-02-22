@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 ##
-## Author(s):
-##  - Vincent Barbaresi <vbarbaresi@aldebaran-robotics.com>
+# Author(s):
+# - Vincent Barbaresi <vbarbaresi@aldebaran-robotics.com>
 ##
-## Copyright (C) 2013 Aldebaran Robotics
+# Copyright (C) 2013 Aldebaran Robotics
 
 import time
 import qi
 import sys
 import pytest
+
 
 class TestService:
     def display(self, t):
@@ -48,7 +49,7 @@ def test_unicode_strings():
     mystring = service.display(unicode_string)
     print("mystr:", mystring)
     print("uystr:", unicode_string)
-    assert type(mystring) == str
+    assert isinstance(mystring, str)
     assert mystring.encode("ascii") == unicode_string.encode("ascii")
 
     # Wide unicode
@@ -215,6 +216,7 @@ def main():
     test_object_types()
     test_qi_object_instance()
     test_type()
+
 
 if __name__ == "__main__":
     main()

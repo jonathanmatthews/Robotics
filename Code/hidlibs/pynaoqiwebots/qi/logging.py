@@ -1,8 +1,8 @@
 ##
-## Author(s):
-##  - Herve CUCHE <hcuche@aldebaran-robotics.com>
+# Author(s):
+# - Herve CUCHE <hcuche@aldebaran-robotics.com>
 ##
-## Copyright (C) 2013 Aldebaran Robotics
+# Copyright (C) 2013 Aldebaran Robotics
 ##
 
 from _qi import pylog
@@ -13,17 +13,18 @@ import uuid
 __all__ = ("SILENT", "FATAL", "ERROR", "WARNING", "INFO", "VERBOSE", "DEBUG",
            "fatal", "error", "warning", "info", "verbose",
            "Logger", "setLevel", "setContext", "setFilters",
-           "getLogger", "logFatal", "logError", "logWarning", "logInfo", "logVerbose", "logDebug",  #deprecated
+           "getLogger", "logFatal", "logError", "logWarning", "logInfo", "logVerbose", "logDebug",  # deprecated
            )
 
 # Log Level
-SILENT  = 0
-FATAL   = 1
-ERROR   = 2
+SILENT = 0
+FATAL = 1
+ERROR = 2
 WARNING = 3
-INFO    = 4
+INFO = 4
 VERBOSE = 5
-DEBUG   = 6
+DEBUG = 6
+
 
 def _logGetTraceInfo():
     callerframerecord = inspect.stack()[2]    # 0 represents this line
@@ -31,8 +32,10 @@ def _logGetTraceInfo():
     info = inspect.getframeinfo(frame)
     return info
 
+
 def _printToString(*args):
     return ' '.join(str(x) for x in args)
+
 
 class Logger:
     def __init__(self, category):
@@ -44,7 +47,14 @@ class Logger:
 
         Logs a message with level FATAL on this logger."""
         info = _logGetTraceInfo()
-        pylog(FATAL, self.category, _printToString(*args), info.filename, info.function, info.lineno)
+        pylog(
+            FATAL,
+            self.category,
+            _printToString(
+                *args),
+            info.filename,
+            info.function,
+            info.lineno)
 
     def error(self, *args):
         """ error(*args) -> None
@@ -52,7 +62,14 @@ class Logger:
 
         Logs a message with level ERROR on this logger."""
         info = _logGetTraceInfo()
-        pylog(ERROR, self.category, _printToString(*args), info.filename, info.function, info.lineno)
+        pylog(
+            ERROR,
+            self.category,
+            _printToString(
+                *args),
+            info.filename,
+            info.function,
+            info.lineno)
 
     def warning(self, *args):
         """ warning(*args) -> None
@@ -60,7 +77,14 @@ class Logger:
 
         Logs a message with level WARNING on this logger."""
         info = _logGetTraceInfo()
-        pylog(WARNING, self.category, _printToString(*args), info.filename, info.function, info.lineno)
+        pylog(
+            WARNING,
+            self.category,
+            _printToString(
+                *args),
+            info.filename,
+            info.function,
+            info.lineno)
 
     def info(self, *args):
         """ info(*args) -> None
@@ -68,7 +92,14 @@ class Logger:
 
         Logs a message with level INFO on this logger."""
         info = _logGetTraceInfo()
-        pylog(INFO, self.category, _printToString(*args), info.filename, info.function, info.lineno)
+        pylog(
+            INFO,
+            self.category,
+            _printToString(
+                *args),
+            info.filename,
+            info.function,
+            info.lineno)
 
     def verbose(self, *args):
         """ verbose(*args) -> None
@@ -76,7 +107,15 @@ class Logger:
 
         Logs a message with level VERBOSE on this logger."""
         info = _logGetTraceInfo()
-        pylog(VERBOSE, self.category, _printToString(*args), info.filename, info.function, info.lineno)
+        pylog(
+            VERBOSE,
+            self.category,
+            _printToString(
+                *args),
+            info.filename,
+            info.function,
+            info.lineno)
+
 
 def fatal(cat, *args):
     """ fatal(cat, *args) -> None
@@ -85,7 +124,15 @@ def fatal(cat, *args):
 
     Logs a message with level FATAL."""
     info = _logGetTraceInfo()
-    pylog(FATAL, cat, _printToString(*args), info.filename, info.function, info.lineno)
+    pylog(
+        FATAL,
+        cat,
+        _printToString(
+            *args),
+        info.filename,
+        info.function,
+        info.lineno)
+
 
 def error(cat, *args):
     """ error(cat, *args) -> None
@@ -94,7 +141,15 @@ def error(cat, *args):
 
     Logs a message with level ERROR."""
     info = _logGetTraceInfo()
-    pylog(ERROR, cat, _printToString(*args), info.filename, info.function, info.lineno)
+    pylog(
+        ERROR,
+        cat,
+        _printToString(
+            *args),
+        info.filename,
+        info.function,
+        info.lineno)
+
 
 def warning(cat, *args):
     """ warning(cat, *args) -> None
@@ -103,7 +158,15 @@ def warning(cat, *args):
 
     Logs a message with level WARNING."""
     info = _logGetTraceInfo()
-    pylog(WARNING, cat, _printToString(*args), info.filename, info.function, info.lineno)
+    pylog(
+        WARNING,
+        cat,
+        _printToString(
+            *args),
+        info.filename,
+        info.function,
+        info.lineno)
+
 
 def info(cat, *args):
     """ info(cat, *args) -> None
@@ -112,7 +175,15 @@ def info(cat, *args):
 
     Logs a message with level INFO."""
     info = _logGetTraceInfo()
-    pylog(INFO, cat, _printToString(*args), info.filename, info.function, info.lineno)
+    pylog(
+        INFO,
+        cat,
+        _printToString(
+            *args),
+        info.filename,
+        info.function,
+        info.lineno)
+
 
 def verbose(cat, *args):
     """ verbose(cat, *args) -> None
@@ -121,15 +192,21 @@ def verbose(cat, *args):
 
     Logs a message with level VERBOSE."""
     info = _logGetTraceInfo()
-    pylog(VERBOSE, cat, _printToString(*args), info.filename, info.function, info.lineno)
+    pylog(
+        VERBOSE,
+        cat,
+        _printToString(
+            *args),
+        info.filename,
+        info.function,
+        info.lineno)
 
 
-
-#deprecated 2.0.1  (to remove in 2.1)
-logFatal   = fatal
-logError   = error
+# deprecated 2.0.1  (to remove in 2.1)
+logFatal = fatal
+logError = error
 logWarning = warning
-logInfo    = info
+logInfo = info
 logVerbose = verbose
-logDebug   = verbose
-getLogger  = Logger
+logDebug = verbose
+getLogger = Logger

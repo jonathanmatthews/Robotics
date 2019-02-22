@@ -1,5 +1,5 @@
 ##
-## Copyright (C) 2014 Aldebaran Robotics
+# Copyright (C) 2014 Aldebaran Robotics
 ##
 
 from _qi import Translator
@@ -8,6 +8,7 @@ from .logging import warning
 
 globTranslator = None
 
+
 def defaultTranslator(name):
     global globTranslator
     if globTranslator:
@@ -15,6 +16,7 @@ def defaultTranslator(name):
 
     globTranslator = Translator(name)
     return globTranslator
+
 
 def tr(msg, domain=None, locale=None):
     global globTranslator
@@ -27,4 +29,5 @@ def tr(msg, domain=None, locale=None):
         return globTranslator.translate(msg, domain)
     return globTranslator.translate(msg, domain, locale)
 
-__all__ = ( "defaultTranslator", "tr" )
+
+__all__ = ("defaultTranslator", "tr")
