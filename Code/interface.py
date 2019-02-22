@@ -23,7 +23,8 @@ Contains class:
 files = listdir('.')
 r = compile("algorithm_")
 list_algorithms = filter(r.match, files)
-text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
+text = [algo for algo in list_algorithms if algo[:-4] != '.pyc'] 
+text = ["{} {}".format(i, algo) for i, algo in enumerate(list_algorithms)]
 algorithm = str(
     input(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
@@ -233,4 +234,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(80, 0.2)
+    interface.run(0, 0.2)
