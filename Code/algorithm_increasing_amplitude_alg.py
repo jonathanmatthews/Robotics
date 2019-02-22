@@ -15,10 +15,10 @@ class Algorithm(Robot, Encoders):
 
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
-        self.speech.say("Time to swing")
-        self.set_posture("folded")
+        self.speech.say("\\rspd=100\\Time to swing")
+        self.set_posture("seated")
         time.sleep(2)
-        self.set_posture("unfolded")
+        self.set_posture("extended")
 
 
         print 2

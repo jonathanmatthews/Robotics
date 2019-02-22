@@ -1,7 +1,7 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
 from numpy import sign
-
+import time
 
 class Algorithm(Robot, Encoders):
     """
@@ -15,8 +15,19 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy)
 
         # Run code for set up of algorithm here e.g.
-        self.speech.say("Setting up algorithm")
+        #self.speech.say("Setting up algorithm")
+        self.set_posture("extended")
+        time.sleep(1)
         self.set_posture("seated")
+        time.sleep(1)
+        self.set_posture("extended")
+        time.sleep(1)
+        self.set_posture("seated")
+        time.sleep(1)
+        self.set_posture("extended")
+        time.sleep(1)
+        self.set_posture("seated")
+        time.sleep(1)
         self.max_angle = 0
 
 
@@ -33,7 +44,7 @@ class Algorithm(Robot, Encoders):
         #print time
 
         try:
-    	  self.prev, self.curr = self.curr, self. b_encoder
+    	  self.prev, self.curr = self.curr, self.b_encoder
     	  self.prev_time, self.curr_time = self.curr_time, time
 
     	except: # if don't exist yet
