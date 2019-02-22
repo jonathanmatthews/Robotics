@@ -25,13 +25,13 @@ position_names = {
 
 # Extract data
 t = angles[:, 0]
-accx = angles[:, 1]
-accy = angles[:, 2]
-accz = angles[:, 3]
-gx = angles[:, 4]
-gy = angles[:, 5]
-gz = angles[:, 6]
-angle1 = angles[:, 11]
+accx = angles[:, 2]
+accy = angles[:, 3]
+accz = angles[:, 4]
+gx = angles[:, 5]
+gy = angles[:, 6]
+gz = angles[:, 7]
+angle1 = angles[:, 12]
 position = angles[:, -1]
 
 # setup figure

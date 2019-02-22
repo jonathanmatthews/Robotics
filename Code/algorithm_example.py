@@ -29,12 +29,13 @@ class Algorithm(Robot, Encoders):
         self.set_posture('extended')
         pos will be name of current position
         """
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        print time
+        pos, time, event, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, av, cmx, cmy = args
+        # print time
         # this switches algorithm after time is greater than 10
         if time > 10:
             self.algorithm = self.algorithm_increase
+        print self.all_data
 
     def algorithm_increase(self, *args):
-        pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
+        pos, time, event, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder, av, cmx, cmy = args
         print time, 'algo has changed'

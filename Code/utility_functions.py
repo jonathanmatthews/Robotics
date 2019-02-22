@@ -1,3 +1,6 @@
+from numpy import sin, cos, pi
+
+
 def flatten(values):
     final_list = []
     for list_value in values:

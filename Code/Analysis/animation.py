@@ -21,19 +21,19 @@ L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
 
-files = sorted(os.listdir('Output_data/'))
+files = sorted(os.listdir('../Output_data/'))
 filename = files[-1]
 
 # filename = '15-02-2019 10:29:57'
 # Reads old data from Output_data folder from Code directory or Analysis
-angles = loadtxt('Output_data/' + filename)
+angles = loadtxt('../Output_data/' + filename)
 
 # Extract data
-angle1 = angles[:, 11]
+angle1 = angles[:, 12]
 angle1 = angle1 * pi / 180
-angle2 = angles[:, 7]
+angle2 = angles[:, 8]
 angle2 = angle2 * pi / 180
-angle3 = angles[:, 8]
+angle3 = angles[:, 9]
 angle3 = angle3 * pi / 180
 t = angles[:, 0]
 dt = 0.1
