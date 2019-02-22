@@ -117,17 +117,10 @@ class Interface(Algorithm):
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
-<<<<<<< HEAD
-        #wait = 3
-        #self.speech.say(
-         #   'Increase angle of swing, waiting {} seconds'.format(wait))
-        #tme.sleep(wait)
-=======
         # wait = 3
         # self.speech.say(
             # 'Increase angle of swing, waiting {} seconds'.format(wait))
         # tme.sleep(wait)
->>>>>>> master
 
         initial_time = tme.time()
         for t in range(int(max_runs)):
