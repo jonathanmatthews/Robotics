@@ -40,11 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-<<<<<<< HEAD
 setup = 'Robot_no_encoders'
-=======
-setup = 'Testing'
->>>>>>> master
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {

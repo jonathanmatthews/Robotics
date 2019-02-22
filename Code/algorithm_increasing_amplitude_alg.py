@@ -15,22 +15,12 @@ class Algorithm(Robot, Encoders):
 
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
-        self.set_posture("seated")
-        time.sleep(1.3)
-        self.set_posture("extended")
-        time.sleep(1.3)
-        self.set_posture("seated")
-        time.sleep(1.3)
-        self.set_posture("extended")
-        time.sleep(1.3)
-        self.set_posture("seated")
-        time.sleep(1.3)
-        self.set_posture("extended")
-        time.sleep(1.3)
-        self.set_posture("seated")
-        time.sleep(1.3)
-        self.set_posture("extended")
-        time.sleep(1.3)
+        self.speech.say("Time to swing")
+        self.set_posture("folded")
+        time.sleep(2)
+        self.set_posture("unfolded")
+
+
         print 2
         self.max_angle = 0
         self.algorithm = self.algorithm_start
@@ -60,10 +50,10 @@ class Algorithm(Robot, Encoders):
         pos will be name of current position
         """
         pos, time, ax, ay, az, gx, gy, gz, le0, le1, le2, le3, b_encoder = args
-        #if b_encoder < -self.max_angle + 1 and pos == 'extended':
-        #    self.set_posture('seated')
-        #    self.max_angle = abs(b_encoder)
-        #if b_encoder > self.max_angle - 1 and pos == 'seated':
-        #    self.set_posture('extended')
-        #    self.max_angle = abs(b_encoder)
-        #print time, b_encoder, self.max_angle
+        if b_encoder < -self.max_angle + 1 and pos == 'extended':
+            self.set_posture('seated')
+            self.max_angle = abs(b_encoder)
+        if b_encoder > self.max_angle - 1 and pos == 'seated':
+            self.set_posture('extended')
+            self.max_angle = abs(b_encoder)
+        print time, b_encoder, self.max_angle
