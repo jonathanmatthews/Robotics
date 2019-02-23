@@ -18,14 +18,16 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Setting up algorithm")
         self.speech.say("Time to swing")
         self.set_posture("seated")
-        time.sleep(2)
-        self.previous_be = 0
         self.algorithm = self.algorithm_startup
         self.next_position = 'extended'
+        self.time_switch = 100
+        self.offset= 0.25
 
     def algorithm_startup(self, values):
-        if values['time'] > 5 and values['be'] < 0 and values['be'] > -15 and values['av'] > 0:
+        if values['time'] > 5 and -15 < values['be'] < 0 and values['av'] > 0:
             self.algorithm = self.algorithm_increase
+            self.previous_be = values['be']
+            self.previous_time = values['time']
 
     def algorithm_increase(self, values):
         """
@@ -37,10 +39,14 @@ class Algorithm(Robot, Encoders):
         pos will be name of current position
         """
         current_be = values['be']
+        current_time = values['time']
         # sign of big encoder changes when crossing zero point
         if np.sign(current_be) != np.sign(self.previous_be):
+            print 'Encoder', self.previous_be, current_time
+            dt = current_time - self.previous_time
+            interpolate = dt * np.abs(current_be) / np.abs(current_be - self.previous_be)
             # record current time as the time it goes through the minimum
-            self.min_time = values['time']
+            self.min_time = values['time'] - interpolate
 
             # collect last 60 values of big encoder and time (be abs() so that minima become maxima)
             be = np.abs(self.all_data['be'][-60:])
@@ -55,11 +61,12 @@ class Algorithm(Robot, Encoders):
             self.quart_period = np.abs(self.min_time - self.max_time)
             # set time for position to switch
             # think it's actually best to switch late rather than early so no offset for time changing position
-            self.time_switch = self.min_time + self.quart_period
-            print self.quart_period, self.min_time, self.time_switch
+            self.time_switch = self.min_time + self.quart_period - self.offset
+            print 'Period and switch', self.quart_period, self.min_time, self.time_switch
 
         # at end of loop put current big encoder value as previous value
         self.previous_be = current_be
+        self.previous_time = current_time
         # when time to switch comes change position
         if values['time'] >= self.time_switch:
             # change to new position
@@ -67,7 +74,7 @@ class Algorithm(Robot, Encoders):
             if current_pos == 'seated':
                 self.next_position = 'extended'
             elif current_pos == 'extended':
-                self.next_position == 'seated'
+                self.next_position = 'seated'
             self.set_posture(self.next_position)
             # make sure doesn't try to keep on switching until value is reset in first if statement 
             self.time_switch += 100

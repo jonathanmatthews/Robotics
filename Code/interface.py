@@ -1,12 +1,15 @@
 # python2.7
+from re import compile
+from os import listdir
 import time as tme
 from limb_data import values
 from positions import positions
-from utility_functions import flatten
+from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict
 from sys import path
 from robot_interface import Robot
 from encoder_interface import Encoders
 import numpy
+from collections import OrderedDict
 """
 A module containing an interface that connects the robot and encoders to algorithm and storage.
 
@@ -16,22 +19,19 @@ Contains class:
 """To change from webots to real world, change import below."""
 
 #from robot_interface_webots import Robot
-from os import listdir
-from re import compile
 
 files = listdir('.')
 r = compile("algorithm_")
 list_algorithms = filter(r.match, files)
-text = ["{} {}".format(i, algo[:-3]) for i, algo in enumerate(list_algorithms)]
+text = [algo for algo in list_algorithms if algo[:-4] != '.pyc'] 
+text = ["{} {}".format(i, algo) for i, algo in enumerate(list_algorithms)]
 algorithm = str(
     input(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import).Algorithm
+Algorithm = __import__(algorithm_import[:-2]).Algorithm
 
-# Different positions of robot
-# Information of robot limbs (max angle etc)
 
 """
 Set mode to run here
@@ -40,7 +40,6 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-
 setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
@@ -96,21 +95,22 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
-    def get_ang_vel(self, event_number):
+    def get_ang_vel(self, time, current_angle):
         """
-        Function to get the current angular velocity, accessing the last two data
-        values recorded. Returns None if not enough data exists yet.
+        Function to get the current angular velocity, taking last recorded value and new
+        value. Returns None if not enough data exists yet.
         Requires arguments:
-        event_number : int, the row within self.all_data at whcih to calculate.
+        time: time since start of algorithm
+        current_angle: current big encoder value
         """
-        if len(self.all_data) < 2:
-            return None
+        if len(self.all_data) == 0:
+            return 0
 
-        prev_data = self.all_data[event_number - 1]
-        curr_data = self.all_data[event_number]
+        time_data = self.all_data['time']
+        angle_data = self.all_data['be']
 
-        delta_time = curr_data[0] - prev_data[0]
-        delta_angle = curr_data[-5] - prev_data[-5]
+        delta_time = time - time_data[-1]
+        delta_angle = current_angle - angle_data[-1]
 
         return delta_angle / delta_time
 
@@ -119,11 +119,14 @@ class Interface(Algorithm):
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
         L3 = 0.20  # length of pendulum 3 in m
-        a1 = angle1 * numpy.pi/180
-        a2 = angle2 * numpy.pi/180
-        a3 = angle3 * numpy.pi/180
-        x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
-        y_seat = L3 * numpy.cos(a1 + a2 + a3) + L2 * numpy.cos(a1 + a2) + L1 * numpy.cos(a1)
+        a1 = angle1 * numpy.pi / 180
+        a2 = angle2 * numpy.pi / 180
+        a3 = angle3 * numpy.pi / 180
+        x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * \
+            numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
+        y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
+            numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
+        # THESE VALUES ARE WRONG PLEASE CHANGE
         if self.position == "seated":
             x_com = x_seat + 0.00065
             y_com = y_seat + 0.1166
@@ -135,39 +138,34 @@ class Interface(Algorithm):
         return [x_com, y_com]
 
     def __run_real(self, t, period):
-        max_runs = t * 1 / period
+        max_runs = t * 1 / period + 1.0
 
+        data_type = current_data_types()
         # Data will be added to this with time
-        self.all_data = numpy.empty((int(max_runs), 17))
+        self.all_data = numpy.empty((0, ), dtype=data_type)
+
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
+
         initial_time = tme.time()
-        for t in range(int(max_runs)):
+        for event in range(int(max_runs)):
             start_time = tme.time()
 
-            # record data as list of lists
-            values = [
-                start_time - initial_time,
-                t,
-                self.get_acc(),
-                self.get_gyro(),
-                self.get_small_encoders(),
-                self.get_big_encoder(),
-                self.get_ang_vel(t)]
-            
-            values.append(self.centre_of_mass(values[5], values[4][0], values[4][1]))
+            time = start_time - initial_time
+            ax, ay, az = self.get_acc()
+            gx, gy, gz = self.get_gyro()
+            se0, se1, se2, se3 = self.get_small_encoders()
+            be = self.get_big_encoder()
+            cmx, cmy = self.centre_of_mass(be, se0, se1)
+            av = self.get_ang_vel(time, be)
 
-            # use flatten in utility functions to reduce to one long list
-            # (better for storage) and add current position
-            flat_values = flatten(values)
+            # position recorded is position before any changes
+            current_values = convert_list_dict([time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
-            # run new data through algorithm
-            self.algorithm(self.position, *flat_values)
-
-            flat_values.append(self.position_names[self.position])
-            # add data to row of numpy matrix
-            self.all_data[t, :] = flat_values
+            self.algorithm(current_values)
+            self.all_data = numpy.append(self.all_data, numpy.array(
+                [tuple(current_values.values())], dtype=data_type), axis=0)
 
             # wait until end of cycle time before running again
             cycle_time = tme.time() - start_time
@@ -182,22 +180,25 @@ class Interface(Algorithm):
         # store data in txt file
         self.store(filename)
 
-    def __run_test(self, t, period, filename):
+    def __run_test(self, t, period, filename, output_directory):
         """
         Runs old data line by line through algorithm so that algorithm can be tested
         """
         # Read old data
-        data = self.read(filename)
+        data = read_file(output_directory + filename)
         print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
 
         # Needs to update line by line so only have access to data you would if
         # running real time
-        self.all_data = numpy.empty((len(data), 17))
+        data_type = current_data_types()
+        # Data will be added to this with time
+        self.all_data = numpy.empty((0, ), dtype=data_type)
 
         for i in xrange(len(data)):
+            row_no_pos = list(data[i])[:-1]
+            current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
-            # test algo
-            self.algorithm(self.position_names[self.position], *data[i, :-1])
+            self.algorithm(current_values)
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
@@ -211,31 +212,27 @@ class Interface(Algorithm):
         filename : string, location of the file to read from if testing. Ignore if not testing.
         """
         if self.setup == 'Testing':
-            # access latest file if underneath file name is blanked out
-            files = sorted(listdir('Output_data/'))
-            latest = files[-1]
+            latest, output_directory = get_latest_file('Code')
             filename = kwargs.get('filename', latest)
-            self.__run_test(t, period, filename)
+            self.__run_test(t, period, filename, output_directory)
         else:
             self.__run_real(t, period)
-
-    def read(self, filename):
-        """
-        Reads old data
-        """
-        return numpy.loadtxt('Output_data/' + filename)
 
     def store(self, filename):
         """
         Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
-
-        # All data should be a numpy array
-        numpy.savetxt("Output_data/" + filename, self.all_data)
+        # have to convert floats to strings but position string should stay as
+        # it is
+        with open('Output_data/' + filename, 'w') as f:
+            rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
+                    for line in self.all_data]
+            for row in rows:
+                f.write(','.join(row) + '\n')
         print 'Data saved to {}'.format(filename)
 
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.15)
+    interface.run(0, 0.2)
