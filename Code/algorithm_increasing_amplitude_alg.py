@@ -16,19 +16,12 @@ class Algorithm(Robot, Encoders):
 
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
-<<<<<<< HEAD
-        self.speech.say("\\rspd=100\\Time to swing")
-        self.set_posture("seated")
-        time.sleep(2)
-        self.set_posture("extended")
-=======
         self.speech.say("Time to swing")
         self.set_posture("extended")
         time.sleep(2)
         self.previous_be = 0
         self.algorithm = self.algorithm_startup
         self.next_position = 'seated'
->>>>>>> baf7841f5378b438589cf83d2b31d587cc4ecb62
 
     def algorithm_startup(self, values):
         if values['time'] > 5:
