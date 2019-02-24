@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -173,8 +173,11 @@ class Interface(Algorithm):
                 tme.sleep(period - cycle_time)
 
         # assume final cycle took same time as rest to check if behind or not
-        if cycle_time > period:
+        time_taken = tme.time() - initial_time
+        if time_taken > 1.01 * t:
             print('RAN BEHIND SCHEDULE')
+            print('Correct timing: {}s'.format(t))
+            print('Actual timing: {}s'.format(time_taken))
         else:
             print('Ran on time')
         # store data in txt file
@@ -235,4 +238,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(0, 0.2)
+    interface.run(40, 0.1)
