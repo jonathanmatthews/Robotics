@@ -19,15 +19,20 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Time to swing")
         self.set_posture("seated")
         self.algorithm = self.algorithm_startup
-        self.next_position = 'extended'
         self.time_switch = 100
         self.offset= 0.15
 
     def algorithm_startup(self, values):
         if values['time'] > 5 and -15 < values['be'] < 0 and values['av'] > 0:
+            self.next_position = 'extended'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
             self.previous_time = values['time']
+        if values['time'] > 5 and 0 < values['be'] < 15 and values['av'] < 0:
+            self.next_position = 'seated'
+            self.algorithm = self.algorithm_increase
+            self.previous_be = values['be']
+            self.previous_time = values['time']            
 
     def algorithm_increase(self, values):
         """
