@@ -20,9 +20,11 @@ position = angles['pos']
 
 position_numbers = {
     'extended': 1,
-    'seated': -1
+    'seated': -1,
+    1.0: 'extended',
+    -1.0: 'seated'
 }
-position_number = [max(be)*position_numbers[i] for i in position]
+position_number = [position_numbers[i] for i in position]
 change_point = np.diff(position_number)
 index_change = np.nonzero(change_point)
 
@@ -33,6 +35,7 @@ fig, ax = plt.subplots(
 
 # use this to format graphs, keeps everything looking the same
 ax = format_graph(ax)
+ax2 = ax[0].twinx()
 
 times_change = t[index_change]
 angle_max_index = (np.diff(np.sign(np.diff(np.abs(be)))) < 0).nonzero()[0] + 1
@@ -48,9 +51,12 @@ plt.legend(loc='best')
 plt.grid()
 
 # editing top left plot
+plt.sca(ax2)
+locs, labels = plt.yticks()
+plt.yticks(np.linspace(min(position_number), max(position_number), 3), [position_numbers[min(position_number)], '', position_numbers[max(position_number)]])
+plt.plot(t, position_number, color='r', label='Position of Nao')
 plt.sca(ax[0])
 plt.title('Plot of angle and seat position')
-plt.plot(t, position_number, label='Position of Nao')
 plt.ylabel('Named position')
 plt.plot(t, be, label='Big Encoder')
 plt.show()
