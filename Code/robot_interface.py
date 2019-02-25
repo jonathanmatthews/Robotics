@@ -42,6 +42,7 @@ class Robot():
         Obtain the current gyroscope data. Returns a tuple containing the (x, y, z) gyroscope data,
         in rad/s.
         """
+        return [0.0, 0.0, 0.0]
         x_data = self.memory.getData(self.values['GX'][1])
         y_data = self.memory.getData(self.values['GY'][1])
         z_data = self.memory.getData(self.values['GZ'][1])
@@ -53,6 +54,7 @@ class Robot():
         Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
+        return [0.0, 0.0, 0.0]
         x_data = self.memory.getData(self.values['ACX'][1])
         y_data = self.memory.getData(self.values['ACY'][1])
         z_data = self.memory.getData(self.values['ACZ'][1])
