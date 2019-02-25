@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -115,6 +115,7 @@ class Interface(Algorithm):
         return delta_angle / delta_time
 
     def centre_of_mass(self, angle1, angle2, angle3):
+        return [0.0, 0.0]
         '''Returns the centre of mass relative to the big encoder.'''
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
@@ -238,4 +239,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(40, 0.1)
+    interface.run(40, 0.10)
