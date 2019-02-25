@@ -21,6 +21,8 @@ class Algorithm(Robot, Encoders):
         self.algorithm = self.algorithm_startup
         self.time_switch = 100
         self.offset= 0.15
+        self.decreasing = False
+
 
     def algorithm_startup(self, values):
         if values['time'] > 5 and -15 < values['be'] < 0 and values['av'] > 0:
@@ -32,7 +34,7 @@ class Algorithm(Robot, Encoders):
             self.next_position = 'seated'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
-            self.previous_time = values['time']            
+            self.previous_time = values['time']
 
     def algorithm_increase(self, values):
         """
@@ -73,14 +75,16 @@ class Algorithm(Robot, Encoders):
         self.previous_time = current_time
         # want time to switch as close to top as possible
         if np.abs(values['time'] - self.time_switch) <= dt/2:
-            # change to new position
-            current_pos = values['pos']
-            if current_pos == 'seated':
-                self.next_position = 'extended'
-            elif current_pos == 'extended':
-                self.next_position = 'seated'
-            self.set_posture(self.next_position)
-            # make sure doesn't try to keep on switching until value is reset in first if statement 
-            self.time_switch += 100
-
-
+            # first time it is 35 degrees or more it will skip a cycle so that motion is opposite and amplitude decreases
+            if np.abs(values['be']) < 20 or self.decreasing == True:
+                # change to new position
+                if self.next_position == 'seated':
+                    self.set_posture(self.next_position)
+                    self.next_position = 'extended'
+                elif self.next_position == 'extended':
+                    self.set_posture(self.next_position)
+                    self.next_position = 'seated'
+                # make sure doesn't try to keep on switching until value is reset in first if statement 
+                self.time_switch += 100
+            elif np.abs(values['be']) >= 20:
+                self.decreasing = True
