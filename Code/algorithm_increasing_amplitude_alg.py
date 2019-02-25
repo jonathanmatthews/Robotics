@@ -75,8 +75,11 @@ class Algorithm(Robot, Encoders):
         self.previous_time = current_time
         # want time to switch as close to top as possible
         if np.abs(values['time'] - self.time_switch) <= dt/2:
-            # first time it is 35 degrees or more it will skip a cycle so that motion is opposite and amplitude decreases
-            if np.abs(values['be']) < 20 or self.decreasing == True:
+            # when it is decreasing stop doing anything at 2 degrees
+            if np.abs(values['be']) < 2:
+                pass
+            # first time it is 20 degrees or more it will skip a cycle so that motion is opposite and amplitude decreases
+            elif np.abs(values['be']) < 20 or self.decreasing == True:
                 # change to new position
                 if self.next_position == 'seated':
                     self.set_posture(self.next_position)
