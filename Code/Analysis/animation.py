@@ -5,7 +5,7 @@ This code should be run from inside the Analysis directory, otherwise the import
 """
 
 
-from numpy import sin, cos, loadtxt, pi
+from numpy import sin, cos, pi
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

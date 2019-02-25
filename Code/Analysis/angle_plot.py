@@ -5,7 +5,6 @@ This code should be run from inside the Analysis directory, otherwise the import
 """
 
 import numpy as np
-from numpy import loadtxt
 import os
 import matplotlib.pyplot as plt
 from graph_format import format_graph
