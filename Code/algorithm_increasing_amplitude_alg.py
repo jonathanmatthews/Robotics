@@ -19,24 +19,47 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Time to swing")
         print self.get_acc()
         self.set_posture("seated")
-        self.algorithm = self.algorithm_startup
+        self.algorithm = self.algorithm_start
         self.time_switch = 100
-        self.to_extended_offset = 0.0
-        self.to_seated_offset = 0.0
+        self.to_extended_offset = -0.2
+        self.to_seated_offset = -0.2
         self.decreasing = False
+        self.last_move = 0
+        self.period = 1.3
 
 
-    def algorithm_startup(self, values):
-        if values['time'] > 3 and -15 < values['be'] < 0 and values['av'] > 0:
+    def algorithm_start(self, values):
+        """
+        Defines how robot moves with swinging.
+        Can collect old data via:
+        print self.all_data
+        Can move to new position via:
+        self.set_posture('extended')
+        pos will be name of current posture
+        """
+        #aims to thrash about until the displacement is large enough (> 2 degrees)
+        t = values["time"]
+
+        if t > 0 and t < 0.1:
+            self.set_posture("extended")
+
+        if t > self.last_move + self.period:
+            self.last_move = t
+            if self.position = "extended":
+                self.set_posture("seated")
+            else:
+
+        
+        if t > 6 and -2.0 < values['be'] < 0.0 and values['av'] > 0:
             self.next_position = 'extended'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
-            self.previous_time = values['time']
-        if values['time'] > 3 and 0 < values['be'] < 15 and values['av'] < 0:
+            self.previous_time = t
+        if t > 6 and 0.0 < values['be'] < 2.0 and values['av'] < 0:
             self.next_position = 'seated'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
-            self.previous_time = values['time']
+            self.previous_time = t
 
     def algorithm_increase(self, values):
         """
@@ -79,12 +102,14 @@ class Algorithm(Robot, Encoders):
         self.previous_be = current_be
         self.previous_time = current_time
         # want time to switch as close to top as possible
-        if np.abs(values['time'] - self.time_switch) <= dt/2:
+        #if np.abs(values['time'] - self.time_switch) <= dt/2:
+        if values['time'] > self.time_switch:
             # when it is decreasing stop doing anything at 2 degrees
-            if np.abs(values['be']) < 2:
+            if np.abs(values['be']) < 2 and self.decreasing == True:
                 pass
             # first time it is 20 degrees or more it will skip a cycle so that motion is opposite and amplitude decreases
-            elif np.abs(values['be']) < 65 or self.decreasing == True:
+            elif np.abs(values['be']) < 16 or self.decreasing == True:
+
                 # change to new position
                 if self.next_position == 'seated':
                     self.set_posture(self.next_position)
@@ -94,5 +119,5 @@ class Algorithm(Robot, Encoders):
                     self.next_position = 'seated'
                 # make sure doesn't try to keep on switching until value is reset in first if statement 
                 self.time_switch += 100
-            elif np.abs(values['be']) >= 65:
+            elif np.abs(values['be']) >= 16:
                 self.decreasing = True
