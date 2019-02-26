@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -229,6 +229,7 @@ class Interface(Algorithm):
         """
         # have to convert floats to strings but position string should stay as
         # it is
+        
         with open('Output_data/' + filename, 'w') as f:
             rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
                     for line in self.all_data]

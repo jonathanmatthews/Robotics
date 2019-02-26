@@ -55,12 +55,12 @@ class Algorithm(Robot, Encoders):
             # Shuffle values around, such that we compare the current state to
             # the previous state.
 
-            self.prev, self.curr = self.curr, self.get_big_encoder
+            self.prev, self.curr = self.curr, values['be']
             self.prev_time, self.curr_time = self.curr_time, values['time']
         
         except: # If this is the first time this function is run.
-            self.prev, self.curr = 0, 0
-            self.prev_time, self.curr_time = 0, 0
+            self.prev, self.curr = 0.0, 0.0
+            self.prev_time, self.curr_time = 0.0, 0.0
 
             self.max_times = [] # Times at which max amplitude reached.
             self.zero_times = [] # Times at which zero point was reached.
@@ -83,8 +83,8 @@ class Algorithm(Robot, Encoders):
         ### Moving robot:
         
         if self.quarter_periods:
-            fold = values['time'] + TOLERANCE >= self.max_times[-1] + self.quarter_periods[-1]
-            unfold = values['time'] + TOLERANCE >= self.zero_times[-1] + self.quarter_periods[-1]
+            fold = values['time'] + TOLERANCE >= self.max_times[-1] + 2*self.quarter_periods[-1]
+            unfold = values['time'] + TOLERANCE >= self.zero_times[-1] + 2*self.quarter_periods[-1]
             
             if fold and self.position != "folded":
                 self.set_posture("folded")
@@ -92,3 +92,4 @@ class Algorithm(Robot, Encoders):
           
             elif unfold and self.position != "unfolded":
                 self.set_posture("unfolded")
+                
