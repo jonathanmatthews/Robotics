@@ -46,6 +46,8 @@ class Robot():
         x_data = self.memory.getData(self.values['GX'][1])
         y_data = self.memory.getData(self.values['GY'][1])
         z_data = self.memory.getData(self.values['GZ'][1])
+        # not sure whether the below works on not, worth testing
+        # x_data, y_data, z_data = self.memory.getData([self.values['GX'][1], self.values['GY'][1], self.values['GZ'][1]])
 
         return [x_data, y_data, z_data]
 
@@ -58,6 +60,8 @@ class Robot():
         x_data = self.memory.getData(self.values['ACX'][1])
         y_data = self.memory.getData(self.values['ACY'][1])
         z_data = self.memory.getData(self.values['ACZ'][1])
+        # same again, not sure if this works but would be good to save time
+        # x_data, y_data, z_data = self.memory.getData([self.values['ACX'][1], self.values['ACY'][1], self.values[ACZ'][1]])
 
         return [x_data, y_data, z_data]
 
@@ -94,9 +98,9 @@ class Robot():
         self.motion.setStiffnesses(
             ["Head", "RArm", "LArm", "RLeg", "LLeg"], 1)
         # Start movement of each part
-        for i in range(len(speed)):
+        for i, speed_value in enumerate(speed):
             self.motion.setAngles(
                 names[i], list(
-                    posture.values())[i], speed[i])
+                    posture.values())[i], speed_value)
         # Update current position
         self.position = name_posture

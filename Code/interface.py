@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -106,11 +106,15 @@ class Interface(Algorithm):
         if len(self.all_data) == 0:
             return 0
 
-        time_data = self.all_data['time']
-        angle_data = self.all_data['be']
+        # time_data = self.all_data['time']
+        # angle_data = self.all_data['be']
+        latest_values = self.all_data[-1]
 
-        delta_time = time - time_data[-1]
-        delta_angle = current_angle - angle_data[-1]
+        # delta_time = time - time_data[-1]
+        # delta_angle = current_angle - angle_data[-1]
+
+        delta_time = time - latest_values['time']
+        delta_angle = current_angle - latest_values['be']
 
         return delta_angle / delta_time
 
@@ -154,6 +158,7 @@ class Interface(Algorithm):
             start_time = tme.time()
 
             time = start_time - initial_time
+            # some profiling for now
             ax, ay, az = self.get_acc()
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
@@ -239,4 +244,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(40, 0.10)
+    interface.run(5, 0.10)
