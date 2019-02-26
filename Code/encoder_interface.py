@@ -33,7 +33,7 @@ class Encoders():
         """
         Return the angles recorded by the small hinge encoders, at the base of the swing, at the time of calling.
         """
-
+        return [0.0, 0.0, 0.0, 0.0]
         encoder0 = self.SmallEncoders.getAngle0()
         encoder1 = self.SmallEncoders.getAngle1()
         encoder2 = self.SmallEncoders.getAngle2()
