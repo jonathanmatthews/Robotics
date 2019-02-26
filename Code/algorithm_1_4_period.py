@@ -17,17 +17,17 @@ class Algorithm(Robot, Encoders):
         # Run code for set up of algorithm here e.g.
         #self.speech.say("Setting up algorithm")
         self.set_posture("extended")
-        time.sleep(1)
+        time.sleep(1.33)
         self.set_posture("seated")
-        time.sleep(1)
+        time.sleep(1.33)
         self.set_posture("extended")
-        time.sleep(1)
+        time.sleep(1.33)
         self.set_posture("seated")
-        time.sleep(1)
+        time.sleep(1.33)
         self.set_posture("extended")
-        time.sleep(1)
+        time.sleep(1.33)
         self.set_posture("seated")
-        time.sleep(1)
+        time.sleep(1.33)
         self.max_angle = 0
 
 

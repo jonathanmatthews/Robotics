@@ -34,7 +34,7 @@ class Robot():
         # Set up proxies to robot
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
-
+        self.touch = ALProxy("ALTouch", ip, port)
         self.position = 'seated'
 
     def get_gyro(self):

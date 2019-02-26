@@ -94,6 +94,9 @@ class Interface(Algorithm):
 
         # Store setup mode for later
         self.setup = setup
+    def hands_grip_swing():
+        if touch.TouchChanged(“FrontTactilTouched”) == 1
+            print 3
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -245,3 +248,4 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     interface = Interface(setup)
     interface.run(5, 0.10)
+    interface.hands_grip_swing()
