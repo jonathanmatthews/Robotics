@@ -34,7 +34,7 @@ class Robot():
         # Set up proxies to robot
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
-
+        self.touch = ALProxy("ALTouch", ip, port)
         self.position = 'seated'
 
     def get_gyro(self):
@@ -42,12 +42,11 @@ class Robot():
         Obtain the current gyroscope data. Returns a tuple containing the (x, y, z) gyroscope data,
         in rad/s.
         """
-        return [0.0, 0.0, 0.0]
-        #x_data = self.memory.getData(self.values['GX'][1])
-        #y_data = self.memory.getData(self.values['GY'][1])
-        #z_data = self.memory.getData(self.values['GZ'][1])
+        x_data = self.memory.getData(self.values['GX'][1])
+        y_data = self.memory.getData(self.values['GY'][1])
+        z_data = self.memory.getData(self.values['GZ'][1])
         # not sure whether the below works on not, worth testing
-        x_data, y_data, z_data = self.memory.getData([self.values['GX'][1], self.values['GY'][1], self.values['GZ'][1]])
+        # x_data, y_data, z_data = self.memory.getData([self.values['GX'][1], self.values['GY'][1], self.values['GZ'][1]])
 
         return [x_data, y_data, z_data]
 
@@ -56,12 +55,11 @@ class Robot():
         Obtain the current accelerometer data. Returns a list containing the (x, y, z) acceleromenter data,
         in m/s.
         """
-        return [0.0, 0.0, 0.0]
-        #x_data = self.memory.getData(self.values['ACX'][1])
-        #y_data = self.memory.getData(self.values['ACY'][1])
-        #z_data = self.memory.getData(self.values['ACZ'][1])
+        x_data = self.memory.getData(self.values['ACX'][1])
+        y_data = self.memory.getData(self.values['ACY'][1])
+        z_data = self.memory.getData(self.values['ACZ'][1])
         # same again, not sure if this works but would be good to save time
-        x_data, y_data, z_data = self.memory.getData([self.values['ACX'][1], self.values['ACY'][1], self.values['ACZ'][1]])
+        # x_data, y_data, z_data = self.memory.getData([self.values['ACX'][1], self.values['ACY'][1], self.values['ACZ'][1]])
 
         return [x_data, y_data, z_data]
 

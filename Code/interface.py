@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -94,6 +94,10 @@ class Interface(Algorithm):
 
         # Store setup mode for later
         self.setup = setup
+
+    def hands_grip_swing():
+        if touch.TouchChanged(“FrontTactilTouched”) == 1:
+            print 3
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -156,7 +160,6 @@ class Interface(Algorithm):
             start_time = tme.time()
 
             time = start_time - initial_time
-            # some profiling for now
             ax, ay, az = self.get_acc()
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
@@ -243,3 +246,4 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     interface = Interface(setup)
     interface.run(5, 0.10)
+    interface.hands_grip_swing()
