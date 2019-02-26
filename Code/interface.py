@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -94,8 +94,9 @@ class Interface(Algorithm):
 
         # Store setup mode for later
         self.setup = setup
+
     def hands_grip_swing():
-        if touch.TouchChanged(“FrontTactilTouched”) == 1
+        if touch.TouchChanged(“FrontTactilTouched”) == 1:
             print 3
 
     def get_ang_vel(self, time, current_angle):
@@ -122,7 +123,6 @@ class Interface(Algorithm):
         return delta_angle / delta_time
 
     def centre_of_mass(self, angle1, angle2, angle3):
-        return [0.0, 0.0]
         '''Returns the centre of mass relative to the big encoder.'''
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
@@ -161,7 +161,6 @@ class Interface(Algorithm):
             start_time = tme.time()
 
             time = start_time - initial_time
-            # some profiling for now
             ax, ay, az = self.get_acc()
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()

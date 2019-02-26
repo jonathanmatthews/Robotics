@@ -15,9 +15,7 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy)
 
         # Run code for set up of algorithm here e.g.
-        self.speech.say("Setting up algorithm")
         self.speech.say("Time to swing")
-        print self.get_acc()
         self.set_posture("seated")
         self.algorithm = self.algorithm_start
         self.time_switch = 100
@@ -48,7 +46,7 @@ class Algorithm(Robot, Encoders):
             if self.position = "extended":
                 self.set_posture("seated")
             else:
-
+                self.set_posture("extended")
         
         if t > 6 and -2.0 < values['be'] < 0.0 and values['av'] > 0:
             self.next_position = 'extended'
@@ -72,10 +70,8 @@ class Algorithm(Robot, Encoders):
         """
         current_be = values['be']
         current_time = values['time']
-        dt = current_time - self.previous_time
         # sign of big encoder changes when crossing zero point
         if np.sign(current_be) != np.sign(self.previous_be):
-            interpolate = dt * np.abs(current_be) / np.abs(current_be - self.previous_be)
             # record current time as the time it goes through the minimum
             self.min_time = values['time'] - interpolate
 
@@ -102,7 +98,6 @@ class Algorithm(Robot, Encoders):
         self.previous_be = current_be
         self.previous_time = current_time
         # want time to switch as close to top as possible
-        #if np.abs(values['time'] - self.time_switch) <= dt/2:
         if values['time'] > self.time_switch:
             # when it is decreasing stop doing anything at 2 degrees
             if np.abs(values['be']) < 2 and self.decreasing == True:
