@@ -19,10 +19,9 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Here we go ooooooo")
         self.set_posture("extended", 0.05)
 
-        self.b_max = 0
-        self.b_min = 0
-        self.event_number = 0
         self.algorithm = self.algorithm_start
+        self.last_move = 0
+        self.period = 1.3
 
     def algorithm_start(self, values):
         """
@@ -35,32 +34,18 @@ class Algorithm(Robot, Encoders):
         """
         #aims to thrash about until the displacement is large enough (> 2 degrees)
         t = values["time"]
-        be = values["be"]
-        
-        if values["be"] > self.b_max:
-            self.b_max = values["be"]
-        if values["be"] < self.b_min:
-            self.b_min = values["be"]
-        print values["be"], self.b_max, self.b_min
-        
-        ang_vel = self.get_ang_vel(values["time"], values["be"])
 
-        if t > 1.0 and t < 1.1:
-            self.set_posture("seated", 1.0)
-            print "leaning forward quickly"
-        if t > 1.3 and t < 1.4:
-            self.set_posture("extended", 1.0)
-            print "leaning back quickly"
-        if t > 1.8:
-            if be < 0.8 * self.b_min and ang_vel < 0 and pos != "extended":
-                self.set_posture("extended")
-                print "extended"
-            if be > 0.8 * self.b_max and ang_vel > 0 and pos != "seated":
+        if t > 0 and t < 0.1:
+            self.set_posture("extended")
+
+        if t > self.last_move + self.period:
+            self.last_move = t
+            if self.position = "extended":
                 self.set_posture("seated")
-                print "seated"
-        
-        # this switches algorithm after time is greater than 10
-        if be > 1:
+            else:
+                self.set_posture("extended")
+
+        if values["be"] > 1:
             self.algorithm = self.algorithm_increase
 
     def algorithm_increase(self, values):
