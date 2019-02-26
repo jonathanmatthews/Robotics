@@ -19,15 +19,14 @@ class Algorithm(Robot, Encoders):
         self.speech.say("Time to swing")
         print self.get_acc()
         self.set_posture("seated")
-        # self.algorithm = self.algorithm_startup
+        self.algorithm = self.algorithm_start
         self.time_switch = 100
         self.to_extended_offset = -0.2
         self.to_seated_offset = -0.2
         self.decreasing = False
-        self.b_max = 0
-        self.b_min = 0
-        self.event_number = 0
-        self.algorithm = self.algorithm_start
+        self.last_move = 0
+        self.period = 1.3
+
 
     def algorithm_start(self, values):
         """
@@ -40,53 +39,27 @@ class Algorithm(Robot, Encoders):
         """
         #aims to thrash about until the displacement is large enough (> 2 degrees)
         t = values["time"]
-        be = values["be"]
-        
-        if values["be"] > self.b_max:
-            self.b_max = values["be"]
-        if values["be"] < self.b_min:
-            self.b_min = values["be"]
-        print values["be"], self.b_max, self.b_min
 
-        ang_vel = values['av']
-
-        if t > 1.0 and t < 1.1:
-            self.set_posture("seated")
-            print "leaning forward quickly"
-        if t > 1.3 and t < 1.4:
+        if t > 0 and t < 0.1:
             self.set_posture("extended")
-            print "leaning back quickly"
-        if t > 1.8:
-            if be < 0.8 * self.b_min and ang_vel < 0 and values['pos'] != "extended":
-                self.set_posture("extended")
-                print "extended"
-            if be > 0.8 * self.b_max and ang_vel > 0 and values['pos'] != "seated":
+
+        if t > self.last_move + self.period:
+            self.last_move = t
+            if self.position = "extended":
                 self.set_posture("seated")
-                print "seated"
+            else:
+
         
-        if t > 3 and -1.0 < values['be'] < 0.0 and values['av'] > 0:
+        if t > 6 and -2.0 < values['be'] < 0.0 and values['av'] > 0:
             self.next_position = 'extended'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
             self.previous_time = t
-        if t > 3 and 0.0 < values['be'] < 1.0 and values['av'] < 0:
+        if t > 6 and 0.0 < values['be'] < 2.0 and values['av'] < 0:
             self.next_position = 'seated'
             self.algorithm = self.algorithm_increase
             self.previous_be = values['be']
             self.previous_time = t
-
-
-    def algorithm_startup(self, values):
-        if values['time'] > 3 and -15 < values['be'] < 0 and values['av'] > 0:
-            self.next_position = 'extended'
-            self.algorithm = self.algorithm_increase
-            self.previous_be = values['be']
-            self.previous_time = values['time']
-        if values['time'] > 3 and 0 < values['be'] < 15 and values['av'] < 0:
-            self.next_position = 'seated'
-            self.algorithm = self.algorithm_increase
-            self.previous_be = values['be']
-            self.previous_time = values['time']
 
     def algorithm_increase(self, values):
         """
