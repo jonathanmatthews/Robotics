@@ -119,7 +119,6 @@ class Interface(Algorithm):
         return delta_angle / delta_time
 
     def centre_of_mass(self, angle1, angle2, angle3):
-        return [0.0, 0.0]
         '''Returns the centre of mass relative to the big encoder.'''
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
@@ -131,13 +130,12 @@ class Interface(Algorithm):
             numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
         y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
             numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
-        # THESE VALUES ARE WRONG PLEASE CHANGE
         if self.position == "seated":
-            x_com = x_seat + 0.00065
-            y_com = y_seat + 0.1166
+            x_com = x_seat - (0.00065 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1166 * numpy.cos(a1 + a2 + a3))
         elif self.position == "extended":
-            x_com = x_seat + 0.0183
-            y_com = y_seat + 0.1494
+            x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]
