@@ -17,6 +17,7 @@ class Algorithm(Robot, Encoders):
         # Run code for set up of algorithm here e.g.
         self.speech.say("Setting up algorithm")
         self.speech.say("Time to swing")
+        print self.get_acc()
         self.set_posture("seated")
         # self.algorithm = self.algorithm_startup
         self.time_switch = 100
