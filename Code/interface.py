@@ -30,7 +30,7 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import).Algorithm
+Algorithm = __import__(algorithm_import[:-2]).Algorithm
 
 
 """
@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -106,15 +106,20 @@ class Interface(Algorithm):
         if len(self.all_data) == 0:
             return 0
 
-        time_data = self.all_data['time']
-        angle_data = self.all_data['be']
+        # time_data = self.all_data['time']
+        # angle_data = self.all_data['be']
+        latest_values = self.all_data[-1]
 
-        delta_time = time - time_data[-1]
-        delta_angle = current_angle - angle_data[-1]
+        # delta_time = time - time_data[-1]
+        # delta_angle = current_angle - angle_data[-1]
+
+        delta_time = time - latest_values['time']
+        delta_angle = current_angle - latest_values['be']
 
         return delta_angle / delta_time
 
     def centre_of_mass(self, angle1, angle2, angle3):
+        return [0.0, 0.0]
         '''Returns the centre of mass relative to the big encoder.'''
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
@@ -153,6 +158,7 @@ class Interface(Algorithm):
             start_time = tme.time()
 
             time = start_time - initial_time
+            # some profiling for now
             ax, ay, az = self.get_acc()
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
@@ -173,8 +179,11 @@ class Interface(Algorithm):
                 tme.sleep(period - cycle_time)
 
         # assume final cycle took same time as rest to check if behind or not
-        if cycle_time > period:
+        time_taken = tme.time() - initial_time
+        if time_taken > 1.01 * t:
             print('RAN BEHIND SCHEDULE')
+            print('Correct timing: {}s'.format(t))
+            print('Actual timing: {}s'.format(time_taken))
         else:
             print('Ran on time')
         # store data in txt file
@@ -202,6 +211,7 @@ class Interface(Algorithm):
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
+        self.store(filename)
 
     def run(self, t, period, **kwargs):
         """
@@ -234,4 +244,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(0, 0.2)
+    interface.run(5, 0.10)

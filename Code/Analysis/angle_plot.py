@@ -5,7 +5,6 @@ This code should be run from inside the Analysis directory, otherwise the import
 """
 
 import numpy as np
-from numpy import loadtxt
 import os
 import matplotlib.pyplot as plt
 from graph_format import format_graph
@@ -29,7 +28,6 @@ gy = angles['gy']
 gz = angles['gz']
 angle1 = angles['be']
 position = angles['pos']
-print position
 
 position_numbers = {
     'extended': 1,
@@ -50,7 +48,6 @@ plt.sca(ax[0])
 plt.title('Plot of angle against seat position')
 plt.plot(t, position_number, label='Position of Nao')
 plt.ylabel('Named position')
-plt.xlim([0, 30])
 
 # editing bottom left plot
 plt.sca(ax[2])
