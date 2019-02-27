@@ -95,6 +95,10 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
+    def hands_grip_swing():
+        if touch.TouchChanged(“FrontTactilTouched”) == 1:
+            print 3
+
     def get_ang_vel(self, time, current_angle):
         """
         Function to get the current angular velocity, taking last recorded value and new
@@ -106,11 +110,15 @@ class Interface(Algorithm):
         if len(self.all_data) == 0:
             return 0
 
-        time_data = self.all_data['time']
-        angle_data = self.all_data['be']
+        # time_data = self.all_data['time']
+        # angle_data = self.all_data['be']
+        latest_values = self.all_data[-1]
 
-        delta_time = time - time_data[-1]
-        delta_angle = current_angle - angle_data[-1]
+        # delta_time = time - time_data[-1]
+        # delta_angle = current_angle - angle_data[-1]
+
+        delta_time = time - latest_values['time']
+        delta_angle = current_angle - latest_values['be']
 
         return delta_angle / delta_time
 
@@ -126,13 +134,12 @@ class Interface(Algorithm):
             numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
         y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
             numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
-        # THESE VALUES ARE WRONG PLEASE CHANGE
         if self.position == "seated":
-            x_com = x_seat + 0.00065
-            y_com = y_seat + 0.1166
+            x_com = x_seat - (0.00065 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1166 * numpy.cos(a1 + a2 + a3))
         elif self.position == "extended":
-            x_com = x_seat + 0.0183
-            y_com = y_seat + 0.1494
+            x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]
@@ -173,8 +180,11 @@ class Interface(Algorithm):
                 tme.sleep(period - cycle_time)
 
         # assume final cycle took same time as rest to check if behind or not
-        if cycle_time > period:
+        time_taken = tme.time() - initial_time
+        if time_taken > 1.01 * t:
             print('RAN BEHIND SCHEDULE')
+            print('Correct timing: {}s'.format(t))
+            print('Actual timing: {}s'.format(time_taken))
         else:
             print('Ran on time')
         # store data in txt file
@@ -202,6 +212,7 @@ class Interface(Algorithm):
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
+        self.store(filename)
 
     def run(self, t, period, **kwargs):
         """
@@ -234,4 +245,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.1)
+    interface.run(5, 0.10)
