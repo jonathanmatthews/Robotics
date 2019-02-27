@@ -80,7 +80,7 @@ class Algorithm(Robot, Encoders):
             # collect last 60 values of big encoder and time (be abs() so that minima become maxima)
             be = np.abs(self.all_data['be'][-10:])
             time = self.all_data['time'][-10:]
-perf
+
             # find indexes where maxima occur in big encoder absolute dataset
             angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
             # extract time corresponding to latest maxima
