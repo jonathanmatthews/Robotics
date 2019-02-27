@@ -3,6 +3,7 @@ import numpy
 from os import listdir
 from collections import OrderedDict
 
+
 def flatten(values):
     final_list = []
     for list_value in values:
@@ -71,6 +72,7 @@ def get_latest_file(current_dir):
         latest = files[-1]
     return latest, output_directory
 
+
 def convert_list_dict(current_values):
     """
     Converts list of values into a dictionary with keys of names current_data_types(), this way data
@@ -86,4 +88,3 @@ def convert_list_dict(current_values):
     for i, name in enumerate(data_names):
         values[name] = current_values[i]
     return values
-

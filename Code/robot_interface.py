@@ -91,7 +91,8 @@ class Robot():
         # Use names in dictionary to collect longer name that naoqi uses
         names = [self.values[name][0] for name in posture.keys()]
         # Create list of speeds such that movements finish at same time
-        speed = [max_speed * (self.values[named_part_range][5] / 1.4920799999999999) for named_part_range in posture.keys()]
+        speed = [max_speed * (self.values[named_part_range][5] / 1.4920799999999999)
+                 for named_part_range in posture.keys()]
         # Need stiffness set to 1.0 before can move
         self.motion.setStiffnesses(
             ["Head", "RArm", "LArm", "RLeg", "LLeg"], 1)
@@ -102,4 +103,3 @@ class Robot():
                     posture.values())[i], speed_value)
         # Update current position
         self.position = name_posture
-

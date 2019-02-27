@@ -21,7 +21,8 @@ Contains class:
 #from robot_interface_webots import Robot
 
 files = listdir('.')
-list_algorithms = [x for x in files if search(r"(?<=^algorithm_).+(?=\.py$)", x)]
+list_algorithms = [x for x in files if search(
+    r"(?<=^algorithm_).+(?=\.py$)", x)]
 algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
@@ -155,7 +156,6 @@ class Interface(Algorithm):
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
 
-
         initial_time = tme.time()
         for event in range(int(max_runs)):
             start_time = tme.time()
@@ -169,7 +169,8 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
 
             # position recorded is position before any changes
-            current_values = convert_list_dict([time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
+            current_values = convert_list_dict(
+                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
             self.algorithm(current_values)
             self.all_data = numpy.append(self.all_data, numpy.array(

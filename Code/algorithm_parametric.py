@@ -38,7 +38,6 @@ class Algorithm(Robot, Encoders):
 
         if time > -1:
             self.algorithm = self.algorithm_increase
-        
 
     def algorithm_increase(self, values):
         """
@@ -46,10 +45,10 @@ class Algorithm(Robot, Encoders):
         See interface.py for details.
         """
 
-        TOLERANCE = 0 # How many seconds early the robot is allowed to switch positions.
+        # How many seconds early the robot is allowed to switch positions.
+        TOLERANCE = 0
 
-
-        ### Getting period:
+        # Getting period:
 
         try:
             # Shuffle values around, such that we compare the current state to
@@ -57,38 +56,38 @@ class Algorithm(Robot, Encoders):
 
             self.prev, self.curr = self.curr, values['be']
             self.prev_time, self.curr_time = self.curr_time, values['time']
-        
-        except: # If this is the first time this function is run.
+
+        except:  # If this is the first time this function is run.
             self.prev, self.curr = 0.0, 0.0
             self.prev_time, self.curr_time = 0.0, 0.0
 
-            self.max_times = [] # Times at which max amplitude reached.
-            self.zero_times = [] # Times at which zero point was reached.
+            self.max_times = []  # Times at which max amplitude reached.
+            self.zero_times = []  # Times at which zero point was reached.
             self.quarter_periods = []
-        
-        if sign(self.curr) != sign(self.prev): # Zero crossed
+
+        if sign(self.curr) != sign(self.prev):  # Zero crossed
             self.zero_times.append(values['time'])
             self.moving_down = False
-        
+
         elif abs(self.curr) < abs(self.prev) and not self.moving_down:
             self.max_times.append(values['time'])
             self.moving_down = True
 
             # Moving down flag prevents max_times from being appended to more than once.
-            
+
             quarter_period = self.max_times[-1] - self.zero_times[-1]
             self.quarter_periods.append(quarter_period)
 
+        # Moving robot:
 
-        ### Moving robot:
-        
         if self.quarter_periods:
-            fold = (values['time'] + TOLERANCE >= self.max_times[-1] + 2*self.quarter_periods[-1])
-            unfold = (values['time'] + TOLERANCE >= self.zero_times[-1] + 2*self.quarter_periods[-1])
-            
+            fold = (values['time'] + TOLERANCE >=
+                    self.max_times[-1] + 2*self.quarter_periods[-1])
+            unfold = (values['time'] + TOLERANCE >=
+                      self.zero_times[-1] + 2*self.quarter_periods[-1])
+
             if fold and self.position != "folded":
                 self.set_posture("folded")
-            
+
             elif unfold and self.position != "unfolded":
                 self.set_posture("unfolded")
-                

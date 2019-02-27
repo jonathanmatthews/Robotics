@@ -3,6 +3,7 @@ from encoder_interface import Encoders
 import time
 import numpy as np
 
+
 class Algorithm(Robot, Encoders):
     """
     This is an example algorithm class, as everyone will be working on different algorithms
@@ -25,7 +26,6 @@ class Algorithm(Robot, Encoders):
         self.last_move = 0
         self.period = 1.3
 
-
     def algorithm_start(self, values):
         """
         Defines how robot moves with swinging.
@@ -35,7 +35,7 @@ class Algorithm(Robot, Encoders):
         self.set_posture('extended')
         pos will be name of current posture
         """
-        #aims to thrash about until the displacement is large enough (> 2 degrees)
+        # aims to thrash about until the displacement is large enough (> 2 degrees)
         t = values["time"]
 
         if t > 0 and t < 0.1:
@@ -47,7 +47,7 @@ class Algorithm(Robot, Encoders):
                 self.set_posture("seated")
             else:
                 self.set_posture("extended")
-        
+
         if t > 6 and -2.0 < values['be'] < 0.0 and values['av'] > 0:
             self.next_position = 'extended'
             self.algorithm = self.algorithm_increase
@@ -74,7 +74,8 @@ class Algorithm(Robot, Encoders):
         # sign of big encoder changes when crossing zero point
         if np.sign(current_be) != np.sign(self.previous_be):
             # record current time as the time it goes through the minimum
-            interpolate = dt * np.abs(current_be) / np.abs(current_be - self.previous_be)
+            interpolate = dt * np.abs(current_be) / \
+                np.abs(current_be - self.previous_be)
             self.min_time = values['time'] - interpolate
 
             # collect last 60 values of big encoder and time (be abs() so that minima become maxima)
@@ -82,7 +83,8 @@ class Algorithm(Robot, Encoders):
             time = self.all_data['time'][-10:]
 
             # find indexes where maxima occur in big encoder absolute dataset
-            angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
+            angle_max_index = (np.diff(np.sign(np.diff(be)))
+                               < 0).nonzero()[0] + 1
             # extract time corresponding to latest maxima
             self.max_time = time[angle_max_index[-1]]
 
@@ -114,7 +116,7 @@ class Algorithm(Robot, Encoders):
                 elif self.next_position == 'extended':
                     self.set_posture(self.next_position)
                     self.next_position = 'seated'
-                # make sure doesn't try to keep on switching until value is reset in first if statement 
+                # make sure doesn't try to keep on switching until value is reset in first if statement
                 self.time_switch += 100
             elif np.abs(values['be']) >= 16:
                 self.decreasing = True
