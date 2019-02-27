@@ -227,50 +227,6 @@ class Interface(Algorithm):
         Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
-        # have to convert floats to strings but position string should stay as
-        # it is
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        print self.max_times
-        
-        print "\n\n"
-        
-        print self.zero_times
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         with open('Output_data/' + filename, 'w') as f:
             rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
                     for line in self.all_data]
