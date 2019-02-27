@@ -95,5 +95,5 @@ plt.ylim([-3, 0])
 plt.xlim([-1.5, 1.5])
 
 
-# ani.save('Figures/double_pendulum.mp4', fps=15)
+#ani.save('Figures/double_pendulum.mp4', fps=15)
 plt.show()

@@ -40,7 +40,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Developing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -95,6 +95,10 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
+    def hands_grip_swing():
+        if touch.TouchChanged(“FrontTactilTouched”) == 1:
+            print 3
+
     def get_ang_vel(self, time, current_angle):
         """
         Function to get the current angular velocity, taking last recorded value and new
@@ -106,16 +110,19 @@ class Interface(Algorithm):
         if len(self.all_data) == 0:
             return 0
 
-        time_data = self.all_data['time']
-        angle_data = self.all_data['be']
+        # time_data = self.all_data['time']
+        # angle_data = self.all_data['be']
+        latest_values = self.all_data[-1]
 
-        delta_time = time - time_data[-1]
-        delta_angle = current_angle - angle_data[-1]
+        # delta_time = time - time_data[-1]
+        # delta_angle = current_angle - angle_data[-1]
+
+        delta_time = time - latest_values['time']
+        delta_angle = current_angle - latest_values['be']
 
         return delta_angle / delta_time
 
     def centre_of_mass(self, angle1, angle2, angle3):
-        return [0.0, 0.0]
         '''Returns the centre of mass relative to the big encoder.'''
         L1 = 1.5  # length of pendulum 1 in m
         L2 = 0.12  # length of pendulum 2 in m
@@ -127,13 +134,12 @@ class Interface(Algorithm):
             numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
         y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
             numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
-        # THESE VALUES ARE WRONG PLEASE CHANGE
         if self.position == "seated":
-            x_com = x_seat + 0.00065
-            y_com = y_seat + 0.1166
+            x_com = x_seat - (0.00065 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1166 * numpy.cos(a1 + a2 + a3))
         elif self.position == "extended":
-            x_com = x_seat + 0.0183
-            y_com = y_seat + 0.1494
+            x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]
@@ -237,4 +243,5 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(40, 0.10)
+    interface.run(5, 0.10)
+    interface.hands_grip_swing()
