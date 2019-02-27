@@ -30,7 +30,7 @@ algorithm = str(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
 algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import[:-2]).Algorithm
+Algorithm = __import__(algorithm_import[:-3]).Algorithm
 
 
 """
@@ -244,4 +244,3 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     interface = Interface(setup)
     interface.run(5, 0.10)
-    interface.hands_grip_swing()
