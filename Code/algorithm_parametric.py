@@ -83,13 +83,12 @@ class Algorithm(Robot, Encoders):
         ### Moving robot:
         
         if self.quarter_periods:
-            fold = values['time'] + TOLERANCE >= self.max_times[-1] + 2*self.quarter_periods[-1]
-            unfold = values['time'] + TOLERANCE >= self.zero_times[-1] + 2*self.quarter_periods[-1]
+            fold = (values['time'] + TOLERANCE >= self.max_times[-1] + 2*self.quarter_periods[-1])
+            unfold = (values['time'] + TOLERANCE >= self.zero_times[-1] + 2*self.quarter_periods[-1])
             
             if fold and self.position != "folded":
                 self.set_posture("folded")
             
-          
             elif unfold and self.position != "unfolded":
                 self.set_posture("unfolded")
                 
