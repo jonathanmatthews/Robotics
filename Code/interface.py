@@ -97,7 +97,7 @@ class Interface(Algorithm):
         self.setup = setup
 
     def hands_grip_swing(self):
-        if touch.TouchChanged("FrontTactilTouched") == 1:
+        if self.touch.TouchChanged("FrontTactilTouched") == 1:
             print 3
 
     def get_ang_vel(self, time, current_angle):
