@@ -21,7 +21,9 @@ position_numbers = {
     'extended': 1,
     'seated': -1,
     1.0: 'extended',
-    -1.0: 'seated'
+    -1.0: 'seated',
+    'folded': 1.0,
+    'unfolded': -1
 }
 position_number = [position_numbers[i] for i in position]
 change_point = np.diff(position_number)
