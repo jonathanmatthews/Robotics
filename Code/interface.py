@@ -25,7 +25,6 @@ list_algorithms = [x for x in files if search(r"(?<=^algorithm_).+(?=\.py$)", x)
 algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
-print algo_dict
 text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
 algorithm = str(
     input(
@@ -235,8 +234,6 @@ class Interface(Algorithm):
         Saves numpy matrix as txt file
         filename: name of file to store to in Output_data folder
         """
-        # have to convert floats to strings but position string should stay as
-        # it is
         with open('Output_data/' + filename, 'w') as f:
             rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
                     for line in self.all_data]
@@ -248,4 +245,3 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     interface = Interface(setup)
     interface.run(5, 0.10)
-    interface.hands_grip_swing()
