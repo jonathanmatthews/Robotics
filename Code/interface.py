@@ -1,5 +1,5 @@
 # python2.7
-from re import compile
+from re import search
 from os import listdir
 import time as tme
 from limb_data import values
@@ -21,16 +21,18 @@ Contains class:
 #from robot_interface_webots import Robot
 
 files = listdir('.')
-r = compile("algorithm_")
-list_algorithms = filter(r.match, files)
-text = [algo for algo in list_algorithms if algo[:-4] != '.pyc'] 
-text = ["{} {}".format(i, algo) for i, algo in enumerate(list_algorithms)]
+list_algorithms = [x for x in files if search(r"(?<=^algorithm_).+(?=\.py$)", x)]
+algo_dict = {}
+for i, algo in enumerate(list_algorithms):
+    algo_dict[i] = algo[:-3]
+print algo_dict
+text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
 algorithm = str(
     input(
         'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
             "\n".join(text))))
-algorithm_import = [algo[2:] for algo in text if algorithm in algo][0]
-Algorithm = __import__(algorithm_import[:-2]).Algorithm
+algorithm_import = algo_dict[int(algorithm)]
+Algorithm = __import__(algorithm_import).Algorithm
 
 
 """
@@ -95,8 +97,8 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
-    def hands_grip_swing():
-        if touch.TouchChanged(“FrontTactilTouched”) == 1:
+    def hands_grip_swing(self):
+        if touch.TouchChanged("FrontTactilTouched") == 1:
             print 3
 
     def get_ang_vel(self, time, current_angle):
