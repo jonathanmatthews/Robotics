@@ -43,7 +43,7 @@ class Algorithm(Robot, Encoders):
 
         if t > self.last_move + self.period:
             self.last_move = t
-            if self.position = "extended":
+            if self.position == "extended":
                 self.set_posture("seated")
             else:
                 self.set_posture("extended")
@@ -70,9 +70,11 @@ class Algorithm(Robot, Encoders):
         """
         current_be = values['be']
         current_time = values['time']
+        dt = current_time - self.previous_time
         # sign of big encoder changes when crossing zero point
         if np.sign(current_be) != np.sign(self.previous_be):
             # record current time as the time it goes through the minimum
+            interpolate = dt * np.abs(current_be) / np.abs(current_be - self.previous_be)
             self.min_time = values['time'] - interpolate
 
             # collect last 60 values of big encoder and time (be abs() so that minima become maxima)
