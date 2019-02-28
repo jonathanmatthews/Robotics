@@ -4,29 +4,28 @@ import time
 import numpy as np
 
 
-class Algorithm(Robot, Encoders):
+class IncreaseQuarterPeriod():
     """
     This is an example algorithm class, as everyone will be working on different algorithms
     """
 
     def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy):
-        # Initialise encoder
-        Encoders.__init__(self, BigEncoder, SmallEncoders)
-        # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy)
-
-        # Run code for set up of algorithm here e.g.
-        self.speech.say("Time to swing")
-        self.set_posture("seated")
-        self.algorithm = self.algorithm_start
         self.time_switch = 100
         self.to_extended_offset = -0.2
         self.to_seated_offset = -0.2
         self.decreasing = False
-        self.last_move = 0
-        self.period = 1.3
 
-    def algorithm_start(self, values):
+        if -2.0 < values['be'] < 0.0 and values['av'] > 0:
+            self.next_position = 'extended'
+            self.previous_be = values['be']
+            self.previous_time = time.time()
+        if 0.0 < values['be'] < 2.0 and values['av'] < 0:
+            self.next_position = 'seated'
+            self.previous_be = values['be']
+            self.previous_time = time.time()
+
+
+    def algo(self, values):
         """
         Defines how robot moves with swinging.
         Can collect old data via:

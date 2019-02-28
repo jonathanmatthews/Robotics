@@ -41,6 +41,6 @@ class Algorithm(Robot, Encoders):
         },{
             'algo': self.decrease,
             'increase': False,
-            'duration': 2
+            'duration': 3
         }]
         
