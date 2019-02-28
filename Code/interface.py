@@ -102,7 +102,7 @@ class Interface(Algorithm):
         tme.sleep(2)
 
 
-    def next_algo(self, values):
+    def next_algo(self, values, all_data):
         """
         This function switches to the next algorithm defined in the algorithm file.
         self.order contains the dictionary with the defined order of algorithms, this extracts
@@ -120,12 +120,8 @@ class Interface(Algorithm):
 
         algo_class = info.pop('algo')
         kwargs = info
-        algo_class = algo_class(values, **kwargs)
+        algo_class = algo_class(values, all_data, **kwargs)
         return algo_class.algo
-
-    def hands_grip_swing(self):
-        if self.touch.TouchChanged("FrontTactilTouched") == 1:
-            print 3
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -200,8 +196,10 @@ class Interface(Algorithm):
                 [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
             if switch == 'switch':
-                self.algorithm = self.next_algo(current_values)
-            switch = self.algorithm(current_values)
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            if switch in positions.keys():
+                self.set_posture(positions[switch])
         
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
