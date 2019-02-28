@@ -1,14 +1,16 @@
 from time import time
 
+'''Start-up algorithm for the triple pendulum. Incomplete.'''
+
 class Start():
-    def __init__(self, values, **kwargs):
+    def __init__(self, values, all_data, **kwargs):
         self.start_time = time()
         self.duration = kwargs.get('duration', 10)
         self.wait_time = 1.3
         self.last_move = 0
         pass
     
-    def algo(self, values):
+    def algo(self, values, all_data):
         print 'start', values['time']
         t = values['time']
         if t < 0.1:
