@@ -5,7 +5,7 @@ import time as tme
 from limb_data import values
 from positions import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict
-from sys import path
+from sys import path, argv
 from robot_interface import Robot
 from encoder_interface import Encoders
 import numpy
@@ -27,10 +27,19 @@ algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
 text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
-algorithm = str(
-    input(
-        'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
-            "\n".join(text))))
+
+if argv[-1][0] is not "@":
+    algorithm = str(
+        input(
+            'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
+                "\n".join(text))))
+else:
+    algorithm = argv[-1][1:]
+
+print("running " + algo_dict[int(algorithm)] + "\n")
+# By running this script with the final command line argument '@n' will run the nth algorithm that would
+# otherwise appear in the list.
+
 algorithm_import = algo_dict[int(algorithm)]
 Algorithm = __import__(algorithm_import).Algorithm
 
@@ -42,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
