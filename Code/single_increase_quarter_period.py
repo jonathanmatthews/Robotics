@@ -10,20 +10,19 @@ class IncreaseQuarterPeriod():
     """
 
     def __init__(self, values, all_data, **kwargs):
+        # stops switching too often
         self.time_switch = 100
+        # how far from calculated top nao swings at
         self.offset = -0.2
+        # conditions for running, will stop at first condition reached 
         self.max_angle = kwargs.get('max_angle', 50)
+        self.duration = kwargs.get('duration', 20)
+
+        # set up parameters
+        self.start_time = values['time']
         self.previous_time = values['time']
         self.previous_be = values['be']
-        self.duration = kwargs.get('duration', 20)
-        
-        # using angular velocity to switch position
-        if values['av'] < 0:
-            self.next_position = 'seated'
-        elif values['av'] > 0:
-            self.next_position = 'extended'
-        else:
-            print 'ANGULAR VELOCITY EXACTLY ZERO'
+        self.increasing = kwargs.get('increasing', True)
 
     
     def algo(self, values, all_data):
@@ -39,21 +38,22 @@ class IncreaseQuarterPeriod():
             self.time_switch = self.min_time + self.quart_period + self.offset
             print self.time_switch
 
-        if values['time'] > self.time_switch:
-            # change to the new position
-            # make sure it doesn't try to keep on switching until value is reset in first if statement
-            self.time_switch += 100
-            if self.next_position == 'seated':
-                self.next_position = 'extended'
-                return 'seated'
-            else: 
-                self.next_position = 'seated'
-                return 'extended'
-
         # At the end of the loop, set the value of big encoder to the previous value
         self.previous_be = values['be']
         self.previous_time = values['time']
       
+        if values['time'] > self.time_switch:
+            # don't want nao to trigger every cycle so set next time far ahead, it will be reset when zero point is crossed
+            self.time_switch += 100
+            position_to_change = self.next_position_calculation(values)
+            # return string corresponding to position to change to, interface then handles changing
+            return position_to_change
+        
+        # either conditions met
+        if values['time'] - self.start_time > self.duration or values['be'] > self.max_angle:
+            return 'switch'
+        return 'no change'
+            
 
     def last_zero_crossing(self, values):
         current_be = values['be']
@@ -73,3 +73,17 @@ class IncreaseQuarterPeriod():
             max_time = time[angle_max_index[-1]]
             return max_time
  
+    def next_position_calculation(self, values):
+        if values['be'] < 0 and self.increasing == True:
+            next_position = 'seated'
+        elif values['be'] > 0 and self.increasing == True:
+            next_position = 'extended'
+        elif values['be'] < 0 and self.increasing == False:
+            next_position = 'extended'
+        elif values['be'] > 0 and self.increasing == False:
+            next_position = 'seated'
+        else:
+            print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
+            next_position = values['pos']
+        return next_position
+        
