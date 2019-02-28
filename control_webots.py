@@ -20,9 +20,7 @@ def set_posture(name_posture, max_speed=1.0):
 
 tts = ALProxy("ALTextToSpeech", "127.0.0.1", 9559)
 motion = ALProxy("ALMotion", "127.0.0.1", 9559)
-
 motion.setStiffnesses(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1)
-
 tts.say("Connected!")
 
 set_posture("unfolded")
