@@ -21,7 +21,8 @@ Contains class:
 #from robot_interface_webots import Robot
 
 files = listdir('.')
-list_algorithms = [x for x in files if search(r"(?<=^algorithm_).+(?=\.py$)", x)]
+list_algorithms = [x for x in files if search(
+    r"(?<=^algorithm_).+(?=\.py$)", x)]
 algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
@@ -101,13 +102,35 @@ class Interface(Algorithm):
             values,
             positions,
             ALProxy)
+        self.speech.say
 
         # Store setup mode for later
         self.setup = setup
 
-    def hands_grip_swing(self):
-        if self.touch.TouchChanged("FrontTactilTouched") == 1:
-            print 3
+        self.speech.say("Connected and setup, waiting 2 seconds")
+        tme.sleep(2)
+
+
+    def next_algo(self, values, all_data):
+        """
+        This function switches to the next algorithm defined in the algorithm file.
+        self.order contains the dictionary with the defined order of algorithms, this extracts
+        the latest algorithm data, initialises the class with the extra arguments and returns a function
+        that only requires values to be put in.
+        Arguments:
+            values: list of current values, big encoder etc
+        Returns:
+            reference to function to switch to
+        """
+        try:
+            info = self.order.pop(0)
+        except IndexError as e:
+            raise IndexError(e, 'Ran out of algorithms')
+
+        algo_class = info.pop('algo')
+        kwargs = info
+        algo_class = algo_class(values, all_data, **kwargs)
+        return algo_class.algo
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -163,7 +186,7 @@ class Interface(Algorithm):
 
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
-
+        switch = 'switch'
 
         initial_time = tme.time()
         for event in range(int(max_runs)):
@@ -178,9 +201,15 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
 
             # position recorded is position before any changes
-            current_values = convert_list_dict([time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
+            current_values = convert_list_dict(
+                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
-            self.algorithm(current_values)
+            if switch == 'switch':
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            if switch in positions.keys():
+                self.set_posture(positions[switch])
+        
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
 
@@ -191,7 +220,7 @@ class Interface(Algorithm):
 
         # assume final cycle took same time as rest to check if behind or not
         time_taken = tme.time() - initial_time
-        if time_taken > 1.01 * t:
+        if time_taken > 1.03 * t:
             print('RAN BEHIND SCHEDULE')
             print('Correct timing: {}s'.format(t))
             print('Actual timing: {}s'.format(time_taken))
@@ -253,4 +282,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(5, 0.10)
+    interface.run(10, 0.10)

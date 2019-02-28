@@ -4,6 +4,7 @@ import time
 import numpy as np
 import math
 
+
 class Algorithm(Robot, Encoders):
     """
     This is an example algorithm class, as everyone will be working on different algorithms
@@ -25,11 +26,10 @@ class Algorithm(Robot, Encoders):
         self.to_seated_offset = 0.0
         self.decreasing = False
         self.pendulum_length = 1.82
-        self.next_highest_angle  = None
+        self.next_highest_angle = None
         self.max_speed = None
         self.maintain_angle = 30
         self.previous_av = None
-
 
     def algorithm_startup(self, values):
         if values['time'] > 3 and -15 < values['be'] < 0 and values['av'] > 0:
@@ -52,35 +52,37 @@ class Algorithm(Robot, Encoders):
         current_be = values['be']
         current_posture = values['pos']
         current_av = values['av']
-        
-        #Check if the sign of the big encoder data has changed
-        #If not changed, we know the swing is not at its lowest point
+
+        # Check if the sign of the big encoder data has changed
+        # If not changed, we know the swing is not at its lowest point
         if (np.sign(self.previous_be) == np.sign(current_be)):
             pass
-        #If the sign changed, calculate the approximation of the highest point it can reach
+        # If the sign changed, calculate the approximation of the highest point it can reach
         else:
             print("At lowest point now, calculating the next max angle")
             self.max_speed = math.radians(values['av']) * self.pendulum_length
             h = 0.5*(self.max_speed**2)/9.8
             print(h)
-            #Calculate the next highest angle in degrees, 
-            #The -2 degree at end is because we want to start change the position a little bit early
-            self.next_highest_angle = math.degrees(math.acos((self.pendulum_length-h)/self.pendulum_length))-2
-            self.next_highest_angle = np.sign(current_be) * self.next_highest_angle
+            # Calculate the next highest angle in degrees,
+            # The -2 degree at end is because we want to start change the position a little bit early
+            self.next_highest_angle = math.degrees(
+                math.acos((self.pendulum_length-h)/self.pendulum_length))-2
+            self.next_highest_angle = np.sign(
+                current_be) * self.next_highest_angle
             print('next_biggist_angle')
             print(self.next_highest_angle)
-        
+
         self.previous_be = current_be
         self.previous_av = current_av
 
         if (self.next_highest_angle):
             next_pos = None
-            
-            if(np.sign(self.next_highest_angle)<0 and current_be<self.next_highest_angle):
+
+            if(np.sign(self.next_highest_angle) < 0 and current_be < self.next_highest_angle):
                 next_pos = 'seated'
-            elif(np.sign(self.next_highest_angle)>0 and current_be>self.next_highest_angle):
+            elif(np.sign(self.next_highest_angle) > 0 and current_be > self.next_highest_angle):
                 next_pos = 'extended'
-            
+
             if(next_pos):
                 self.set_posture(next_pos)
                 self.next_highest_angle = None
@@ -88,7 +90,8 @@ class Algorithm(Robot, Encoders):
         if(current_be >= self.maintain_angle+5):
             self.algorithm = self.algorithm_maintain
         """
-    def algorithm_maintain(self,values):
+
+    def algorithm_maintain(self, values):
         current_av = values['av']
         current_be = values['be']
         if(np.sign(current_av) != np.sign(self.previous_av)):

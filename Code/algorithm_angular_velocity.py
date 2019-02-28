@@ -4,6 +4,7 @@ import time
 import numpy as np
 import math
 
+
 class Algorithm(Robot, Encoders):
     """
     This is an example algorithm class, as everyone will be working on different algorithms
@@ -23,10 +24,9 @@ class Algorithm(Robot, Encoders):
         self.time_switch = 100
         self.decreasing = False
         self.pendulum_length = 2.0
-        self.next_highest_angle  = None
+        self.next_highest_angle = None
         self.preious_av = None
         self.maintain_angle = 30
-
 
     def algorithm_startup(self, values):
         if values['time'] > 3 and -15 < values['be'] < 0 and values['av'] > 0:
@@ -56,16 +56,16 @@ class Algorithm(Robot, Encoders):
                 self.set_posture('extended')
             if(self.position == 'extended'):
                 self.set_posture('seated')
-        else:pass
-        
+        else:
+            pass
+
         self.preious_av = current_av
         self.previous_be = current_be
-        
+
         if(current_be >= self.maintain_angle+5):
             self.algorithm = self.algorithm_maintain
 
-        
-    def algorithm_maintain(self,values):
+    def algorithm_maintain(self, values):
         current_av = values['av']
         current_be = values['be']
         if(np.sign(current_av) != np.sign(self.preious_av)):
