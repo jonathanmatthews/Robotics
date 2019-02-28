@@ -17,7 +17,7 @@ class Algorithm(Robot, Encoders):
         # Run code for set up of algorithm here e.g.
         self.speech.say("Time to swing")
         self.set_posture("seated")
-        self.algorithm = self.algorithm_start
+        self.algorithm = self.algorithm_increase
         self.time_switch = 100
         self.to_extended_offset = -0.2
         self.to_seated_offset = -0.2
@@ -108,12 +108,12 @@ class Algorithm(Robot, Encoders):
             elif np.abs(values['be']) < 16 or self.decreasing == True:
 
                 # change to new position
-                if self.next_position == 'seated':
+                if self.next_position == 'folded':
                     self.set_posture(self.next_position)
-                    self.next_position = 'extended'
-                elif self.next_position == 'extended':
+                    self.next_position = 'unfolded'
+                elif self.next_position == 'unfolded':
                     self.set_posture(self.next_position)
-                    self.next_position = 'seated'
+                    self.next_position = 'folded'
                 # make sure doesn't try to keep on switching until value is reset in first if statement 
                 self.time_switch += 100
             elif np.abs(values['be']) >= 16:
