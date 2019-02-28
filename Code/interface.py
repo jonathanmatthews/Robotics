@@ -93,9 +93,36 @@ class Interface(Algorithm):
             values,
             positions,
             ALProxy)
+        self.speech.say
 
         # Store setup mode for later
         self.setup = setup
+
+        self.speech.say("Connected and setup, waiting 2 seconds")
+        tme.sleep(2)
+
+
+    def next_algo(self, values):
+        """
+        This function switches to the next algorithm defined in the algorithm file.
+        self.order contains the dictionary with the defined order of algorithms, this extracts
+        the latest algorithm data, initialises the class with the extra arguments and returns a function
+        that only requires values to be put in.
+        Arguments:
+            values: list of current values, big encoder etc
+        Returns:
+            reference to function to switch to
+        """
+        try:
+            info = self.order.pop(0)
+        except IndexError as e:
+            raise IndexError(e, 'Ran out of algorithms')
+            
+        algo_class = info.pop('algo')(values)
+        kwargs = info
+        def curried_function(values):
+            return algo_class.algo(values, **kwargs)
+        return curried_function
 
     def hands_grip_swing(self):
         if self.touch.TouchChanged("FrontTactilTouched") == 1:
@@ -155,6 +182,7 @@ class Interface(Algorithm):
 
         # Filename of exact running time
         filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
+        switch = 'switch'
 
         initial_time = tme.time()
         for event in range(int(max_runs)):
@@ -172,7 +200,10 @@ class Interface(Algorithm):
             current_values = convert_list_dict(
                 [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
-            self.algorithm(current_values)
+            if switch == 'switch':
+                self.algorithm = self.next_algo(current_values)
+            switch = self.algorithm(current_values)
+        
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
 
@@ -245,4 +276,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(5, 0.10)
+    interface.run(20, 0.10)
