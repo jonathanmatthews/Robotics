@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -243,11 +243,19 @@ class Interface(Algorithm):
         # Data will be added to this with time
         self.all_data = numpy.empty((0, ), dtype=data_type)
 
+        switch = 'switch'
         for i in xrange(len(data)):
             row_no_pos = list(data[i])[:-1]
             current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
-            self.algorithm(current_values)
+
+            if switch == 'switch':
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            
+            if switch in positions.keys():
+                self.set_posture(switch)
+
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)

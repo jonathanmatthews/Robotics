@@ -1,10 +1,9 @@
-from time import time
 '''Start-up algorithm that simply kicks, waits a half period,
     and kicks again.'''
 
 class Start():
     def __init__(self, values, all_data, **kwargs):
-        self.start_time = time()
+        self.start_time = values['time']
         self.duration = kwargs.get('duration', 10)
         self.wait_time = 1.3
         self.last_move = 0
@@ -25,5 +24,5 @@ class Start():
                 else:
                     return 'extended'
 
-        if time() - self.start_time > self.duration:
+        if t - self.start_time > self.duration:
             return 'switch'
