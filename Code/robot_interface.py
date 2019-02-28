@@ -27,15 +27,12 @@ class Robot():
         self.values = values
         self.positions = positions
 
-        # Set up connection
-        self.speech = ALProxy("ALTextToSpeech", ip, port)
-        self.speech.say("Connected")
-
         # Set up proxies to robot
+        self.speech = ALProxy("ALTextToSpeech", ip, port)
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
         self.touch = ALProxy("ALTouch", ip, port)
-        self.position = 'seated'
+        self.set_posture('seated')
 
     def get_gyro(self):
         """
