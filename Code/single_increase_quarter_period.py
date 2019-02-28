@@ -75,7 +75,7 @@ class IncreaseQuarterPeriod():
         self.previous_be = current_be
         self.previous_time = current_time
      
-        if np.abs(current_be[self.index_max_angle(10, all_data)]) < 2:
+        if np.abs(all_data['be'][self.index_max_angle(10, all_data)]) < 2:
             self.max_time = time[self.index_max_angle(10, all_data)[-1]]
             if values['pos'] == 'seated':
                 self.time_switch = self.max_time + 1.33
