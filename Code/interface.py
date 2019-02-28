@@ -5,7 +5,7 @@ import time as tme
 from limb_data import values
 from positions import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict
-from sys import path
+from sys import path, argv
 from robot_interface import Robot
 from encoder_interface import Encoders
 import numpy
@@ -27,10 +27,19 @@ algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
 text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
-algorithm = str(
-    input(
-        'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
-            "\n".join(text))))
+
+if argv[-1][0] is not "@":
+    algorithm = str(
+        input(
+            'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
+                "\n".join(text))))
+else:
+    algorithm = argv[-1][1:]
+
+print("running " + algo_dict[int(algorithm)] + "\n")
+# By running this script with the final command line argument '@n' will run the nth algorithm that would
+# otherwise appear in the list.
+
 algorithm_import = algo_dict[int(algorithm)]
 Algorithm = __import__(algorithm_import).Algorithm
 
@@ -42,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -102,7 +111,7 @@ class Interface(Algorithm):
         tme.sleep(2)
 
 
-    def next_algo(self, values):
+    def next_algo(self, values, all_data):
         """
         This function switches to the next algorithm defined in the algorithm file.
         self.order contains the dictionary with the defined order of algorithms, this extracts
@@ -120,12 +129,8 @@ class Interface(Algorithm):
 
         algo_class = info.pop('algo')
         kwargs = info
-        algo_class = algo_class(values, **kwargs)
-        return algo_class.algo
-
-    def hands_grip_swing(self):
-        if self.touch.TouchChanged("FrontTactilTouched") == 1:
-            print 3
+        algo_class_initialized = algo_class(values, all_data, **kwargs)
+        return algo_class_initialized.algo
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -200,8 +205,10 @@ class Interface(Algorithm):
                 [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
             if switch == 'switch':
-                self.algorithm = self.next_algo(current_values)
-            switch = self.algorithm(current_values)
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            if switch in positions.keys():
+                self.set_posture(switch)
         
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
@@ -236,11 +243,19 @@ class Interface(Algorithm):
         # Data will be added to this with time
         self.all_data = numpy.empty((0, ), dtype=data_type)
 
+        switch = 'switch'
         for i in xrange(len(data)):
             row_no_pos = list(data[i])[:-1]
             current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
-            self.algorithm(current_values)
+
+            if switch == 'switch':
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            
+            if switch in positions.keys():
+                self.set_posture(switch)
+
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
