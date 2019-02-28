@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -129,8 +129,8 @@ class Interface(Algorithm):
 
         algo_class = info.pop('algo')
         kwargs = info
-        algo_class = algo_class(values, all_data, **kwargs)
-        return algo_class.algo
+        algo_class_initialized = algo_class(values, all_data, **kwargs)
+        return algo_class_initialized.algo
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -208,7 +208,7 @@ class Interface(Algorithm):
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
             if switch in positions.keys():
-                self.set_posture(positions[switch])
+                self.set_posture(switch)
         
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)

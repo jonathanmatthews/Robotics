@@ -2,7 +2,7 @@ from robot_interface import Robot
 from encoder_interface import Encoders
 from algorithm_increase import IncreaseDecrease
 from algorithm_maintain import Maintain
-from algorithm_startup import Start
+from single_startup_const_period import Start
 
 class Algorithm(Robot, Encoders):
     """
