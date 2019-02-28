@@ -7,7 +7,7 @@ class Maintain():
         self.maintain_angle = kwargs.get('maintain_angle', 10)
         self.duration = kwargs.get('duration', 15)
 
-    def algo(self, values, **kwargs):
+    def algo(self, values):
         print 'Maintain', values['time']
 
         if time() - self.start_time > self.duration:

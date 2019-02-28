@@ -9,7 +9,7 @@ class IncreaseDecrease():
         self.duration = kwargs.get('duration', 20)
 
 
-    def algo(self, values, **kwargs):
+    def algo(self, values):
         if self.increase:
             print 'Increase', values['time']
             if values['be'] > self.max_angle:
