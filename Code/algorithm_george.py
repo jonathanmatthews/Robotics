@@ -26,9 +26,10 @@ class Algorithm(Robot, Encoders):
         # decreases for 20 seconds or the end of the running time
         self.order = [{
             'algo': self.start,
-            'duration': 0.0
+            'duration': 5.5
         },{
             'algo': self.increase,
-            'max_angle': 30.0
+            'max_angle': 30.0,
+            'duration': 34.0
         }]
         
