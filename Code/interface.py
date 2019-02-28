@@ -117,12 +117,11 @@ class Interface(Algorithm):
             info = self.order.pop(0)
         except IndexError as e:
             raise IndexError(e, 'Ran out of algorithms')
-            
-        algo_class = info.pop('algo')(values)
+
+        algo_class = info.pop('algo')
         kwargs = info
-        def curried_function(values):
-            return algo_class.algo(values, **kwargs)
-        return curried_function
+        algo_class = algo_class(values, **kwargs)
+        return algo_class.algo
 
     def hands_grip_swing(self):
         if self.touch.TouchChanged("FrontTactilTouched") == 1:
@@ -214,7 +213,7 @@ class Interface(Algorithm):
 
         # assume final cycle took same time as rest to check if behind or not
         time_taken = tme.time() - initial_time
-        if time_taken > 1.01 * t:
+        if time_taken > 1.03 * t:
             print('RAN BEHIND SCHEDULE')
             print('Correct timing: {}s'.format(t))
             print('Actual timing: {}s'.format(time_taken))
@@ -276,4 +275,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(20, 0.10)
+    interface.run(10, 0.10)

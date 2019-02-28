@@ -2,19 +2,19 @@ from time import time
 
 class IncreaseDecrease():
 
-    def __init__(self, values):
+    def __init__(self, values, **kwargs):
         self.start_time = time()
+        self.max_angle = kwargs.get('max_angle', 20)
+        self.increase = kwargs.get('increase', True)
+        self.duration = kwargs.get('duration', 20)
+
 
     def algo(self, values, **kwargs):
-        max_angle = kwargs.get('max_angle', 20)
-        increase = kwargs.get('increase', True)
-        duration = kwargs.get('duration', 20)
-
-        if increase:
+        if self.increase:
             print 'Increase', values['time']
-            if values['be'] > max_angle:
+            if values['be'] > self.max_angle:
                 return 'switch'
         else:
             print 'Decrease', values['time']
-        if time() - self.start_time > duration:
+        if time() - self.start_time > self.duration:
             return 'switch'
