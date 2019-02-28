@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Developing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -108,7 +108,7 @@ class Interface(Algorithm):
         self.setup = setup
 
         self.speech.say("Connected and setup, waiting 2 seconds")
-        tme.sleep(2)
+        tme.sleep(3)
 
 
     def next_algo(self, values, all_data):
@@ -207,6 +207,7 @@ class Interface(Algorithm):
             if switch == 'switch':
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
+
             if switch in positions.keys():
                 self.set_posture(switch)
         
@@ -290,4 +291,4 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(10, 0.10)
+    interface.run(10, 0.06)
