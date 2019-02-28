@@ -70,13 +70,13 @@ class Algorithm(Robot, Encoders):
             self.zero_times.append(values['time'])
             self.moving_down = False
         
-        elif abs(self.curr) < abs(self.prev) and not self.moving_down:
+        elif abs(self.curr) <= abs(self.prev) and not self.moving_down:
             self.max_times.append(values['time'])
             self.moving_down = True
 
             # Moving down flag prevents max_times from being appended to more than once.
             
-            quarter_period = self.max_times[-1] - self.zero_times[-1]
+            quarter_period = abs(self.max_times[-1] - self.zero_times[-1])
             self.quarter_periods.append(quarter_period)
 
 
@@ -91,4 +91,3 @@ class Algorithm(Robot, Encoders):
             
             elif unfold and self.position != "unfolded":
                 self.set_posture("unfolded")
-                
