@@ -3,6 +3,7 @@ from encoder_interface import Encoders
 from algorithm_increase import IncreaseDecrease
 from algorithm_maintain import Maintain
 from algorithm_startup import Start
+from single_increase_quarter_period import IncreaseQuarterPeriod
 
 class Algorithm(Robot, Encoders):
     """
@@ -19,7 +20,7 @@ class Algorithm(Robot, Encoders):
         # this classes will be initialised one cycle before switching to the algorithm
         self.decrease = IncreaseDecrease
         self.maintain = Maintain
-        self.increase = IncreaseDecrease
+        self.increase= IncreaseQuarterPeriod
         self.start = Start
 
         # This defines the order of running, and any extra arguments required for the functions
@@ -41,6 +42,7 @@ class Algorithm(Robot, Encoders):
         },{
             'algo': self.decrease,
             'increase': False,
-            'duration': 3
+            'duration': 3,
+            'increasing': False
         }]
         
