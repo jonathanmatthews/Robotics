@@ -43,7 +43,6 @@ ax2 = ax.twinx()
 times_change = t[index_change]
 angle_max_index = (np.diff(np.sign(np.diff(np.abs(be)))) < 0).nonzero()[0] + 1
 true_max = t[angle_max_index][-len(times_change):-1]
-diff = true_max - times_change[:-1]
 # editing top left plot
 plt.sca(ax2)
 locs, labels = plt.yticks()

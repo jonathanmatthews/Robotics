@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Encoders_no_robot'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -173,6 +173,10 @@ class Interface(Algorithm):
         elif self.position == "extended":
             x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
             y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
+        elif self.position == 'folded':
+            return [0, 0]
+        elif self.position == 'unfolded':
+            return [0, 0]
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]
@@ -291,6 +295,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(90, 0.06)
+    interface.run(30, 0.06)
     interface.motion.setStiffnesses("Body", 0.0)
 
