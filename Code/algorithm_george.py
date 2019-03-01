@@ -16,6 +16,7 @@ class Algorithm(Robot, Encoders):
 
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
+
         self.increase= IncreaseQuarterPeriod
         self.decrease = IncreaseQuarterPeriod
         self.start = Start
@@ -36,5 +37,11 @@ class Algorithm(Robot, Encoders):
             'algo': self.decrease,
             'duration': 15.0,
             'increasing': False
+            'algo': self.start
+        },
+        {
+            'algo': self.increase,
+            'max_angle': 20,
+            'duration': 10
         }]
         
