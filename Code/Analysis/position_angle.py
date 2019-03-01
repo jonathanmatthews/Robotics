@@ -9,6 +9,7 @@ from utility_functions import read_file, convert_read_numpy, get_latest_file
 
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis')
+filename = '01-03-2019 16:09:41'
 angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 print filename
@@ -43,7 +44,6 @@ ax2 = ax.twinx()
 times_change = t[index_change]
 angle_max_index = (np.diff(np.sign(np.diff(np.abs(be)))) < 0).nonzero()[0] + 1
 true_max = t[angle_max_index][-len(times_change):-1]
-diff = true_max - times_change[:-1]
 # editing top left plot
 plt.sca(ax2)
 locs, labels = plt.yticks()

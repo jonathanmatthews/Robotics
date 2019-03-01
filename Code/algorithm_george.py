@@ -2,6 +2,7 @@ from robot_interface import Robot
 from encoder_interface import Encoders
 from single_startup_const_period import Start
 from single_increase_quarter_period import IncreaseQuarterPeriod
+from single_nothing import Nothing
 
 class Algorithm(Robot, Encoders):
     """
@@ -27,14 +28,10 @@ class Algorithm(Robot, Encoders):
         # decreases for 20 seconds or the end of the running time
         self.order = [{
             'algo': self.start,
-            'duration': 25.0
+            'duration': 30.0
         },{
             'algo': self.increase,
             'max_angle': 30.0,
-            'duration': 60.0
-        },{
-            'algo': self.decrease,
-            'duration': 15.0,
-            'increasing': False
+            'duration': 80.0
         }]
         

@@ -291,5 +291,5 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    #interface.run(90, 0.06)
+    interface.run(100, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
