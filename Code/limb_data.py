@@ -1,5 +1,6 @@
-# part code = part name, sensor location for proxy, minimum position,
-# maximum position, possible range of motion, range between seated and extended
+# Dictionary to access the part names and sensor values for NAO including ranges of motion.
+# 'ID' = part name, path name for parts and sensors, minimum angle (rad), maximum angle(rad), range of motion, range between seated and extended positions (rad)
+
 values = {
     'AX': ['AngleX', 'Device/SubDeviceList/InertialSensor/AngleX/Sensor/Value'],
     'AY': ['AngleY', 'Device/SubDeviceList/InertialSensor/AngleY/Sensor/Value'],

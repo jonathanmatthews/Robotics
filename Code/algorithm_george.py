@@ -1,8 +1,7 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
-from algorithm_increase import IncreaseDecrease
-from algorithm_maintain import Maintain
-from algorithm_startup import Start
+from single_startup_const_period import Start
+from single_increase_quarter_period import IncreaseQuarterPeriod
 
 class Algorithm(Robot, Encoders):
     """
@@ -17,9 +16,8 @@ class Algorithm(Robot, Encoders):
 
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
-        self.decrease = IncreaseDecrease
-        self.maintain = Maintain
-        self.increase = IncreaseDecrease
+        self.increase= IncreaseQuarterPeriod
+        self.decrease = IncreaseQuarterPeriod
         self.start = Start
 
         # This defines the order of running, and any extra arguments required for the functions
@@ -29,18 +27,14 @@ class Algorithm(Robot, Encoders):
         # decreases for 20 seconds or the end of the running time
         self.order = [{
             'algo': self.start,
-            'duration': 2
+            'duration': 25.0
         },{
             'algo': self.increase,
-            'max_angle': 20,
-            'duration': 3
-        },{
-            'algo': self.maintain,
-            'maintain_angle': 20,
-            'duration': 2
+            'max_angle': 30.0,
+            'duration': 60.0
         },{
             'algo': self.decrease,
-            'increase': False,
-            'duration': 3
+            'duration': 15.0,
+            'increasing': False
         }]
         

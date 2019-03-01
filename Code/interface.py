@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -108,7 +108,7 @@ class Interface(Algorithm):
         self.setup = setup
 
         self.speech.say("Connected and setup, waiting 2 seconds")
-        tme.sleep(2)
+        tme.sleep(3)
 
 
     def next_algo(self, values, all_data):
@@ -129,8 +129,8 @@ class Interface(Algorithm):
 
         algo_class = info.pop('algo')
         kwargs = info
-        algo_class = algo_class(values, all_data, **kwargs)
-        return algo_class.algo
+        algo_class_initialized = algo_class(values, all_data, **kwargs)
+        return algo_class_initialized.algo
 
     def get_ang_vel(self, time, current_angle):
         """
@@ -213,8 +213,9 @@ class Interface(Algorithm):
             if switch == 'switch':
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
+
             if switch in positions.keys():
-                self.set_posture(positions[switch])
+                self.set_posture(switch)
         
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
@@ -249,11 +250,19 @@ class Interface(Algorithm):
         # Data will be added to this with time
         self.all_data = numpy.empty((0, ), dtype=data_type)
 
+        switch = 'switch'
         for i in xrange(len(data)):
             row_no_pos = list(data[i])[:-1]
             current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
-            self.algorithm(current_values)
+
+            if switch == 'switch':
+                self.algorithm = self.next_algo(current_values, self.all_data)
+            switch = self.algorithm(current_values, self.all_data)
+            
+            if switch in positions.keys():
+                self.set_posture(switch)
+
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
@@ -288,4 +297,5 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(10, 0.10)
+    #interface.run(90, 0.06)
+    interface.motion.setStiffnesses("Body", 0.0)
