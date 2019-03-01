@@ -19,5 +19,7 @@ class Algorithm(Robot, Encoders):
         self.increase = Increase
         
         self.order = [{
+            
+        },{
             'algo': self.increase
         }]

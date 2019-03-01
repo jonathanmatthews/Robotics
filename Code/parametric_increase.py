@@ -1,14 +1,21 @@
 from numpy import sign
-from time import time
 
 class Increase():
 
     def __init__(self, values, all_data, **kwargs):
-        self.start_time = time()
+        self.start_time = values['time']
         self.max_angle = kwargs.get('max_angle', 180)
         self.increase = kwargs.get('increase', True)
-        self.duration = kwargs.get('duration', 999999999) # A big number.
-
+        self.duration = kwargs.get('duration', float("inf"))
+        
+        self.position = None
+        self.prev, self.curr = 0.0, values['be']
+        self.prev_time, self.curr_time = 0.0, values['time']
+        self.max_times = [] # Times at which max amplitude reached.
+        self.zero_times = [] # Times at which zero point was reached.
+        self.quarter_periods = []
+        
+        self.moving_down = False
 
     def algo(self, values, all_data, **kwargs):
         """
@@ -21,20 +28,14 @@ class Increase():
 
         ### Getting period:
 
-        try:
-            # Shuffle values around, such that we compare the current state to
-            # the previous state.
-
-            self.prev, self.curr = self.curr, values['be']
-            self.prev_time, self.curr_time = self.curr_time, values['time']
         
-        except: # If this is the first time this function is run.
-            self.prev, self.curr = 0.0, 0.0
-            self.prev_time, self.curr_time = 0.0, 0.0
+        # Shuffle values around, such that we compare the current state to
+        # the previous state.
 
-            self.max_times = [] # Times at which max amplitude reached.
-            self.zero_times = [] # Times at which zero point was reached.
-            self.quarter_periods = []
+        self.prev, self.curr = self.curr, values['be']
+        self.prev_time, self.curr_time = self.curr_time, values['time']
+        
+        
         
         if sign(self.curr) != sign(self.prev): # Zero crossed
             self.zero_times.append(values['time'])
@@ -55,7 +56,7 @@ class Increase():
         self.switch_condition = False
         
         if self.switch_condition:
-	  return "switch"
+            return "switch"
         
         if self.quarter_periods:
             fold = (values['time'] + TOLERANCE >= self.max_times[-1] + 2*self.quarter_periods[-1])
@@ -63,9 +64,11 @@ class Increase():
             
             if fold and self.position != "folded":
                 self.position = "folded"
+                print values['time'], self.position
                 return "folded"
             
             elif unfold and self.position != "unfolded":
                 self.position = "unfolded"
-	        return "unfolded"
+                print values['time'], self.position
+                return "unfolded"
                 
