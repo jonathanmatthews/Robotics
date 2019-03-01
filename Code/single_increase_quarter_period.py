@@ -13,7 +13,7 @@ class IncreaseQuarterPeriod():
         # stops switching too often
         self.time_switch = 100
         # how far from calculated top nao swings at
-        self.offset = -0.2
+        self.offset = 0.0
         # conditions for running, will stop at first condition reached 
         self.max_angle = kwargs.get('max_angle', 50)
         self.duration = kwargs.get('duration', 20)
@@ -74,13 +74,14 @@ class IncreaseQuarterPeriod():
             return max_time
  
     def next_position_calculation(self, values):
-        if values['be'] < 0 and self.increasing == True:
+        print 'Big encoder at evaluation', values['be']
+        if values['be'] < 0 or values['av'] < 0 and self.increasing == True:
             next_position = 'seated'
-        elif values['be'] > 0 and self.increasing == True:
+        elif values['be'] > 0 or values['av'] > 0 and self.increasing == True:
             next_position = 'extended'
-        elif values['be'] < 0 and self.increasing == False:
+        elif values['be'] < 0 or values['av'] < 0 and self.increasing == False:
             next_position = 'extended'
-        elif values['be'] > 0 and self.increasing == False:
+        elif values['be'] > 0 or values['av'] > 0 and self.increasing == False:
             next_position = 'seated'
         else:
             print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"

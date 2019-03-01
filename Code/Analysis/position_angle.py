@@ -11,11 +11,13 @@ from utility_functions import read_file, convert_read_numpy, get_latest_file
 filename, output_data_directory = get_latest_file('Analysis')
 angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
+print filename
 
 # Extract data
 t = angles['time']
 be = angles['be']
 position = angles['pos']
+print t[-1]
 
 position_numbers = {
     'extended': 1,
