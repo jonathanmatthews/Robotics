@@ -1,14 +1,13 @@
-from time import time
 import numpy as np
 
 class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
-        self.start_time = time()
+        self.start_time = values['time']
         self.max_angle = kwargs.get('max_angle', 20)
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', 20)
-        self.min_angle = kwargs.get('min_angle',5)
+        self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
 
 
@@ -48,5 +47,5 @@ class IncreaseDecrease():
             print 'Decrease', values['time']
             if abs(self.previous_max_angle) < self.min_angle:
                 return 'switch'
-        if time() - self.start_time > self.duration:
+        if values['time'] - self.start_time > self.duration:
             return 'switch'
