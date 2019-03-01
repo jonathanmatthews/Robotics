@@ -168,11 +168,17 @@ class Interface(Algorithm):
         y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
             numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
         if self.position == "seated":
-            x_com = x_seat - (0.00065 * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + (0.1166 * numpy.cos(a1 + a2 + a3))
+            x_com = x_seat - ((0.03674 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.02463) * numpy.cos(a1 + a2 + a3))
         elif self.position == "extended":
-            x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
+            x_com = x_seat - ((0.0488 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.0124) * numpy.cos(a1 + a2 + a3))
+        elif self.position == 'folded':
+            x_com = x_seat - ((0.0558 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.000757) * numpy.cos(a1 + a2 + a3))
+        elif self.position == 'unfolded':
+            x_com = x_seat - ((0.031 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.035) * numpy.cos(a1 + a2 + a3))
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]

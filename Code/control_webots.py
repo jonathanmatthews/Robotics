@@ -23,5 +23,5 @@ motion = ALProxy("ALMotion", "127.0.0.1", 9559)
 motion.setStiffnesses(["Head", "RArm", "LArm", "RLeg", "LLeg"], 1)
 tts.say("Connected!")
 
-set_posture("unfolded")
+set_posture("extended")
     
