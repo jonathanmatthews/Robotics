@@ -1,6 +1,7 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
 from parametric_increase import Increase
+from single_nothing import Nothing
 
 
 class Algorithm(Robot, Encoders):
@@ -17,7 +18,11 @@ class Algorithm(Robot, Encoders):
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
         self.increase = Increase
+        self.start = Nothing
         
         self.order = [{
+            'algo': self.start,
+            'duration': 5
+        },{
             'algo': self.increase
         }]

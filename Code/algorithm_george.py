@@ -17,6 +17,7 @@ class Algorithm(Robot, Encoders):
 
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
+
         self.increase= IncreaseQuarterPeriod
         self.decrease = IncreaseQuarterPeriod
         self.start = Start
