@@ -22,8 +22,8 @@ print t[-1]
 position_numbers = {
     'extended': 1,
     'seated': -1,
-    1.0: 'extended',
-    -1.0: 'seated',
+    1.0: 'extended/folded',
+    -1.0: 'seated/unfolded',
     'folded': 1.0,
     'unfolded': -1
 }
