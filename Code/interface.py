@@ -168,15 +168,17 @@ class Interface(Algorithm):
         y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
             numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
         if self.position == "seated":
-            x_com = x_seat - (0.00065 * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + (0.1166 * numpy.cos(a1 + a2 + a3))
+            x_com = x_seat - ((0.03674 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.02463) * numpy.cos(a1 + a2 + a3))
         elif self.position == "extended":
-            x_com = x_seat - (0.0183 * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + (0.1494 * numpy.cos(a1 + a2 + a3))
+            x_com = x_seat - ((0.0488 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.0124) * numpy.cos(a1 + a2 + a3))
         elif self.position == 'folded':
-            return [0, 0]
+            x_com = x_seat - ((0.0558 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.000757) * numpy.cos(a1 + a2 + a3))
         elif self.position == 'unfolded':
-            return [0, 0]
+            x_com = x_seat - ((0.031 - 0.03) * numpy.sin(a1 + a2 + a3))
+            y_com = y_seat + ((0.16 - 0.035) * numpy.cos(a1 + a2 + a3))
         else:
             raise ValueError("Position not found")
         return [x_com, y_com]
@@ -208,7 +210,7 @@ class Interface(Algorithm):
             current_values = convert_list_dict(
                 [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
-            if switch == 'switch':
+            if switch == 'switch' and event != max_runs - 1:
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
 
@@ -254,7 +256,8 @@ class Interface(Algorithm):
             current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
 
-            if switch == 'switch':
+            if switch == 'switch' and i != (len(data) - 1):
+                print i, len(data)
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
             
@@ -295,6 +298,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(30, 0.06)
+    interface.run(5, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
 
