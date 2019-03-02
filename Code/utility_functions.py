@@ -2,7 +2,7 @@ from numpy import sin, cos, pi
 import numpy
 from os import listdir
 from collections import OrderedDict
-
+import datetime
 
 def flatten(values):
     final_list = []
@@ -64,12 +64,10 @@ def current_data_types():
 def get_latest_file(current_dir):
     if current_dir == 'Code':
         output_directory = 'Output_data/'
-        files = sorted(listdir(output_directory))
-        latest = files[-1]
     else:
         output_directory = '../Output_data/'
-        files = sorted(listdir(output_directory))
-        latest = files[-1]
+    dates = [datetime.datetime.strptime(ts, "%d-%m-%Y %H:%M:%S") for ts in listdir(output_directory)]
+    latest = dates[-1]
     return latest, output_directory
 
 
