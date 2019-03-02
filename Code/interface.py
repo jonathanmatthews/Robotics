@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -210,7 +210,7 @@ class Interface(Algorithm):
             current_values = convert_list_dict(
                 [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
 
-            if switch == 'switch':
+            if switch == 'switch' and event != max_runs - 1:
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
 
@@ -256,7 +256,8 @@ class Interface(Algorithm):
             current_values = convert_list_dict(row_no_pos + [self.position])
             # Put new data through algorithm not including position as want to
 
-            if switch == 'switch':
+            if switch == 'switch' and i != (len(data) - 1):
+                print i, len(data)
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
             
@@ -297,5 +298,5 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(100, 0.10)
+    interface.run(5, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)

@@ -67,7 +67,9 @@ def get_latest_file(current_dir):
     else:
         output_directory = '../Output_data/'
     dates = [datetime.datetime.strptime(ts, "%d-%m-%Y %H:%M:%S") for ts in listdir(output_directory)]
+    dates.sort()
     latest = dates[-1]
+    latest = datetime.datetime.strftime(latest, "%d-%m-%Y %H:%M:%S")
     return latest, output_directory
 
 
