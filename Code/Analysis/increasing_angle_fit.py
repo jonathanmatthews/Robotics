@@ -33,13 +33,17 @@ plt.scatter(max_times, max_angles)
 def linear_fit(t, a, b):
     return a * t + b
 
+# fit to linear fit
 popt, pcov = curve_fit(linear_fit, max_times, max_angles)
+# convert to standard error
 perr = np.sqrt(np.diag(pcov))
 
+# plot line of best fit
 fitted_times = np.linspace(min(max_times), max(max_times), 100)
 fitted_values = linear_fit(fitted_times, *popt)
 plt.plot(fitted_times, fitted_values, label='Fitted Linear Increase')
 
+# text box with parameter outputs
 param_names = ['a', 'b']
 text_params = [
     r"${}: {:.3f} \pm {:.3f}$".format(
@@ -49,6 +53,7 @@ plt.text(0.95, 0.05, r'$at + b$' + '\n' + "\n".join(text_params), horizontalalig
          verticalalignment='bottom',
          transform=ax.transAxes, size=17, bbox=dict(facecolor='lightgrey', alpha=0.9))
 
+# Titles etc
 plt.title('Linear fit of maximum angles')
 plt.xlabel('Time (s)')
 plt.ylabel(r"$Angle (^o)$")

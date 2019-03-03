@@ -9,8 +9,7 @@ from numpy import sin, cos, pi
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import os
-from graph_format import format_graph
+from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file, cm_to_cartesian

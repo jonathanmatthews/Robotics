@@ -2,11 +2,15 @@
 This plot shows the angle against time, along with the position of the robot against time, along with gyrometer and accelerometer values.
 
 This code should be run from inside the Analysis directory, otherwise the imports will NOT work.
+
+
+
+THIS PLOT ISN'T THAT USEFUL NOW
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from graph_format import format_graph
+from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file
