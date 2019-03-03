@@ -34,6 +34,7 @@ t = angles['time']
 dt = t[-1] - t[-2]
 cmx = angles['cmx']
 cmy = angles['cmy']
+algorithm = angles['algo']
 
 # Convert angles to cartesian coordinates
 x1 = L1 * sin(angle1)
@@ -46,9 +47,13 @@ x3 = L2 * sin(angle1 + angle2 + angle3) + x2
 y3 = -L2 * cos(angle1 + angle2 + angle3) + y2
 
 # Add figure
-fig = plt.figure()
-ax = fig.add_subplot(111, autoscale_on=False,
-                     xlim=(-1.5, 1.5), ylim=(-2.5, 0.5))
+# fig = plt.figure()
+# ax = fig.add_subplot(111, autoscale_on=False,
+                    #  xlim=(-1.5, 1.5), ylim=(-2.5, 0.5), figsize=(15, 15))
+fig, ax = plt.subplots(
+    1, 1, figsize=(
+        15, 15))
+
 ax = format_graph(ax)
 ax.grid()
 plt.sca(ax)
@@ -58,9 +63,18 @@ line1, = ax.plot([], [], 'o-', lw=2, color='b')
 line2, = ax.plot([], [], 'o-', lw=2, color='r')
 line3, = ax.plot([], [], 'o-', lw=2, color='g')
 line4, = ax.plot([], [], 'o-', lw=4, color='y')
-time_template = 'time = %.1fs'
-time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, size=14)
+line5, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
+line6, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
 
+time_template = 'Time = %.1fs'
+algorithm_template = 'Algorithm: %s'
+time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, size=14)
+algorithm_text = ax.text(0.60, 0.9, '', transform=ax.transAxes, size=14)
+plt.axvspan(-1.5, 1.5, facecolor='grey', alpha=0.15)
+
+max_angle = 0
+min_angle = 0
+  
 
 def init():
     # Start up functions, gives clean start
@@ -70,6 +84,8 @@ def init():
 
 
 def animate(i):
+    global max_angle, min_angle
+
     # Coordinates of masses per frame
     origin = [0, 0]
     m1 = [x1[i], y1[i]]
@@ -83,11 +99,20 @@ def animate(i):
     line4.set_data([m3[0], cm[0]], [m3[1], cm[1]])
 
     time_text.set_text(time_template % t[i])
-    return line1, line2, line3, time_text
+    algorithm_text.set_text(algorithm_template % algorithm[i])
+
+    current_angle = np.arctan(x3[i]/y3[i])
+    if current_angle > max_angle:
+        max_angle = current_angle
+        line5.set_data([origin[0], m3[0]], [origin[1], m3[1]])
+    if current_angle < min_angle:
+        min_angle = current_angle
+        line6.set_data([origin[0], m3[0]], [origin[1], m3[1]])
+    return line1, line2, line3, line4, time_text, algorithm_text, line5, line6
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(0, len(t)),
-                              interval=100 * dt/0.1, blit=True, init_func=init)
+                              interval=600 * dt/0.1, blit=True, init_func=init)
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
