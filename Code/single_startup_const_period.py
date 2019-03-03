@@ -25,6 +25,6 @@ class Start():
                     return 'extended'
 
         
-        if t - self.start_time > self.duration and t - self.last_move > 0.2:
+        if t - self.start_time > self.duration and 0.15 < t - self.last_move < 0.5:
             print 'last move', self.last_move
             return 'switch'
