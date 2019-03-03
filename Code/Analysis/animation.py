@@ -13,7 +13,7 @@ import os
 from graph_format import format_graph
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy, get_latest_file
+from utility_functions import read_file, convert_read_numpy, get_latest_file, cm_to_cartesian
 
 L1 = 1.5  # length of pendulum 1 in m
 L2 = 0.12  # length of pendulum 2 in m
@@ -43,13 +43,11 @@ y1 = -L1 * cos(angle1)
 x2 = L2 * sin(angle1 + angle2) + x1
 y2 = -L2 * cos(angle1 + angle2) + y1
 
-x3 = L2 * sin(angle1 + angle2 + angle3) + x2
-y3 = -L2 * cos(angle1 + angle2 + angle3) + y2
+x3 = L3 * sin(angle1 + angle2 + angle3) + x2
+y3 = -L3 * cos(angle1 + angle2 + angle3) + y2
+
 
 # Add figure
-# fig = plt.figure()
-# ax = fig.add_subplot(111, autoscale_on=False,
-                    #  xlim=(-1.5, 1.5), ylim=(-2.5, 0.5), figsize=(15, 15))
 fig, ax = plt.subplots(
     1, 1, figsize=(
         15, 15))
@@ -65,11 +63,13 @@ line3, = ax.plot([], [], 'o-', lw=2, color='g')
 line4, = ax.plot([], [], 'o-', lw=4, color='y')
 line5, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
 line6, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
+line7, = ax.plot([], [], 'o-', lw=1, color='y')
 
 time_template = 'Time = %.1fs'
 algorithm_template = 'Algorithm: %s'
 time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, size=14)
 algorithm_text = ax.text(0.60, 0.9, '', transform=ax.transAxes, size=14)
+centre_mass_text = ax.text(0.67, 0.4, 'Centre of mass with respect to seat', transform=ax.transAxes, size=14)
 plt.axvspan(-1.5, 1.5, facecolor='grey', alpha=0.15)
 
 max_angle = 0
@@ -91,12 +91,19 @@ def animate(i):
     m1 = [x1[i], y1[i]]
     m2 = [x2[i], y2[i]]
     m3 = [x3[i], y3[i]]
-    cm = [cmx[i], cmy[i]]
+    cm = cm_to_cartesian(angle1[i], angle2[i], angle3[i], [cmx[i], cmy[i]])
+    
+    enlarged_cm = [5*cmx[i], 5*cmy[i]]
+    centre_of_mass_start = [1.0, -1.5]
+    centre_of_mass_end = [coord[0] + coord[1] for coord in zip(centre_of_mass_start, enlarged_cm)]
+
+
     # First list is x-coords of one line, second list is y-coords of same line
     line1.set_data([origin[0], m1[0]], [origin[1], m1[1]])
     line2.set_data([m1[0], m2[0]], [m1[1], m2[1]])
     line3.set_data([m2[0], m3[0]], [m2[1], m3[1]])
     line4.set_data([m3[0], cm[0]], [m3[1], cm[1]])
+    line7.set_data([centre_of_mass_start[0], centre_of_mass_end[0]], [centre_of_mass_start[1], centre_of_mass_end[1]])
 
     time_text.set_text(time_template % t[i])
     algorithm_text.set_text(algorithm_template % algorithm[i])
@@ -108,11 +115,11 @@ def animate(i):
     if current_angle < min_angle:
         min_angle = current_angle
         line6.set_data([origin[0], m3[0]], [origin[1], m3[1]])
-    return line1, line2, line3, line4, time_text, algorithm_text, line5, line6
+    return line1, line2, line3, line4, time_text, algorithm_text, line5, line6, line7
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(0, len(t)),
-                              interval=600 * dt/0.1, blit=True, init_func=init)
+                              interval=100 * dt/0.1, blit=True, init_func=init)
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
