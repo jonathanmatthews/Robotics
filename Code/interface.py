@@ -4,7 +4,7 @@ from os import listdir
 import time as tme
 from limb_data import values
 from positions import positions
-from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict
+from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat
 from sys import path, argv
 from robot_interface import Robot
 from encoder_interface import Encoders
@@ -127,9 +127,9 @@ class Interface(Algorithm):
         except IndexError as e:
             raise IndexError(e, 'Ran out of algorithms')
 
-        algo_class = info.pop('algo')
+        self.algo_class = info.pop('algo')
         kwargs = info
-        algo_class_initialized = algo_class(values, all_data, **kwargs)
+        algo_class_initialized = self.algo_class(values, all_data, **kwargs)
         return algo_class_initialized.algo
 
     def get_ang_vel(self, time, current_angle):
@@ -143,45 +143,13 @@ class Interface(Algorithm):
         if len(self.all_data) == 0:
             return 0
 
-        # time_data = self.all_data['time']
-        # angle_data = self.all_data['be']
         latest_values = self.all_data[-1]
-
-        # delta_time = time - time_data[-1]
-        # delta_angle = current_angle - angle_data[-1]
 
         delta_time = time - latest_values['time']
         delta_angle = current_angle - latest_values['be']
 
         return delta_angle / delta_time
 
-    def centre_of_mass(self, angle1, angle2, angle3):
-        '''Returns the centre of mass relative to the big encoder.'''
-        L1 = 1.5  # length of pendulum 1 in m
-        L2 = 0.12  # length of pendulum 2 in m
-        L3 = 0.20  # length of pendulum 3 in m
-        a1 = angle1 * numpy.pi / 180
-        a2 = angle2 * numpy.pi / 180
-        a3 = angle3 * numpy.pi / 180
-        x_seat = L3 * numpy.sin(a1 + a2 + a3) + L2 * \
-            numpy.sin(a1 + a2) + L1 * numpy.sin(a1)
-        y_seat = - L3 * numpy.cos(a1 + a2 + a3) - L2 * \
-            numpy.cos(a1 + a2) - L1 * numpy.cos(a1)
-        if self.position == "seated":
-            x_com = x_seat - ((0.03674 - 0.03) * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + ((0.16 - 0.02463) * numpy.cos(a1 + a2 + a3))
-        elif self.position == "extended":
-            x_com = x_seat - ((0.0488 - 0.03) * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + ((0.16 - 0.0124) * numpy.cos(a1 + a2 + a3))
-        elif self.position == 'folded':
-            x_com = x_seat - ((0.0558 - 0.03) * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + ((0.16 - 0.000757) * numpy.cos(a1 + a2 + a3))
-        elif self.position == 'unfolded':
-            x_com = x_seat - ((0.031 - 0.03) * numpy.sin(a1 + a2 + a3))
-            y_com = y_seat + ((0.16 - 0.035) * numpy.cos(a1 + a2 + a3))
-        else:
-            raise ValueError("Position not found")
-        return [x_com, y_com]
 
     def __run_real(self, t, period):
         max_runs = t * 1 / period + 1.0
@@ -203,12 +171,16 @@ class Interface(Algorithm):
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
             be = self.get_big_encoder()
-            cmx, cmy = self.centre_of_mass(be, se0, se1)
+            cmx, cmy = centre_of_mass_respect_seat(self.position)
             av = self.get_ang_vel(time, be)
+            try:
+                algo = self.algo_class.__name__
+            except:
+                algo = 'None'
 
             # position recorded is position before any changes
             current_values = convert_list_dict(
-                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, self.position])
+                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, algo, self.position])
 
             if switch == 'switch' and event != max_runs - 1:
                 self.algorithm = self.next_algo(current_values, self.all_data)
@@ -241,8 +213,8 @@ class Interface(Algorithm):
         Runs old data line by line through algorithm so that algorithm can be tested
         """
         # Read old data
-        data = read_file(output_directory + filename)
         print 'Using test mode, will apply algorithm to data from file {}'.format(filename)
+        data = read_file(output_directory + filename)
 
         # Needs to update line by line so only have access to data you would if
         # running real time
@@ -252,12 +224,16 @@ class Interface(Algorithm):
 
         switch = 'switch'
         for i in xrange(len(data)):
-            row_no_pos = list(data[i])[:-1]
-            current_values = convert_list_dict(row_no_pos + [self.position])
+            try:
+                algo = self.algo_class.__name__
+            except:
+                algo = 'None'
+
+            row_no_pos = list(data[i])[:-2]
+            current_values = convert_list_dict(row_no_pos + [algo, self.position])
             # Put new data through algorithm not including position as want to
 
             if switch == 'switch' and i != (len(data) - 1):
-                print i, len(data)
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
             
@@ -298,6 +274,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(5, 0.10)
+    interface.run(100, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
 
