@@ -1,5 +1,8 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
+
+from sys import path
+path.insert(0, 'Single_Pendulum')
 from parametric_increase import Increase
 from single_startup_const_period import Start
 from single_increase_quarter_period import IncreaseQuarterPeriod
