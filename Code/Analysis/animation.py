@@ -60,15 +60,19 @@ line1, = ax.plot([], [], 'o-', lw=2, color='b')
 line2, = ax.plot([], [], 'o-', lw=2, color='r')
 line3, = ax.plot([], [], 'o-', lw=2, color='g')
 line4, = ax.plot([], [], 'o-', lw=4, color='y')
-line5, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
-line6, = ax.plot([], [], 'o-', lw=1, linestyle='--', color='b')
+line5, = ax.plot([], [], '-', lw=1, linestyle='--', color='b')
+line6, = ax.plot([], [], '-', lw=1, linestyle='--', color='b')
 line7, = ax.plot([], [], 'o-', lw=1, color='y')
 
-time_template = 'Time = %.1fs'
+time_template = 'Time: %.1fs'
 algorithm_template = 'Algorithm: %s'
+max_angle_template = 'Max Angle: %.2f ' + r"$(^o)$"
+min_angle_template = 'Min Angle: %.2f ' + r"$(^o)$"
 time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, size=14)
-algorithm_text = ax.text(0.60, 0.9, '', transform=ax.transAxes, size=14)
 centre_mass_text = ax.text(0.67, 0.4, 'Centre of mass with respect to seat', transform=ax.transAxes, size=14)
+max_angle_text = ax.text(0.05, 0.85, '', transform=ax.transAxes, size=14)
+min_angle_text = ax.text(0.05, 0.80, '', transform=ax.transAxes, size=14)
+algorithm_text = ax.text(0.05, 0.75, '', transform=ax.transAxes, size=14)
 plt.axvspan(-1.5, 1.5, facecolor='grey', alpha=0.15)
 
 max_angle = 0
@@ -107,14 +111,17 @@ def animate(i):
     time_text.set_text(time_template % t[i])
     algorithm_text.set_text(algorithm_template % algorithm[i])
 
-    current_angle = np.arctan(x3[i]/y3[i])
+    current_angle = np.arctan(x3[i]/y3[i]) * 180/np.pi
     if current_angle > max_angle:
         max_angle = current_angle
         line5.set_data([origin[0], m3[0]], [origin[1], m3[1]])
     if current_angle < min_angle:
         min_angle = current_angle
         line6.set_data([origin[0], m3[0]], [origin[1], m3[1]])
-    return line1, line2, line3, line4, time_text, algorithm_text, line5, line6, line7
+
+    max_angle_text.set_text(min_angle_template % min_angle)
+    min_angle_text.set_text(max_angle_template % max_angle)
+    return line1, line2, line3, line4, time_text, algorithm_text, line5, line6, line7, min_angle_text, max_angle_text
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(0, len(t)),

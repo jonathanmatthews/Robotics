@@ -5,7 +5,6 @@ from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file
-from functools import reduce
 
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis')
