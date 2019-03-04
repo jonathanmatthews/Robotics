@@ -60,7 +60,7 @@ positions = {
     },
 
 
-    'folded': {
+    'raised': {
 
         'HY': 0,
         'HP': 0.2548,
@@ -92,7 +92,7 @@ positions = {
 
 
 
-    'unfolded': {
+    'lowered': {
 
         'HY': 0,
         'HP': -0.6719517,
