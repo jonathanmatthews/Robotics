@@ -3,6 +3,8 @@ from encoder_interface import Encoders
 from parametric_increase import Increase
 from single_startup_const_period import Start
 from single_increase_quarter_period import IncreaseQuarterPeriod
+from single_maintain_constant import MaintainConstant
+from single_nothing import Nothing
 
 
 class Algorithm(Robot, Encoders):
@@ -21,13 +23,14 @@ class Algorithm(Robot, Encoders):
         self.increase1 = IncreaseQuarterPeriod
         self.increase2 = Increase
         self.start = Start
+        self.start = Nothing
+        self.maintain = MaintainConstant
         
         self.order = [{
             'algo': self.start,
-            'duration': 30.0
+            'duration': 5.0
         },{
-            'algo': self.increase1,
-            'max_angle': 10
-        },{
-            'algo': self.increase2
+            'algo': self.maintain,
+            'duration': 35.0,
+            'max_angle': 10.0
         }]
