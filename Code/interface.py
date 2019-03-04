@@ -51,7 +51,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Real'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -102,13 +102,12 @@ class Interface(Algorithm):
             values,
             positions,
             ALProxy)
-        self.speech.say
 
         # Store setup mode for later
         self.setup = setup
 
         self.speech.say("Connected and setup, waiting 2 seconds")
-        tme.sleep(3)
+        tme.sleep(2)
 
 
     def next_algo(self, values, all_data):
@@ -274,6 +273,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(100, 0.10)
+    interface.run(200, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
 

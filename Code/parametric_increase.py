@@ -22,6 +22,9 @@ class Increase():
         self.time_to_switch_unfolded = 100
         self.time_to_switch_folded =100
         
+        self.tolerance_zero = -0.1
+        self.tolerance_max = -0.0
+        
     
     def last_maxima(self, all_data):
         """
@@ -55,13 +58,6 @@ class Increase():
         See interface.py for details.
         """
 
-        TOLERANCE = 0.4 # How many seconds early the robot is allowed to switch positions.
-
-        if values['av'] > 0 and not self.moving_down:
-            # The robot seems to change a bit too early more frequently at the positive extreme,
-            # so decrease tolerance in this case by a small amount.
-            TOLERANCE += -0.2
-
         ### Getting period:
 
         # Shuffle values around, such that we compare the current state to
@@ -74,8 +70,13 @@ class Increase():
             print values['time'], 'Crossed zero point'
             self.moving_down = False
             self.max_times = self.last_maxima(all_data)
-            quarter_period = abs(self.max_times[-1] - values['time'])
-            self.time_to_switch_unfolded = values['time'] + quarter_period
+            
+            dt = self.curr_time - self.prev_time
+            interpolate = dt * np.abs(self.curr) / \
+            np.abs(self.curr - self.prev)
+            true_zero_time = values['time'] - interpolate
+            quarter_period = abs(self.max_times[-1] - true_zero_time)
+            self.time_to_switch_unfolded = true_zero_time + quarter_period
         
         elif abs(self.curr) <= abs(self.prev) and not self.moving_down: # Top of swing reached.
             print values['time'], 'At maximum'
@@ -86,12 +87,12 @@ class Increase():
             quarter_period = abs(values['time'] - self.zero_times[-1])
             self.time_to_switch_folded = values['time'] + quarter_period     
         
-        if values['time'] + TOLERANCE > self.time_to_switch_unfolded:
+        if values['time'] + self.tolerance_zero > self.time_to_switch_unfolded:
             self.time_to_switch_unfolded += 100 # Some arbitrary big number.
 
             return 'unfolded' # Change position.
             
-        if values['time'] + TOLERANCE > self.time_to_switch_folded:
+        if values['time'] + self.tolerance_max > self.time_to_switch_folded:
             self.time_to_switch_folded += 100 # Some arbitrary big number.
 
             return 'folded' # Change position.

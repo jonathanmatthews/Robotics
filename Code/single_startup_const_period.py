@@ -5,7 +5,7 @@ class Start():
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
         self.duration = kwargs.get('duration', 10)
-        self.wait_time = 1.3
+        self.wait_time = 1.25
         self.last_move = 0
         pass
     
