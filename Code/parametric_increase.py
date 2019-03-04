@@ -22,8 +22,8 @@ class Increase():
         self.time_to_switch_unfolded = 100
         self.time_to_switch_folded =100
         
-        self.tolerance_zero = -0.1
-        self.tolerance_max = -0.0
+        self.tolerance_zero = -0.3
+        self.tolerance_max = -0.3
         
     
     def last_maxima(self, all_data):
@@ -87,12 +87,12 @@ class Increase():
             quarter_period = abs(values['time'] - self.zero_times[-1])
             self.time_to_switch_folded = values['time'] + quarter_period     
         
-        if values['time'] + self.tolerance_zero > self.time_to_switch_unfolded:
+        if values['time'] - self.tolerance_zero > self.time_to_switch_unfolded:
             self.time_to_switch_unfolded += 100 # Some arbitrary big number.
 
-            return 'unfolded' # Change position.
+            return 'lowered' # Change position.
             
-        if values['time'] + self.tolerance_max > self.time_to_switch_folded:
+        if values['time'] - self.tolerance_max > self.time_to_switch_folded:
             self.time_to_switch_folded += 100 # Some arbitrary big number.
 
-            return 'folded' # Change position.
+            return 'raised' # Change position.

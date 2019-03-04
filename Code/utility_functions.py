@@ -122,10 +122,10 @@ def centre_of_mass_respect_seat(position):
     elif position == "extended":
         x_com = (0.0488 - 0.03)
         y_com = (0.16 - 0.0124)
-    elif position == 'folded':
+    elif position == 'raised':
         x_com = (0.0558 - 0.03)
         y_com = (0.16 - 0.000757)
-    elif position == 'unfolded':
+    elif position == 'lowered':
         x_com = (0.031 - 0.03)
         y_com = (0.16 - 0.035)
     else:

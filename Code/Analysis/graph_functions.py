@@ -9,10 +9,10 @@ position_numbers = {
     'seated': -1,
     1.0: 'extended',
     -1.0: 'seated',
-    'folded': 2.0,
-    'unfolded': -2.0,
-    2.0: 'folded',
-    -2.0: 'unfolded',
+    'raised': 2.0,
+    'lowered': -2.0,
+    2.0: 'raised',
+    -2.0: 'lowered',
     0.0: ''
 }
 

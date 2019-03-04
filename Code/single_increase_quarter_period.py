@@ -16,7 +16,7 @@ class IncreaseQuarterPeriod():
         self.offset = -0.2
         # conditions for running, will stop at first condition reached 
         self.max_angle = kwargs.get('max_angle', 50)
-        self.duration = kwargs.get('duration', 20)
+        self.duration = kwargs.get('duration', float('inf'))
 
         # set up parameters
         self.start_time = values['time']

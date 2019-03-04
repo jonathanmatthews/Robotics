@@ -27,7 +27,6 @@ class Algorithm(Robot, Encoders):
             'duration': 30.0
         },{
             'algo': self.increase1,
-            'duration': 100,
             'max_angle': 10
         },{
             'algo': self.increase2

@@ -108,6 +108,7 @@ class Interface(Algorithm):
 
         self.speech.say("Connected and setup, waiting 2 seconds")
         tme.sleep(2)
+        
 
 
     def next_algo(self, values, all_data):
@@ -273,6 +274,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(200, 0.10)
+    interface.run(150.0, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
 
