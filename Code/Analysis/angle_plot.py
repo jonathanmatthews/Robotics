@@ -2,12 +2,15 @@
 This plot shows the angle against time, along with the position of the robot against time, along with gyrometer and accelerometer values.
 
 This code should be run from inside the Analysis directory, otherwise the imports will NOT work.
+
+
+
+THIS PLOT ISN'T THAT USEFUL NOW
 """
 
 import numpy as np
-import os
 import matplotlib.pyplot as plt
-from graph_format import format_graph
+from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file
@@ -29,12 +32,6 @@ gz = angles['gz']
 angle1 = angles['be']
 position = angles['pos']
 
-position_numbers = {
-    'extended': 1,
-    'seated': 0
-}
-position_number = [position_numbers[i] for i in position]
-
 # setup figure
 fig, ax = plt.subplots(
     2, 2, figsize=(
@@ -45,8 +42,7 @@ ax = format_graph(ax)
 
 # editing top left plot
 plt.sca(ax[0])
-plt.title('Plot of angle against seat position')
-plt.plot(t, position_number, label='Position of Nao')
+add_named_position_plot(t, position)
 plt.ylabel('Named position')
 
 # editing bottom left plot

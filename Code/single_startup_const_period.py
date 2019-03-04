@@ -5,7 +5,7 @@ class Start():
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
         self.duration = kwargs.get('duration', 10)
-        self.wait_time = 1.3
+        self.wait_time = 1.25
         self.last_move = 0
         pass
     
@@ -24,5 +24,7 @@ class Start():
                 else:
                     return 'extended'
 
-        if t - self.start_time > self.duration:
+        
+        if t - self.start_time > self.duration and 0.15 < t - self.last_move < 0.5:
+            print 'last move', self.last_move
             return 'switch'

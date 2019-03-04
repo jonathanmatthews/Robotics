@@ -7,7 +7,7 @@ This code should be run from inside the Analysis directory, otherwise the import
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from graph_format import format_graph
+from graph_functions import *
 from scipy.optimize import curve_fit
 from sys import path
 path.insert(0, '..')
@@ -16,6 +16,7 @@ from utility_functions import read_file, convert_read_numpy, get_latest_file
 filename, output_data_directory = get_latest_file('Analysis')
 angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
+
 t = angles['time']
 angle = angles['be']
 
@@ -35,18 +36,11 @@ plt.ylabel('Angle ' + r"$(^o)$")
 
 plt.plot(t, angle, label='Collected data')
 
-# finds indexes corresponding to local maxima
-# angle_max_index = argrelextrema(angle, np.greater)
-t = t[5:]
-angle = angle[5:]
-angle_max_index = (np.diff(np.sign(np.diff(angle))) < 0).nonzero()[0] + 1
-# extracts value corresponding to those indexes
-time_max = t[angle_max_index]
-angle_max = angle[angle_max_index]
-plt.scatter(time_max, angle_max, color='r', label='Local maxima')
+times_max, angles_max = times_and_values_maxima(t, angle)
+plt.scatter(times_max, angles_max, color='r', label='Local maxima')
 
 # calculate period of swing
-time_between_max = np.sum(np.diff(time_max)) / (len(time_max) - 1)
+time_between_max = np.sum(np.diff(times_max)) / (len(times_max) - 1)
 w_d = 2 * np.pi / time_between_max
 
 
@@ -54,19 +48,12 @@ def damping_fit(t, a, b):
     # Function that curve_fit will attempt to fit to
     return a * np.exp(-b * t)
 
-time_max = list(time_max)
-angle_max = list(angle_max)
-print time_max
-print angle_max
-print len(time_max)
-print len(angle_max)
 # parameters optimum and covariance matrix
-popt, pcov = curve_fit(damping_fit, time_max, angle_max, p0=[30, 0.01])
-print popt
+popt, pcov = curve_fit(damping_fit, times_max, angles_max, p0=[30, 0.01])
 # convert to standard error
-#perr = np.sqrt(np.diag(pcov))
-# create time list and calculate corresponding angles
-time = np.linspace(min(time_max), max(time_max), 100)
+perr = np.sqrt(np.diag(pcov))
+
+time = np.linspace(min(times_max), max(times_max), 100)
 angle_fitted = damping_fit(time, *popt)
 
 plt.plot(time, angle_fitted, label='Fitted curve')

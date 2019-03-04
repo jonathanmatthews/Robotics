@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from graph_format import format_graph
+from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy
@@ -39,5 +39,5 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig(
-    'Figures/Comparison.eps', format='eps')
+# fig.savefig(
+    # 'Figures/Comparison.eps', format='eps')
