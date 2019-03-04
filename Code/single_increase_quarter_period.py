@@ -3,7 +3,6 @@ from encoder_interface import Encoders
 import time as tme
 import numpy as np
 
-
 class IncreaseQuarterPeriod():
     """
     This is an example algorithm class, as everyone will be working on different algorithms
@@ -14,15 +13,21 @@ class IncreaseQuarterPeriod():
         self.time_switch = 100
         # how far from calculated top nao swings at
         self.offset = -0.2
-        # conditions for running, will stop at first condition reached 
-        self.max_angle = kwargs.get('max_angle', 50)
-        self.duration = kwargs.get('duration', float('inf'))
-
         # set up parameters
         self.start_time = values['time']
         self.previous_time = values['time']
         self.previous_be = values['be']
+
+        # conditions for running, will stop at first condition reached 
+        self.max_angle = kwargs.get('max_angle', 50)
+        self.duration = kwargs.get('duration', 30)
+        self.last_maximum = self.last_maxima(all_data, 'be')
         self.increasing = kwargs.get('increasing', True)
+        if self.increasing == True:
+            print 'Increasing amplitude, quarter period'
+        else:
+            print 'Decreasing amplitude, quarter period'
+        self.min_angle = kwargs.get('min_angle', 6)
 
     
     def algo(self, values, all_data):
@@ -36,7 +41,8 @@ class IncreaseQuarterPeriod():
 
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
-            print self.time_switch
+            self.last_maximum = self.last_maxima(all_data, 'be')
+            print 'Next switching time', self.time_switch
 
         # At the end of the loop, set the value of big encoder to the previous value
         self.previous_be = values['be']
@@ -50,8 +56,18 @@ class IncreaseQuarterPeriod():
             return position_to_change
         
         # either conditions met
-        if values['time'] - self.start_time > self.duration or values['be'] > self.max_angle:
+        if values['time'] - self.start_time > self.duration:
+            if self.increasing == True:
+                print 'Switching from increasing, duration ended'
+            else:
+                print 'Switching from decreasing, duration ended'
             return 'switch'
+        if (self.last_maximum > self.max_angle and self.increasing == True):
+            print 'Maximum angle reached, switching'
+            return 'switch'
+        if (self.last_maximum < self.min_angle and self.increasing == False):
+            print 'Minimum angle reached, switching'
+            return 'switch' 
         return 'no change'
             
 
@@ -65,23 +81,31 @@ class IncreaseQuarterPeriod():
         min_time = values['time'] - interpolate
         return min_time
 
-    def last_maxima(self, all_data):
+    def last_maxima(self, all_data, be_time='time'):
             be = np.abs(all_data['be'][-30:])
             time = all_data['time'][-30:]
             # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
             angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-            max_time = time[angle_max_index[-1]]
-            return max_time
- 
-    def next_position_calculation(self, values):
-        print 'Big encoder at evaluation', values['be']
-        if values['be'] < 0:
-            next_position = 'seated'
-        elif values['be'] > 0:
-            next_position = 'extended'
+            if be_time == 'time':
+                return time[angle_max_index[-1]]
+            elif be_time == 'be':
+                return be[angle_max_index[-1]]
 
+    def next_position_calculation(self, values):
+        if values['be'] < 0 and self.increasing == True:
+            next_position = 'seated'
+        elif values['be'] > 0 and self.increasing == True:
+            next_position = 'extended'
+        elif values['be'] < 0 and self.increasing == False:
+            next_position = 'extended'
+        elif values['be'] > 0 and self.increasing == False:
+            next_position = 'seated'
         else:
             print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
             next_position = values['pos']
         return next_position
+
+class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
+    def __init__(self, values, all_data, **kwargs):
+        IncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)
         
