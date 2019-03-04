@@ -16,7 +16,6 @@ class MaintainConstant():
         self.duration = kwargs.get('duration', float('inf'))
 
 
-    
     def algo(self, values, all_data):
         print 'Maintain'
         if values['be'] > self.max_angle - 3.0:

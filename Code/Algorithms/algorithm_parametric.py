@@ -1,8 +1,14 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
+
+from sys import path
+path.insert(0, 'Single_Pendulum')
+from parametric_increase import Increase
 from single_startup_const_period import Start
 from single_increase_quarter_period import IncreaseQuarterPeriod
+from single_maintain_constant import MaintainConstant
 from single_nothing import Nothing
+
 
 class Algorithm(Robot, Encoders):
     """
@@ -17,22 +23,17 @@ class Algorithm(Robot, Encoders):
 
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
-
-        self.increase= IncreaseQuarterPeriod
-        self.decrease = IncreaseQuarterPeriod
+        self.increase1 = IncreaseQuarterPeriod
+        self.increase2 = Increase
         self.start = Start
-
-        # This defines the order of running, and any extra arguments required for the functions
-        # are defined in the dictionary
-        # This algorithm runs the startup algorithm for 2 seconds, then runs increase till it reaches
-        # 20 degrees or for 3 seconds, then maintains at 20 degrees for 2 seconds, and then finally
-        # decreases for 20 seconds or the end of the running time
+        self.start = Nothing
+        self.maintain = MaintainConstant
+        
         self.order = [{
             'algo': self.start,
-            'duration': 25.0
+            'duration': 5.0
         },{
-            'algo': self.increase,
-            'max_angle': 30.0,
-            'duration': 176.0
+            'algo': self.maintain,
+            'duration': 35.0,
+            'max_angle': 10.0
         }]
-        

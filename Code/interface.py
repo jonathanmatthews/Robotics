@@ -20,7 +20,7 @@ Contains class:
 
 #from robot_interface_webots import Robot
 
-files = listdir('.')
+files = listdir('Algorithms')
 list_algorithms = [x for x in files if search(
     r"(?<=^algorithm_).+(?=\.py$)", x)]
 algo_dict = {}
@@ -41,6 +41,7 @@ print("running " + algo_dict[int(algorithm)] + "\n")
 # otherwise appear in the list.
 
 algorithm_import = algo_dict[int(algorithm)]
+path.insert(0, 'Algorithms')
 Algorithm = __import__(algorithm_import).Algorithm
 
 
@@ -51,7 +52,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {

@@ -8,7 +8,7 @@ class Nothing():
 
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
-        self.duration = kwargs.get('duration', 20)
+        self.duration = kwargs.get('duration', float('inf'))
 
     
     def algo(self, values, all_data):
