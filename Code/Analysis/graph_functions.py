@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy
 import numpy as np
+from functools import reduce
+
 
 position_numbers = {
     'extended': 1,
@@ -59,6 +61,9 @@ def shade_background_based_on_algorithm(time, algorithm):
     for i, index in enumerate(algorithm_change_indexes[:-1]):
         plt.axvspan(time[index], time[index + algorithm_change_diff[i]], alpha = (i+1) * 0.15, color='grey', label='{}'.format(algorithm[index+1]))
     return algorithm_change_indexes
+
+def algorithm_change_indexes(algorithm):
+    return np.append(np.where(algorithm[:-1] != algorithm[1:])[0], np.array(len(algorithm) - 1))
 
 def combine_multiple_legends(axes, custom_location='best'):
     lines = []
