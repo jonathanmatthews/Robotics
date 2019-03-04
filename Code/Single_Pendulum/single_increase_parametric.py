@@ -11,6 +11,17 @@ class Increase():
         self.max_angle = kwargs.get('max_angle', 180)
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', float("inf"))
+        self.decrease = kwargs.get('decrease', False)
+        # Set decrease as True to swap raised/lowered, such that the
+        # amplitude decreases, slowing down the swing (hopefully).
+
+        if self.decrease:
+            self.zero_pos = "lowered"
+            self.maxima_pos = "raised"
+        
+        elif not self.decrease:
+            self.zero_pos = "raised"
+            self.maxima_pos = "lowered"
         
         self.prev, self.curr = 0.0, values['be']
         self.prev_time, self.curr_time = 0.0, values['time']
@@ -90,9 +101,9 @@ class Increase():
         if values['time'] - self.tolerance_zero > self.time_to_switch_unfolded:
             self.time_to_switch_unfolded += 100 # Some arbitrary big number.
 
-            return 'lowered' # Change position.
+            return self.maxima_pos # Change position.
             
         if values['time'] - self.tolerance_max > self.time_to_switch_folded:
             self.time_to_switch_folded += 100 # Some arbitrary big number.
 
-            return 'raised' # Change position.
+            return self.zero_pos # Change position.
