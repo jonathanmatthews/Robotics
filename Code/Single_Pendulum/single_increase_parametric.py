@@ -32,6 +32,7 @@ class Increase():
         
         self.time_to_switch_unfolded = 100
         self.time_to_switch_folded =100
+        self.max_angle_reached = False
         
         self.tolerance_zero = -0.3
         self.tolerance_max = -0.3
@@ -74,6 +75,9 @@ class Increase():
         # Shuffle values around, such that we compare the current state to
         # the previous state.
 
+        if abs(values['be']) >= self.max_angle:
+            self.max_angle_reached = True # Switch at next zero.
+        
         self.prev, self.curr = self.curr, values['be']
         self.prev_time, self.curr_time = self.curr_time, values['time']
         
@@ -100,10 +104,13 @@ class Increase():
         
         if values['time'] - self.tolerance_zero > self.time_to_switch_unfolded:
             self.time_to_switch_unfolded += 100 # Some arbitrary big number.
-
             return self.maxima_pos # Change position.
             
         if values['time'] - self.tolerance_max > self.time_to_switch_folded:
-            self.time_to_switch_folded += 100 # Some arbitrary big number.
 
+            if values['time'] >= self.duration + self.start_time or self.max_angle_reached:
+                print("Maximum duration/angle reached, switching.")
+                return "switch" # Switch ready for next zero.
+
+            self.time_to_switch_folded += 100 # Some arbitrary big number.
             return self.zero_pos # Change position.
