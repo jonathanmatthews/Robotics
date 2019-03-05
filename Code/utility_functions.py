@@ -49,17 +49,35 @@ def current_data_types():
                                                          'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
             ('cmx', 'f4'), ('cmy', 'f4'), ('algo', '|S25'), ('pos', '|S10')]
 
-def get_latest_file(current_dir):
+def get_latest_file(current_dir, test=True):
+    """
+    Get latest data file, if test = True will collect latest tst file, if not then only
+    original files will be loaded
+    current_dir:
+        current directory: Code or Analysis
+        test: include test files or not
+    Returns:
+        filename + ' Tst' or filename + ' Org'
+    """
     if current_dir == 'Code':
         output_directory = 'Output_data/'
     else:
         output_directory = '../Output_data/'
-    dates = [datetime.datetime.strptime(ts, "%d-%m-%Y %H:%M:%S") for ts in listdir(output_directory)]
+    if test:
+        filetype = 'Tst'
+    else:
+        filetype = 'Org'
+    files = [name[:-4] for name in listdir(output_directory) if name[-3:] == filetype]
+    if len(files) == 0:
+        files = [name[:-4] for name in listdir(output_directory) if name[-3:] == 'Org']
+    dates = [datetime.datetime.strptime(ts, "%d-%m-%Y %H:%M:%S") for ts in files]
     dates.sort()
     latest = dates[-1]
     latest = datetime.datetime.strftime(latest, "%d-%m-%Y %H:%M:%S")
-    return latest, output_directory
-
+    if test:
+        return latest + ' Tst', output_directory
+    else:
+        return latest + ' Org', output_directory
 
 def convert_list_dict(current_values):
     """
@@ -112,22 +130,23 @@ def position_seat_cartesian(angle1, angle2, angle3):
         numpy.cos(angle1 + angle2) - L1 * numpy.cos(angle1)
     return [x_seat, y_seat]
 
-def centre_of_mass_respect_seat(position):
+def centre_of_mass_respect_seat(position, masses):
     """
     Returns centre of mass coordinates of nao in different positions, with respect to the SEAT
     """
-    if position == "seated":
+    if position == "seated" and masses == False:
         x_com = (0.03674 - 0.03)
         y_com = (0.16 - 0.02463)
-    elif position == "extended":
+    elif position == "extended" and masses == False:
         x_com = (0.0488 - 0.03)
         y_com = (0.16 - 0.0124)
-    elif position == 'raised':
+    elif position == 'raised' and masses == False:
         x_com = (0.0558 - 0.03)
         y_com = (0.16 - 0.000757)
-    elif position == 'lowered':
+    elif position == 'lowered' and masses == False:
         x_com = (0.031 - 0.03)
         y_com = (0.16 - 0.035)
+    # need more elif's here for with masses
     else:
         raise ValueError("Position not found")
     return [x_com, y_com]
