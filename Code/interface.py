@@ -55,6 +55,8 @@ Other two are self explanatory
 setup = 'Real'
 if argv[-1] == 'Testing':
     setup = argv[-1]
+if argv[-1] == 'Real':
+    setup = argv[-1]
 
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
