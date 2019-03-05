@@ -3,6 +3,7 @@ import numpy
 from os import listdir
 from collections import OrderedDict
 import datetime
+import numpy as np
 
 def flatten(values):
     final_list = []
@@ -187,17 +188,3 @@ def last_minima(self, all_data):
     min_times = time[angle_max_index]
 
     return min_times
-
-def next_position_calculation(self, values):
-    if values['be'] < 0 and self.increasing == True:
-        next_position = 'seated'
-    elif values['be'] > 0 and self.increasing == True:
-        next_position = 'extended'
-    elif values['be'] < 0 and self.increasing == False:
-        next_position = 'extended'
-    elif values['be'] > 0 and self.increasing == False:
-        next_position = 'seated'
-    else:
-        print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
-        next_position = values['pos']
-    return next_position

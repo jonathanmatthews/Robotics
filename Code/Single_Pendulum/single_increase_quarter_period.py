@@ -1,5 +1,3 @@
-from robot_interface import Robot
-from encoder_interface import Encoders
 import time as tme
 import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
@@ -22,7 +20,7 @@ class IncreaseQuarterPeriod():
         # conditions for running, will stop at first condition reached 
         self.max_angle = kwargs.get('max_angle', 50)
         self.duration = kwargs.get('duration', 30)
-        self.last_maximum = self.last_maxima(all_data, 'be')
+        self.last_maximum = last_maxima(all_data, 'be')
         self.increasing = kwargs.get('increasing', True)
         if self.increasing == True:
             print 'Increasing amplitude, quarter period'
@@ -35,14 +33,14 @@ class IncreaseQuarterPeriod():
         # sign of big encoder changes when crossing zero point
         if np.sign(values['be']) != np.sign(self.previous_be):
 
-            self.min_time = self.last_zero_crossing(values)
-            self.max_time = self.last_maxima(all_data)
+            self.min_time = last_zero_crossing(values)
+            self.max_time = last_maxima(all_data)
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
-            self.last_maximum = self.last_maxima(all_data, 'be')
+            self.last_maximum = last_maxima(all_data, 'be')
             print 'Next switching time', self.time_switch
 
         # At the end of the loop, set the value of big encoder to the previous value
@@ -70,6 +68,20 @@ class IncreaseQuarterPeriod():
             print 'Minimum angle reached, switching'
             return 'switch' 
         return 'no change'
+
+    def next_position_calculation(self, values):
+        if values['be'] < 0 and self.increasing == True:
+            next_position = 'seated'
+        elif values['be'] > 0 and self.increasing == True:
+            next_position = 'extended'
+        elif values['be'] < 0 and self.increasing == False:
+            next_position = 'extended'
+        elif values['be'] > 0 and self.increasing == False:
+            next_position = 'seated'
+        else:
+            print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
+            next_position = values['pos']
+        return next_position
             
 class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
     def __init__(self, values, all_data, **kwargs):

@@ -11,7 +11,7 @@ class Stop():
         self.duration = kwargs.get('duration', 10)
         self.stop_angle = kwargs.get('stop_angle', 1.0)
         self.wait_time = 1.25
-        self.last_move = self.last_maxima(all_data, 'time')
+        self.last_move = last_maxima(all_data, 'time')
 
         # sets up correct position 
         av = values['av']
@@ -35,10 +35,9 @@ class Stop():
         if t - self.start_time > self.duration:
             print 'duration reached, stopping'
             return 'switch'
-        if self.last_maxima(all_data, 'be') < self.stop_angle:
+        if last_maxima(all_data, 'be') < self.stop_angle:
             print 'min angle reached, stopping'
             return 'switch'
-
 
     def next_position(self, values):
         if values['pos'] == 'seated':
