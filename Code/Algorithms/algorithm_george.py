@@ -10,7 +10,6 @@ from single_nothing import Nothing
 from sys import path
 path.insert(0, 'Single_Pendulum')
 
-
 class Algorithm(Robot, Encoders):
     """
     This is an example algorithm class, as everyone will be working on different algorithms
