@@ -2,6 +2,7 @@ from robot_interface import Robot
 from encoder_interface import Encoders
 import time as tme
 import numpy as np
+from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
 
 class IncreaseQuarterPeriod():
     """
@@ -70,46 +71,6 @@ class IncreaseQuarterPeriod():
             return 'switch' 
         return 'no change'
             
-    def moving_average(self, values, window_size):
-        ma = [np.sum(values[i:i+window_size])/window_size for i, _ in enumerate(values[:-window_size+1])]
-        return ma
-
-
-    def last_zero_crossing(self, values):
-        current_be = values['be']
-        dt = values['time'] - self.previous_time
-
-        interpolate = dt * np.abs(current_be) / \
-            np.abs(current_be - self.previous_be)
-
-        min_time = values['time'] - interpolate
-        return min_time
-
-    def last_maxima(self, all_data, be_time='time'):
-            # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
-            be = np.abs(self.moving_average(all_data['be'][-30:], 5))
-            time = all_data['time'][-30:]
-            # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
-            angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-            if be_time == 'time':
-                return time[angle_max_index[-1]]
-            elif be_time == 'be':
-                return be[angle_max_index[-1]]
-
-    def next_position_calculation(self, values):
-        if values['be'] < 0 and self.increasing == True:
-            next_position = 'seated'
-        elif values['be'] > 0 and self.increasing == True:
-            next_position = 'extended'
-        elif values['be'] < 0 and self.increasing == False:
-            next_position = 'extended'
-        elif values['be'] > 0 and self.increasing == False:
-            next_position = 'seated'
-        else:
-            print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
-            next_position = values['pos']
-        return next_position
-
 class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
     def __init__(self, values, all_data, **kwargs):
         IncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)

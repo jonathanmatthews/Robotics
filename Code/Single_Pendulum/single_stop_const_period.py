@@ -3,6 +3,7 @@
     motion, and times starting kick to next maxima.'''
 
 import numpy as np
+from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
 
 class Stop():
     def __init__(self, values, all_data, **kwargs):
@@ -45,12 +46,3 @@ class Stop():
         else:
             return 'seated'
 
-    def last_maxima(self, all_data, be_time):
-        be = np.abs(all_data['be'][-30:])
-        time = np.abs(all_data['time'][-30:])
-        # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
-        max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-        if be_time == 'be':
-            return be[max_index[-1]]
-        elif be_time == 'time':
-            return time[max_index[-1]]
