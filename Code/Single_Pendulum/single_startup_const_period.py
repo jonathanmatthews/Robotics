@@ -4,15 +4,15 @@
 
 class Start():
     def __init__(self, values, all_data, **kwargs):
+        print 'Startup script'
         self.start_time = values['time']
-        self.duration = kwargs.get('duration', 10)
+        self.duration = kwargs.get('duration', float('inf'))
+        self.max_angle = kwargs.get('max_angle', 5)
         self.wait_time = 1.25   # defined by the half period of a swing
         self.last_move = 0      # time last kick was performed
         self.first_kick = True  # used to check if it is first kick
-        pass
 
     def algo(self, values, all_data):
-        print 'start', values['time']
         t = values['time']  # renames current time to t
 
         if t < 0.1:
@@ -38,6 +38,10 @@ class Start():
                 else:
                     return 'extended'
 
-        if t - self.start_time > self.duration and 0.15 < t - self.last_move < 0.5:
-            print 'last move', self.last_move
-            return 'switch'
+        if 0.15 < t - self.last_move < 0.5:
+            if t - self.start_time > self.duration:
+                print 'last move', self.last_move
+                return 'switch'
+            if values['be'] > self.max_angle:
+                print 'last move', self.last_move
+                return 'switch'

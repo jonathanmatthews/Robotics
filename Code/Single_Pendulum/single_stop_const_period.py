@@ -2,15 +2,14 @@
     and kicks again. Calculates correct kicking order as will already be in 
     motion, and times starting kick to next maxima.'''
 
-import numpy as np
-from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
 
+from utility_functions import last_maxima
 
 class Stop():
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
-        self.duration = kwargs.get('duration', 10)
-        self.stop_angle = kwargs.get('stop_angle', 1.0)
+        self.duration = kwargs.get('duration', float('inf'))
+        self.min_angle = kwargs.get('min_angle', 1.0)
         self.wait_time = 1.25
         self.last_move = last_maxima(all_data, 'time')
 
@@ -36,7 +35,7 @@ class Stop():
         if t - self.start_time > self.duration:
             print 'duration reached, stopping'
             return 'switch'
-        if last_maxima(all_data, 'be') < self.stop_angle:
+        if last_maxima(all_data, 'be') < self.min_angle:
             print 'min angle reached, stopping'
             return 'switch'
 

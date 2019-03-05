@@ -165,18 +165,22 @@ def centre_of_mass_respect_seat(position, masses):
     return [x_com, y_com]
 
 
-def moving_average(self, values, window_size):
+def moving_average(values, window_size):
     ma = [np.sum(values[i:i+window_size])/window_size for i,
           _ in enumerate(values[:-window_size+1])]
     return ma
 
 
-def last_zero_crossing(self, values):
+def last_zero_crossing(values, previous_time, previous_be):
+    """
+    Interpolates between two times and big encoder values, should be used when sign
+    of encoder changes.
+    """
     current_be = values['be']
-    dt = values['time'] - self.previous_time
+    dt = values['time'] - previous_time
 
     interpolate = dt * np.abs(current_be) / \
-        np.abs(current_be - self.previous_be)
+        np.abs(current_be - previous_be)
 
     min_time = values['time'] - interpolate
     return min_time

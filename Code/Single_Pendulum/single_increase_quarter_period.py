@@ -9,38 +9,42 @@ class IncreaseQuarterPeriod():
     """
 
     def __init__(self, values, all_data, **kwargs):
-        # stops switching too often
+        # offset is time from maximum to swing
         self.time_switch = 100
-        # how far from calculated top nao swings at
         self.offset = -0.2
-        # set up parameters
+        self.last_maximum = last_maxima(all_data, 'be')
+
+        # setting up times
         self.start_time = values['time']
         self.previous_time = values['time']
         self.previous_be = values['be']
 
-        # conditions for running, will stop at first condition reached
-        self.max_angle = kwargs.get('max_angle', 50)
-        self.duration = kwargs.get('duration', 30)
-        self.last_maximum = last_maxima(all_data, 'be')
+        # max_angle used for increasing min_angle for decreasing
         self.increasing = kwargs.get('increasing', True)
-        if self.increasing == True:
+        self.max_angle = kwargs.get('max_angle', 180)
+        self.min_angle = kwargs.get('min_angle', 5)
+        
+        # alternative switch condition
+        self.duration = kwargs.get('duration', float('inf'))
+
+        if self.increasing:
             print 'Increasing amplitude, quarter period'
         else:
             print 'Decreasing amplitude, quarter period'
-        self.min_angle = kwargs.get('min_angle', 6)
 
     def algo(self, values, all_data):
+
         # sign of big encoder changes when crossing zero point
         if np.sign(values['be']) != np.sign(self.previous_be):
 
-            self.min_time = last_zero_crossing(values)
-            self.max_time = last_maxima(all_data)
+            self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
+            self.max_time = last_maxima(all_data, be_time='time')
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
-            self.last_maximum = last_maxima(all_data, 'be')
+            self.last_maximum = last_maxima(all_data, be_time='be')
             print 'Next switching time', self.time_switch
 
         # At the end of the loop, set the value of big encoder to the previous value
@@ -48,12 +52,12 @@ class IncreaseQuarterPeriod():
         self.previous_time = values['time']
 
         if values['time'] > self.time_switch:
-            # don't want nao to trigger every cycle so set next time far ahead, it will be reset when zero point is crossed
             self.time_switch += 100
-            position_to_change = self.next_position_calculation(values)
-            # return string corresponding to position to change to, interface then handles changing
-            return position_to_change
+            return self.next_position_calculation(values)
 
+        return self.end_conditions(values)
+
+    def end_conditions(self, values):
         # either conditions met
         if values['time'] - self.start_time > self.duration:
             if self.increasing == True:

@@ -1,4 +1,3 @@
-from time import time
 import numpy as np
 import math
 
@@ -7,9 +6,9 @@ class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
-        self.max_angle = kwargs.get('max_angle', 20)
+        self.max_angle = kwargs.get('max_angle', 180)
         self.increase = kwargs.get('increase', True)
-        self.duration = kwargs.get('duration', 20)
+        self.duration = kwargs.get('duration', float('int'))
         self.pendulum_length = 1.82
         self.min_angle = kwargs.get('min_angle', 5)
         self.next_highest_angle = None

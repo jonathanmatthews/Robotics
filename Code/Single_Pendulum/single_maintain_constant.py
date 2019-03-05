@@ -7,18 +7,18 @@ class MaintainConstant():
     """
 
     def __init__(self, values, all_data, **kwargs):
+        print 'Starting maintain'
         self.start_time = values['time']
-        # conditions for running, will stop at first condition reached
-        self.max_angle = kwargs.get('max_angle', 10)
-        self.duration = kwargs.get('duration', float('inf'))
+        self.max_angle = kwargs.get('max_angle', 180)
+        self.duration = kwargs.get('duration', 20)
 
     def algo(self, values, all_data):
-        print 'Maintain'
+
         if values['be'] > self.max_angle - 3.0:
-            print values['be']
+            print 'Big encoder at kick command', values['be']
             return 'extended'
         if values['be'] < -self.max_angle + 3.0:
-            print values['be']
+            print 'Big encoder at kick command', values['be']
             return 'seated'
 
         if values['time'] - self.start_time > self.duration:

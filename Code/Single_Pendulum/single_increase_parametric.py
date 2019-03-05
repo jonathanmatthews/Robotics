@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import sign
-from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
+from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation, last_minima
 
 
 class Increase():
@@ -62,7 +62,6 @@ class Increase():
         # Obtain index.
         angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1
         min_times = time[angle_max_index]
-
         return min_times
 
     def algo(self, values, all_data, **kwargs):
@@ -100,8 +99,8 @@ class Increase():
             self.moving_down = True
             # Moving down flag prevents max_times from being appended to more than once.
 
-            self.zero_times = self.last_minima(all_data)
-            self.max_times = self.last_maxima(all_data)
+            self.zero_times = last_minima(all_data)
+            self.max_times = last_maxima(all_data)
             quarter_period = abs(self.max_times[-1] - self.zero_times[-1])
             self.time_to_switch_folded = self.max_times[-1] + quarter_period
 
