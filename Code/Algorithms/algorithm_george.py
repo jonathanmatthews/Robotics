@@ -19,7 +19,7 @@ class Algorithm(Robot, Encoders):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders)
         # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy)
+        Robot.__init__(self, values, positions, ALProxy, masses=False)
 
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
