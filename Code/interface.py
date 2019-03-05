@@ -20,7 +20,7 @@ Contains class:
 
 #from robot_interface_webots import Robot
 
-files = listdir('.')
+files = listdir('Algorithms')
 list_algorithms = [x for x in files if search(
     r"(?<=^algorithm_).+(?=\.py$)", x)]
 algo_dict = {}
@@ -41,6 +41,7 @@ print("running " + algo_dict[int(algorithm)] + "\n")
 # otherwise appear in the list.
 
 algorithm_import = algo_dict[int(algorithm)]
+path.insert(0, 'Algorithms')
 Algorithm = __import__(algorithm_import).Algorithm
 
 
@@ -51,7 +52,12 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
+if argv[-1] == 'Testing':
+    setup = argv[-1]
+if argv[-1] == 'Real':
+    setup = argv[-1]
+
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
@@ -171,7 +177,7 @@ class Interface(Algorithm):
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
             be = self.get_big_encoder()
-            cmx, cmy = centre_of_mass_respect_seat(self.position)
+            cmx, cmy = centre_of_mass_respect_seat(self.position, self.masses)
             av = self.get_ang_vel(time, be)
             try:
                 algo = self.algo_class.__name__
@@ -206,7 +212,7 @@ class Interface(Algorithm):
         else:
             print('Ran on time')
         # store data in txt file
-        self.store(filename)
+        self.store(filename + ' Org')
 
     def __run_test(self, t, period, filename, output_directory):
         """
@@ -243,7 +249,7 @@ class Interface(Algorithm):
             # Add new data to available data
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
-        self.store(filename)
+        self.store(filename[:-4] + ' Tst')
 
     def run(self, t, period, **kwargs):
         """
@@ -253,7 +259,7 @@ class Interface(Algorithm):
         filename : string, location of the file to read from if testing. Ignore if not testing.
         """
         if self.setup == 'Testing':
-            latest, output_directory = get_latest_file('Code')
+            latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
             self.__run_test(t, period, filename, output_directory)
         else:
@@ -274,6 +280,6 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(150.0, 0.10)
+    interface.run(30.0, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
 

@@ -2,12 +2,17 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from graph_functions import *
-from sys import path
+from sys import path, argv
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file
 
+test = False
+if argv[-1] == 'Testing':
+    test = True
+if argv[-1] == 'Real':
+    test = False
 # access latest file if underneath file name is blanked out
-filename, output_data_directory = get_latest_file('Analysis')
+filename, output_data_directory = get_latest_file('Analysis', test=test)
 angles = read_file(output_data_directory + filename)
 angles = convert_read_numpy(angles)
 

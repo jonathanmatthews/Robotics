@@ -5,11 +5,12 @@ import math
 class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
-        self.start_time = time()
+        self.start_time = values['time']
         self.max_angle = kwargs.get('max_angle', 20)
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', 20)
         self.pendulum_length = 1.82
+        self.min_angle = kwargs.get('min_angle', 5)
         self.next_highest_angle = None
         self.previous_max_angle = all_data['be'].max()
 
@@ -20,7 +21,6 @@ class IncreaseDecrease():
         """
         current_be = values['be']
         previous_be = all_data['be'][-1]
-        current_posture = values['pos']
         current_av = values['av']
         previous_av = all_data['av'][-1]
 
@@ -63,3 +63,9 @@ class IncreaseDecrease():
 
         if(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == -1):
             self.previous_max_angle = all_data['be'][-1]
+            if(self.max_angle < abs(self.previous_max_angle) and self.increase == True):
+                return 'switch'
+            elif(abs(self.previous_max_angle) < self.min_angle and self.increase == False):
+                return 'switch'
+        if values['time'] - self.start_time > self.duration:
+            return 'switch'
