@@ -14,8 +14,8 @@ class Increase():
         self.decrease = kwargs.get('decrease', False)
         self.prev_be = values['be']
         self.prev_time = values['time']
-        self.min_offset = -0.3
-        self.max_offset = -0.3
+        self.min_offset = -0.35
+        self.max_offset = -0.35
         self.next_max = values['time'] + 100
         self.next_min = values['time'] + 100
 
@@ -31,7 +31,6 @@ class Increase():
         max_times = time[angle_max_index]
 
         return max_times
-
     
     def algo(self, values, all_data, **kwargs):
         
@@ -47,11 +46,14 @@ class Increase():
 
             self.next_max = true_zero_time + quarter_period + self.max_offset
             self.next_min = true_zero_time + 2 * quarter_period + self.min_offset
-
-        if values['time'] > self.next_max:
-            return 'lowered'
-        if values['time'] > self.next_min:
-            return 'raised'
+            print values['time'], self.next_max, self.next_min
 
         self.prev_be = values['be']
         self.prev_time = values['time']
+        
+        if values['time'] > self.next_max:
+            self.next_max += 100
+            return 'lowered'
+        if values['time'] > self.next_min:
+            self.next_min += 100
+            return 'raised'

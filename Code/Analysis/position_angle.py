@@ -48,8 +48,9 @@ plt.plot(t, be, label='Big Encoder', color='b')
 plt.xlim([0, max(t)])
 
 # editing axis that will have named positions on
-plt.sca(ax2)
-add_named_position_plot(t, position)
+if test:
+    plt.sca(ax2)
+    add_named_position_plot(t, position)
 
 # make one big legend not two smaller ones
 combine_multiple_legends([ax, ax2], custom_location='lower left')

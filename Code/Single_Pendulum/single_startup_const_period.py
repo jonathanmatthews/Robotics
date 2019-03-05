@@ -21,7 +21,7 @@ class Start():
         
         
         if t > 0.1:
-            if t > self.last_move + self.wait_time/2 and self.first_kick = True:
+            if t > self.last_move + self.wait_time/2 and self.first_kick == True:
                 # first kick needed after a quarter period, not half
                 self.first_kick = False  # go to half period kicks
                 self.last_move = t       # reset time of last kick
