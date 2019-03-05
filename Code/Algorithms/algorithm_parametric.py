@@ -3,7 +3,7 @@ from encoder_interface import Encoders
 
 from sys import path
 path.insert(0, 'Single_Pendulum')
-from parametric_increase import Increase
+from single_increase_parametric import Increase
 from single_startup_const_period import Start
 from single_increase_quarter_period import IncreaseQuarterPeriod
 from single_maintain_constant import MaintainConstant
@@ -33,7 +33,8 @@ class Algorithm(Robot, Encoders):
             'algo': self.start,
             'duration': 5.0
         },{
-            'algo': self.maintain,
+            'algo': self.increase2,
             'duration': 35.0,
-            'max_angle': 10.0
+            'max_angle': 10.0,
+            'decrease': False
         }]
