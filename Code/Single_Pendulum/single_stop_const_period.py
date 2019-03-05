@@ -5,6 +5,7 @@
 import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
 
+
 class Stop():
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
@@ -13,7 +14,7 @@ class Stop():
         self.wait_time = 1.25
         self.last_move = last_maxima(all_data, 'time')
 
-        # sets up correct position 
+        # sets up correct position
         av = values['av']
         if av >= 0:
             # positive angular momentum means going backward, therefore want seated to decrease
@@ -22,11 +23,11 @@ class Stop():
             # opposite of above
             self.start_pos = 'extended'
         print 'Stopping swing, constant period'
-    
+
     def algo(self, values, all_data):
         t = values['time']
-        
-        if t  > self.last_move + self.wait_time:
+
+        if t > self.last_move + self.wait_time:
             print 'Stop swing', values['time']
             self.last_move = t
             return self.next_position(values)
@@ -44,4 +45,3 @@ class Stop():
             return 'extended'
         else:
             return 'seated'
-

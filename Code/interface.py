@@ -114,8 +114,6 @@ class Interface(Algorithm):
 
         self.speech.say("Connected and setup, waiting 2 seconds")
         tme.sleep(2)
-        
-
 
     def next_algo(self, values, all_data):
         """
@@ -156,7 +154,6 @@ class Interface(Algorithm):
 
         return delta_angle / delta_time
 
-
     def __run_real(self, t, period):
         max_runs = t * 1 / period + 1.0
 
@@ -194,7 +191,7 @@ class Interface(Algorithm):
 
             if switch in positions.keys():
                 self.set_posture(switch)
-        
+
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)
 
@@ -236,13 +233,14 @@ class Interface(Algorithm):
                 algo = 'None'
 
             row_no_pos = list(data[i])[:-2]
-            current_values = convert_list_dict(row_no_pos + [algo, self.position])
+            current_values = convert_list_dict(
+                row_no_pos + [algo, self.position])
             # Put new data through algorithm not including position as want to
 
             if switch == 'switch' and i != (len(data) - 1):
                 self.algorithm = self.next_algo(current_values, self.all_data)
             switch = self.algorithm(current_values, self.all_data)
-            
+
             if switch in positions.keys():
                 self.set_posture(switch)
 
@@ -282,4 +280,3 @@ if __name__ == '__main__':
     interface = Interface(setup)
     interface.run(30.0, 0.10)
     interface.motion.setStiffnesses("Body", 0.0)
-

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
@@ -20,7 +21,7 @@ class IncreaseDecrease():
         if(self.increase == True):
             if(np.sign(current_av) != np.sign(previous_av)):
                 self.previous_max_angle = all_data['be'][-1]
-                if(current_pos  == 'seated'):
+                if(current_pos == 'seated'):
                     return 'extended'
                 elif(current_pos == 'extended'):
                     return 'seated'

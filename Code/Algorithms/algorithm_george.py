@@ -1,11 +1,5 @@
-from robot_interface import Robot
-from encoder_interface import Encoders
-
 from sys import path
 path.insert(0, 'Single_Pendulum')
-from single_startup_const_period import Start
-from single_nothing import Nothing
-from single_increase_quarter_period import IncreaseQuarterPeriod
 
 class Algorithm(Robot, Encoders):
     """
@@ -25,4 +19,3 @@ class Algorithm(Robot, Encoders):
             'algo': IncreaseQuarterPeriod,
             'duration': 20.0
         }]
-        
