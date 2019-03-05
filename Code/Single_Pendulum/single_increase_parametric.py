@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import sign
+from utility_functions import last_maxima, last_zero_crossing, moving_average, next_position_calculation
 
 class Increase():
 
