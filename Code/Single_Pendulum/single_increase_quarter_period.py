@@ -70,6 +70,10 @@ class IncreaseQuarterPeriod():
             return 'switch' 
         return 'no change'
             
+    def moving_average(self, values, window_size):
+        ma = [np.sum(values[i:i+window_size])/window_size for i, _ in enumerate(values[:-window_size+1])]
+        return ma
+
 
     def last_zero_crossing(self, values):
         current_be = values['be']
@@ -82,7 +86,8 @@ class IncreaseQuarterPeriod():
         return min_time
 
     def last_maxima(self, all_data, be_time='time'):
-            be = np.abs(all_data['be'][-30:])
+            # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
+            be = np.abs(self.moving_average(all_data['be'][-30:], 5))
             time = all_data['time'][-30:]
             # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
             angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
