@@ -5,8 +5,9 @@ import math
 class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
+        print 'Starting'
         self.start_time = values['time']
-        self.max_angle = kwargs.get('max_angle', 20)
+        self.max_angle = kwargs.get('max_angle', 40)
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', 20)
         self.pendulum_length = 1.82
@@ -33,7 +34,6 @@ class IncreaseDecrease():
             print("At lowest point now, calculating the next max angle")
             self.max_speed = math.radians(values['av']) * self.pendulum_length
             h = 0.5*(self.max_speed**2)/9.8
-            print(h)
             # Calculate the next highest angle in degrees,
             # The -2 degree at end is because we want to start change the position a little bit early
             self.next_highest_angle = math.degrees(
