@@ -31,19 +31,6 @@ class Increase():
         max_times = time[angle_max_index]
 
         return max_times
-        
-    
-    def last_minima(self, all_data):
-        """
-        Obtain the time at which the swing was last at the bottom of its arc.
-        """
-        be = np.abs(all_data['be'][-30:])
-        time = all_data['time'][-30:]
-        
-        angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1 # Obtain index.
-        min_times = time[angle_max_index]
-
-        return min_times
 
     
     def algo(self, values, all_data, **kwargs):

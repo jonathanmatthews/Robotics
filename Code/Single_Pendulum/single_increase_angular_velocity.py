@@ -10,8 +10,6 @@ class IncreaseDecrease():
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
 
-
-
     def algo(self, values, all_data):
         """
         Use the angular velosity to estimate the time to switch the posture
@@ -35,9 +33,6 @@ class IncreaseDecrease():
             elif(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == 1):
                 self.previous_max_angle = all_data['be'][-1]
                 return 'seated'
-        if(all_data['be'][-1]>self.max_angle):
-            print('switch algorithm from single_increase_angular_velocity')
-            return 'switch'
 
         if(self.increase == True):
             print 'Increase', values['time']
