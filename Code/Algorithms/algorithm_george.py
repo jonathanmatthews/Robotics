@@ -4,7 +4,7 @@ from encoder_interface import Encoders
 from sys import path
 path.insert(0, 'Single_Pendulum')
 from single_startup_const_period import Start
-from single_increase_quarter_period import IncreaseQuarterPeriod, DecreaseQuarterPeriod
+from single_increase_max_angle_damping import IncreaseDecrease
 from single_nothing import Nothing
 from single_stop_const_period import Stop
 from single_maintain_constant import MaintainConstant
@@ -24,8 +24,7 @@ class Algorithm(Robot, Encoders):
         # These are the classes that all containing the function algorithm that will be run,
         # this classes will be initialised one cycle before switching to the algorithm
 
-        self.increase = IncreaseQuarterPeriod
-        self.decrease = DecreaseQuarterPeriod
+        self.increase = IncreaseDecrease
         self.increase_parametric = Increase
         self.start = Start
         self.stop = Stop
@@ -40,6 +39,8 @@ class Algorithm(Robot, Encoders):
         },{
             'algo': self.increase,
             'max_angle': 15.0,
+            'min_angle': 5.0,
+            'Increase' : True,
             'duration': 50.0
         },{
             'algo': self.maintain,
@@ -49,11 +50,6 @@ class Algorithm(Robot, Encoders):
             'algo': self.increase_parametric,
             'duration': 50.0,
             'max_angle': 20.0
-        },{
-            'algo': self.decrease,
-            'min_angle': 6.0,
-            'increasing': False,
-            'duration': 20
         },{
             'algo': self.stop,
             'min_angle': 1,

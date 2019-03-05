@@ -52,7 +52,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Real'
+setup = 'Testing'
 if argv[-1] == 'Testing':
     setup = argv[-1]
 if argv[-1] == 'Real':
