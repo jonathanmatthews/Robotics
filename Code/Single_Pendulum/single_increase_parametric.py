@@ -34,8 +34,8 @@ class Increase():
         self.time_to_switch_folded =100
         self.max_angle_reached = False
         
-        self.tolerance_zero = -0.3
-        self.tolerance_max = -0.3
+        self.tolerance_zero = -1.0
+        self.tolerance_max = -0.0
         
     
     def last_maxima(self, all_data):
@@ -99,18 +99,20 @@ class Increase():
             # Moving down flag prevents max_times from being appended to more than once.
 
             self.zero_times = self.last_minima(all_data)
-            quarter_period = abs(values['time'] - self.zero_times[-1])
-            self.time_to_switch_folded = values['time'] + quarter_period     
+            self.max_times = self.last_maxima(all_data)
+            quarter_period = abs(self.max_times[-1] - self.zero_times[-1])
+            self.time_to_switch_folded = self.max_times[-1] + quarter_period     
         
-        if values['time'] - self.tolerance_zero > self.time_to_switch_unfolded:
+        if values['time'] > self.time_to_switch_unfolded + self.tolerance_zero:
             self.time_to_switch_unfolded += 100 # Some arbitrary big number.
+            print 'Angle', values['time'], values['be']
             return self.maxima_pos # Change position.
             
-        if values['time'] - self.tolerance_max > self.time_to_switch_folded:
+        if values['time'] > self.time_to_switch_folded + self.tolerance_max:
 
             if values['time'] >= self.duration + self.start_time or self.max_angle_reached:
                 print("Maximum duration/angle reached, switching.")
                 return "switch" # Switch ready for next zero.
-
+            print 'Angle', values['time'], values['be']
             self.time_to_switch_folded += 100 # Some arbitrary big number.
             return self.zero_pos # Change position.
