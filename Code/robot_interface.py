@@ -13,7 +13,7 @@ class Robot():
     """
 
     def __init__(self, values, positions, ALProxy,
-                 ip="192.168.1.3", port=9559):
+                 ip="192.168.1.3", port=9559, **kwargs):
         """
         Sets up the connection to the robot and sets initial posture. Also calibrates encoders to zero, if available.
         Requires arguments:
@@ -31,6 +31,7 @@ class Robot():
         self.speech = ALProxy("ALTextToSpeech", ip, port)
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
+        self.masses = kwargs.get('masses', True)
         self.set_posture('seated')
 
     def get_gyro(self):

@@ -100,9 +100,8 @@ def add_named_position_plot(time, positions):
     positions: list of named positions
     """
     position_number = [position_numbers[i] for i in positions]
-    common_keys = list(set(positions).intersection(position_numbers.keys()))
     plt.ylabel('Named position')
-    y_tick_values = np.linspace(min(position_number), max(position_number), len(common_keys) + 1)
+    y_tick_values = np.arange(min(position_number), max(position_number)+1, 1)
     y_tick_labels = [position_numbers[i] for i in y_tick_values]
     plt.yticks(y_tick_values, y_tick_labels)
     plt.yticks(rotation=-45)
