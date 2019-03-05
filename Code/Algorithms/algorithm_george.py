@@ -1,14 +1,15 @@
+from single_increase_parametric_rework import Increase
+from single_maintain_constant import MaintainConstant
+from single_stop_const_period import Stop
+from single_nothing import Nothing
+from single_increase_max_angle_damping import IncreaseDecrease
+from single_startup_const_period import Start
 from robot_interface import Robot
 from encoder_interface import Encoders
 
 from sys import path
 path.insert(0, 'Single_Pendulum')
-from single_startup_const_period import Start
-from single_increase_max_angle_damping import IncreaseDecrease
-from single_nothing import Nothing
-from single_stop_const_period import Stop
-from single_maintain_constant import MaintainConstant
-from single_increase_parametric_rework import Increase
+
 
 class Algorithm(Robot, Encoders):
     """
@@ -36,33 +37,32 @@ class Algorithm(Robot, Encoders):
         self.order = [{
             'algo': self.nothing,
             'duration': 5.0
-        },{
+        }, {
             'algo': self.increase_parametric,
             'duration': 300
         }]
-        
-        #self.order = [{
-            #'algo': self.start,
-            #'duration': 25.0
-        #},{
-            #'algo': self.increase,
-            #'max_angle': 15.0,
-            #'min_angle': 5.0,
-            #'Increase' : True,
-            #'duration': 50.0
-        #},{
-            #'algo': self.maintain,
-            #'max_angle': 15.0,
-            #'duration': 60.0
-        #},{
-            #'algo': self.increase_parametric,
-            #'duration': 50.0,
-            #'max_angle': 20.0
-        #},{
-            #'algo': self.stop,
-            #'min_angle': 1,
-            #'duration': 100
-        #},{
-            #'algo': self.nothing
-        #}]
-        
+
+        # self.order = [{
+        # 'algo': self.start,
+        # 'duration': 25.0
+        # },{
+        # 'algo': self.increase,
+        # 'max_angle': 15.0,
+        # 'min_angle': 5.0,
+        # 'Increase' : True,
+        # 'duration': 50.0
+        # },{
+        # 'algo': self.maintain,
+        # 'max_angle': 15.0,
+        # 'duration': 60.0
+        # },{
+        # 'algo': self.increase_parametric,
+        # 'duration': 50.0,
+        # 'max_angle': 20.0
+        # },{
+        # 'algo': self.stop,
+        # 'min_angle': 1,
+        # 'duration': 100
+        # },{
+        # 'algo': self.nothing
+        # }]

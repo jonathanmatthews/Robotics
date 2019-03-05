@@ -5,6 +5,7 @@ from collections import OrderedDict
 import datetime
 import numpy as np
 
+
 def flatten(values):
     final_list = []
     for list_value in values:
@@ -44,11 +45,13 @@ def convert_read_numpy(data):
             [tuple(row)], dtype=data_type), axis=0)
     return all_data
 
+
 def current_data_types():
     return [('time', 'f4'), ('event', 'i4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
             ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
                                                          'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
             ('cmx', 'f4'), ('cmy', 'f4'), ('algo', '|S25'), ('pos', '|S10')]
+
 
 def get_latest_file(current_dir, test=True):
     """
@@ -68,10 +71,13 @@ def get_latest_file(current_dir, test=True):
         filetype = 'Tst'
     else:
         filetype = 'Org'
-    files = [name[:-4] for name in listdir(output_directory) if name[-3:] == filetype]
+    files = [name[:-4]
+             for name in listdir(output_directory) if name[-3:] == filetype]
     if len(files) == 0:
-        files = [name[:-4] for name in listdir(output_directory) if name[-3:] == 'Org']
-    dates = [datetime.datetime.strptime(ts, "%d-%m-%Y %H:%M:%S") for ts in files]
+        files = [name[:-4]
+                 for name in listdir(output_directory) if name[-3:] == 'Org']
+    dates = [datetime.datetime.strptime(
+        ts, "%d-%m-%Y %H:%M:%S") for ts in files]
     dates.sort()
     latest = dates[-1]
     latest = datetime.datetime.strftime(latest, "%d-%m-%Y %H:%M:%S")
@@ -79,6 +85,7 @@ def get_latest_file(current_dir, test=True):
         return latest + ' Tst', output_directory
     else:
         return latest + ' Org', output_directory
+
 
 def convert_list_dict(current_values):
     """
@@ -107,13 +114,17 @@ def cm_to_cartesian(angle1, angle2, angle3, position):
     centre_of_mass_nao_seat = position
 
     # minus because of big encoder angle direction
-    angle_seat = -numpy.arctan(cartesian_position_seat[0]/cartesian_position_seat[1])
+    angle_seat = - \
+        numpy.arctan(cartesian_position_seat[0]/cartesian_position_seat[1])
 
     # using rotation of axes formula to convert between frames of reference
-    converted_coords_x = numpy.cos(angle_seat) * centre_of_mass_nao_seat[0] - numpy.sin(angle_seat) * centre_of_mass_nao_seat[1]
-    converted_coords_y = numpy.sin(angle_seat) * centre_of_mass_nao_seat[0] + numpy.cos(angle_seat) * centre_of_mass_nao_seat[1]
+    converted_coords_x = numpy.cos(
+        angle_seat) * centre_of_mass_nao_seat[0] - numpy.sin(angle_seat) * centre_of_mass_nao_seat[1]
+    converted_coords_y = numpy.sin(
+        angle_seat) * centre_of_mass_nao_seat[0] + numpy.cos(angle_seat) * centre_of_mass_nao_seat[1]
     # adding cartesian positions together
     return [cartesian_position_seat[0] + converted_coords_x, cartesian_position_seat[1] + converted_coords_y]
+
 
 def position_seat_cartesian(angle1, angle2, angle3):
     """
@@ -130,6 +141,7 @@ def position_seat_cartesian(angle1, angle2, angle3):
     y_seat = - L3 * numpy.cos(angle1 + angle2 + angle3) - L2 * \
         numpy.cos(angle1 + angle2) - L1 * numpy.cos(angle1)
     return [x_seat, y_seat]
+
 
 def centre_of_mass_respect_seat(position, masses):
     """
@@ -152,9 +164,12 @@ def centre_of_mass_respect_seat(position, masses):
         raise ValueError("Position not found")
     return [x_com, y_com]
 
+
 def moving_average(self, values, window_size):
-    ma = [np.sum(values[i:i+window_size])/window_size for i, _ in enumerate(values[:-window_size+1])]
+    ma = [np.sum(values[i:i+window_size])/window_size for i,
+          _ in enumerate(values[:-window_size+1])]
     return ma
+
 
 def last_zero_crossing(self, values):
     current_be = values['be']
@@ -166,16 +181,18 @@ def last_zero_crossing(self, values):
     min_time = values['time'] - interpolate
     return min_time
 
+
 def last_maxima(self, all_data, be_time='time'):
         # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
-        be = np.abs(self.moving_average(all_data['be'][-30:], 5))
-        time = all_data['time'][-30:]
-        # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
-        angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-        if be_time == 'time':
-            return time[angle_max_index[-1]]
-        elif be_time == 'be':
-            return be[angle_max_index[-1]]
+    be = np.abs(self.moving_average(all_data['be'][-30:], 5))
+    time = all_data['time'][-30:]
+    # extract time corresponding to latest maxima, index_max_angle(number of previous values to return)
+    angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
+    if be_time == 'time':
+        return time[angle_max_index[-1]]
+    elif be_time == 'be':
+        return be[angle_max_index[-1]]
+
 
 def last_minima(self, all_data):
     """
@@ -183,8 +200,9 @@ def last_minima(self, all_data):
     """
     be = np.abs(all_data['be'][-30:])
     time = all_data['time'][-30:]
-    
-    angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1 # Obtain index.
+
+    # Obtain index.
+    angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1
     min_times = time[angle_max_index]
 
     return min_times

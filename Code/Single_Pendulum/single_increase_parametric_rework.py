@@ -2,6 +2,7 @@ import numpy as np
 from numpy import sign
 from utility_functions import last_maxima
 
+
 class Increase():
 
     def __init__(self, values, all_data, **kwargs):
@@ -18,9 +19,9 @@ class Increase():
         self.max_offset = -0.35
         self.next_max = values['time'] + 100
         self.next_min = values['time'] + 100
-    
+
     def algo(self, values, all_data, **kwargs):
-        
+
         if sign(values['be']) != sign(self.prev_be):
 
             # calculate true zero crossing point
@@ -40,7 +41,7 @@ class Increase():
 
         self.prev_be = values['be']
         self.prev_time = values['time']
-        
+
         # if time to switch change to correct position
         if values['time'] > self.next_max:
             self.next_max += 100
@@ -52,7 +53,7 @@ class Increase():
             self.next_min += 100
             if self.increasing == False:
                 return 'raised'
-            else: 
+            else:
                 return 'lowered'
 
         # switch if angle is big enough or duration is over
