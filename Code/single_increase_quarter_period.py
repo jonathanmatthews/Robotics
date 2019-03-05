@@ -55,10 +55,8 @@ class IncreaseQuarterPeriod():
         return 'no change'
 
     def moving_average(self, values, window_size):
-        # for i, value in enumerate(values[:-window_size]):
-            # print np.sum(values[i:i+window_size])/window_size
-        sum = [np.sum(values[i:i+window_size])/window_size for i, _ in enumerate(values[:-window_size+1])]
-        return sum
+        ma = [np.sum(values[i:i+window_size])/window_size for i, _ in enumerate(values[:-window_size+1])]
+        return ma
 
     def last_zero_crossing(self, values):
         current_be = values['be']
