@@ -6,7 +6,7 @@ from sys import path, argv
 path.insert(0, '..')
 from utility_functions import read_file, convert_read_numpy, get_latest_file
 
-test = False
+test = True
 if argv[-1] == 'Testing':
     test = True
 if argv[-1] == 'Real':

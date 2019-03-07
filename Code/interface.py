@@ -287,6 +287,7 @@ if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
     interface = Interface(setup)
+    interface.speech.say('Battery level at {}'.format(interface.get_angle('BC')[0]))
     try:
         interface.run(200.0, 0.10)
     except KeyboardInterrupt:
