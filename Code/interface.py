@@ -198,7 +198,7 @@ class Interface(Algorithm):
             switch = self.algorithm(current_values, self.all_data)
 
             if switch in positions.keys():
-                self.set_posture(switch)
+                self.set_posture(switch, self.position)
 
             self.all_data = numpy.append(self.all_data, numpy.array(
                 [tuple(current_values.values())], dtype=data_type), axis=0)

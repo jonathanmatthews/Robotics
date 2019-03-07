@@ -38,13 +38,9 @@ class Robot():
         position = self.positions[position]
         values = [self.get_angle(key)[0] for key in position.keys()]
         differences = [(key, value, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
-        for trip in differences:
-            print trip
-            new_dict[trip[0]] = trip[1]
-        print new_dict
         
-        for pair in differences:
-            if pair[1] > 0.1:
+        for trip in differences:
+            if trip[2] > 0.1:
                 raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(*pair))
 
     def get_gyro(self):
@@ -106,10 +102,11 @@ class Robot():
         
     def set_posture_initial(self, next_posture='seated', max_speed=0.2):
         startup_dict = {}
-        for key in self.positions[next_posture].keys()
+        for key in self.positions[next_posture].keys():
             startup_dict[key] = self.get_angle(key)[0]
         self.positions['startup'] = startup_dict
     
         self.set_posture(next_posture, 'startup', max_speed=0.2)
+        
         
         
