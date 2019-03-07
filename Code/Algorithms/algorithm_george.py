@@ -61,6 +61,6 @@ class Algorithm(Robot, Encoders):
             'algo': Nothing,
             'duration': 5.0
         },{
-            'algo': IncreaseParametric,
-            'duration': 250.0
+            'algo': IncreaseQuarterPeriod,
+            'duration': 120.0
         }]

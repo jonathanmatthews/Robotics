@@ -28,6 +28,7 @@ class IncreaseParametric():
         self.next_min = self.start_time + 100
 
     def algo(self, values, all_data, **kwargs):
+        print values['time'], values['be']
 
         if sign(values['be']) != sign(self.prev_be):
 
