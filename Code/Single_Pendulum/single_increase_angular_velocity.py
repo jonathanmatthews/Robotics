@@ -1,16 +1,14 @@
-import numpy as np
+from numpy import sign
 
-class IncreaseDecrease():
+class IncreaseAngularVelocity():
 
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
-        self.max_angle = kwargs.get('max_angle', 20)
-        self.increase = kwargs.get('increase', True)
-        self.duration = kwargs.get('duration', 20)
+        self.max_angle = kwargs.get('max_angle', 180)
+        self.increasing = kwargs.get('increasing', True)
+        self.duration = kwargs.get('duration', float('int'))
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
-
-
 
     def algo(self, values, all_data):
         """
@@ -19,33 +17,35 @@ class IncreaseDecrease():
         current_av = values['av']
         current_pos = values['pos']
         previous_av = all_data['av'][-1]
-        if(self.increase == True):
-            if(np.sign(current_av) != np.sign(previous_av)):
+        if(self.increasing == True):
+            if(sign(current_av) != sign(previous_av)):
                 self.previous_max_angle = all_data['be'][-1]
-                if(current_pos  == 'seated'):
+                if(current_pos == 'seated'):
                     return 'extended'
                 elif(current_pos == 'extended'):
                     return 'seated'
             else:
                 pass
-        elif(self.increase == False):
-            if(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == -1):
+        elif(self.increasing == False):
+            if(sign(current_av) != sign(previous_av) and sign(previous_av) == -1):
                 self.previous_max_angle = all_data['be'][-1]
                 return 'extended'
-            elif(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == 1):
+            elif(sign(current_av) != sign(previous_av) and sign(previous_av) == 1):
                 self.previous_max_angle = all_data['be'][-1]
                 return 'seated'
-        if(all_data['be'][-1]>self.max_angle):
-            print('switch algorithm from single_increase_angular_velocity')
-            return 'switch'
 
-        if(self.increase == True):
+        # switch conditions
+        if(self.increasing == True):
             print 'Increase', values['time']
             if abs(values['be']) > self.max_angle:
                 return 'switch'
-        elif(self.increase == False):
+        elif(self.increasing == False):
             print 'Decrease', values['time']
             if abs(self.previous_max_angle) < self.min_angle:
                 return 'switch'
         if values['time'] - self.start_time > self.duration:
             return 'switch'
+
+class DecreaseAngularVelocity(IncreaseAngularVelocity):
+    def __init__(self, values, all_data, **kwargs):
+        IncreaseAngularVelocity.__init__(self, values, all_data, **kwargs)

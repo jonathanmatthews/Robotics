@@ -1,19 +1,19 @@
-from time import time
 import numpy as np
 import math
+
 
 class IncreaseDecrease():
 
     def __init__(self, values, all_data, **kwargs):
+        print 'Starting'
         self.start_time = values['time']
-        self.max_angle = kwargs.get('max_angle', 20)
+        self.max_angle = kwargs.get('max_angle', 180)
         self.increase = kwargs.get('increase', True)
-        self.duration = kwargs.get('duration', 20)
+        self.duration = kwargs.get('duration', float('int'))
         self.pendulum_length = 1.82
         self.min_angle = kwargs.get('min_angle', 5)
         self.next_highest_angle = None
         self.previous_max_angle = all_data['be'].max()
-
 
     def algo(self, values, all_data):
         """
@@ -33,7 +33,6 @@ class IncreaseDecrease():
             print("At lowest point now, calculating the next max angle")
             self.max_speed = math.radians(values['av']) * self.pendulum_length
             h = 0.5*(self.max_speed**2)/9.8
-            print(h)
             # Calculate the next highest angle in degrees,
             # The -2 degree at end is because we want to start change the position a little bit early
             self.next_highest_angle = math.degrees(
@@ -58,7 +57,7 @@ class IncreaseDecrease():
                     next_pos = 'seated'
 
             if(next_pos):
-                self.next_highest_angle = None                
+                self.next_highest_angle = None
                 return next_pos
 
         if(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == -1):

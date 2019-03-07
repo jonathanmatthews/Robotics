@@ -22,11 +22,11 @@ def integrate_pendulum(n, times,
                        initial_velocities=0,
                        lengths=None, masses=1):
     """Integrate a multi-pendulum with `n` sections"""
-    #-------------------------------------------------
+    # -------------------------------------------------
     # Step 1: construct the pendulum model
-    
+
     # Generalized coordinates and velocities
-    # (in this case, angular positions & velocities of each mass) 
+    # (in this case, angular positions & velocities of each mass)
     q = mechanics.dynamicsymbols('q:{0}'.format(n))
     u = mechanics.dynamicsymbols('u:{0}'.format(n))
 
@@ -36,8 +36,8 @@ def integrate_pendulum(n, times,
 
     # gravity and time symbols
     g, t = symbols('g,t')
-    
-    #--------------------------------------------------
+
+    # --------------------------------------------------
     # Step 2: build the model using Kane's Method
 
     # Create pivot point reference frame
@@ -74,14 +74,14 @@ def integrate_pendulum(n, times,
     KM = mechanics.KanesMethod(A, q_ind=q, u_ind=u,
                                kd_eqs=kinetic_odes)
     fr, fr_star = KM.kanes_equations(particles, forces)
-    
-    #-----------------------------------------------------
+
+    # -----------------------------------------------------
     # Step 3: numerically evaluate equations and integrate
 
     # initial positions and velocities  assumed to be given in degrees
     y0 = np.deg2rad(np.concatenate([np.broadcast_to(initial_positions, n),
                                     np.broadcast_to(initial_velocities, n)]))
-        
+
     # lengths and masses
     if lengths is None:
         lengths = np.ones(n) / n
@@ -101,7 +101,7 @@ def integrate_pendulum(n, times,
     mm_sym = KM.mass_matrix_full.subs(kds).subs(unknown_dict)
     fo_sym = KM.forcing_full.subs(kds).subs(unknown_dict)
 
-    # create functions for numerical calculation 
+    # create functions for numerical calculation
     mm_func = lambdify(unknowns + parameters, mm_sym)
     fo_func = lambdify(unknowns + parameters, fo_sym)
 
@@ -137,19 +137,19 @@ def animate_pendulum_multiple(n, n_pendulums=3, perturbation=1E-6, track_length=
     positions = np.array([get_xy_coords(pi, lengths=lengths) for pi in p])
     positions = positions.transpose(0, 2, 3, 1)
     # positions is a 4D array: (npendulums, len(t), n+1, xy)
-    
+
     fig, ax = plt.subplots(figsize=(6, 6))
     fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
     ax.axis('off')
     ax.set(xlim=(-1, 1), ylim=(-1, 1))
-    
+
     track_segments = np.zeros((n_pendulums, 0, 2))
     tracks = collections.LineCollection(track_segments, cmap='rainbow')
     tracks.set_array(np.linspace(0, 1, n_pendulums))
     ax.add_collection(tracks)
-    
+
     points, = plt.plot([], [], 'ok')
-    
+
     pendulum_segments = np.zeros((n_pendulums, 0, 2))
     pendulums = collections.LineCollection(pendulum_segments, colors='black')
     ax.add_collection(pendulums)
@@ -178,9 +178,10 @@ def animate_pendulum_multiple(n, n_pendulums=3, perturbation=1E-6, track_length=
     plt.show()
     plt.close(fig)
     return anim
-    
+
 
 if __name__ == '__main__':
-    # this will plot a triple pendulum, more specifically 5 triple pendulums starting at 
+    # this will plot a triple pendulum, more specifically 5 triple pendulums starting at
     # slightly different conditions
-    anim = animate_pendulum_multiple(3, initial_positions=20, masses=[0.5, 0.2, 2.0])
+    anim = animate_pendulum_multiple(
+        3, initial_positions=20, masses=[0.5, 0.2, 2.0])
