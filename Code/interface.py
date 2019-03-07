@@ -4,6 +4,7 @@ from os import listdir
 import time as tme
 from limb_data import values
 from positions import positions
+#from positions2 import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat
 from sys import path, argv
 from robot_interface import Robot
@@ -114,7 +115,7 @@ class Interface(Algorithm):
 
         self.speech.say("Checking position, then starting")
         # give robot time to get into position before checking it
-        tme.sleep(4)
+        tme.sleep(6.0)
         try:
             self.check_setup('seated')
         except ValueError as e:

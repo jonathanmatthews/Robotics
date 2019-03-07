@@ -31,14 +31,18 @@ class Robot():
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
         self.masses = kwargs.get('masses', True)
-        self.set_posture('seated', max_speed = 0.4)
+        self.set_posture_initial('seated', max_speed = 0.1)
 
     def check_setup(self, position):
+        new_dict = {}
         position = self.positions[position]
         values = [self.get_angle(key)[0] for key in position.keys()]
-        differences = [(key, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
-        for pair in differences:
-            print pair
+        differences = [(key, value, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
+        for trip in differences:
+            print trip
+            new_dict[trip[0]] = trip[1]
+        print new_dict
+        
         for pair in differences:
             if pair[1] > 0.1:
                 raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(*pair))
@@ -81,31 +85,31 @@ class Robot():
         angle = self.memory.getData(limb_info[1])
         name = limb_info[0]
         return angle, name
-
-    def set_posture(self, name_posture, max_speed=1.0):
-        """
-        Sets the robot's posture. Posture should be described with a name corresponding to a dictionary.
-        Requires:
-        name_posture : name, corresponds to dictionary in positions.py.
-        max_speed : float, optional. The speed to move at. Default 1.0.
-        Examples:
-        set_posture('extended')
-        set_posture('seated')
-        """
-        # Extract dictionary corresponding to name_posture
-        posture = self.positions[name_posture]
-        # Use names in dictionary to collect longer name that naoqi uses
-        names = [self.values[name][0] for name in posture.keys()]
-        # Create list of speeds such that movements finish at same time
-        speed = [max_speed * (self.values[named_part_range][5] / 1.4920799999999999)
-                 for named_part_range in posture.keys()]
-        # Need stiffness set to 1.0 before can move
-        self.motion.setStiffnesses(
-            ["Head", "RArm", "LArm", "RLeg", "LLeg"], 1)
-        # Start movement of each part
-        for i, speed_value in enumerate(speed):
-            self.motion.setAngles(
-                names[i], list(
-                    posture.values())[i], speed_value)
-        # Update current position
-        self.position = name_posture
+        
+    def set_posture(self, next_posture, current_posture, max_speed=1.0):
+        next_posture_dict = self.positions[next_posture]
+        current_posture_dict = self.positions[current_posture]
+        
+        differences_in_angles = []
+        for name in next_posture_dict.keys():
+            differences_in_angles.append(abs(next_posture_dict[name] - current_posture_dict[name]))
+            
+        max_difference = max(differences_in_angles)
+        speeds = [max_speed * difference / max_difference for difference in differences_in_angles]
+            
+        part_name = [self.values[name][0] for name in next_posture_dict.keys()]
+        self.motion.setStiffnesses("Body", 1.0)
+        
+        for name, value, speed in zip(part_name, next_posture_dict.values(), speeds):
+            self.motion.setAngles(name, value, speed)
+        self.position = next_posture
+        
+    def set_posture_initial(self, next_posture='seated', max_speed=0.2):
+        startup_dict = {}
+        for key in self.positions[next_posture].keys()
+            startup_dict[key] = self.get_angle(key)[0]
+        self.positions['startup'] = startup_dict
+    
+        self.set_posture(next_posture, 'startup', max_speed=0.2)
+        
+        
