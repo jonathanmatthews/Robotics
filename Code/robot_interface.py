@@ -37,7 +37,7 @@ class Robot():
         for key in self.positions[position].keys():
             value = self.get_angle(key)[0]
             difference = abs(value - self.positions[position][key])
-            if difference > 0.05:
+            if difference > 0.1:
                 raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(key, difference))
 
     def get_gyro(self):
