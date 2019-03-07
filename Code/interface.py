@@ -3,8 +3,8 @@ from re import search
 from os import listdir
 import time as tme
 from limb_data import values
-from positions import positions
-#from positions2 import positions
+#from positions import positions
+from positions2 import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat
 from sys import path, argv
 from robot_interface import Robot
@@ -115,7 +115,7 @@ class Interface(Algorithm):
 
         self.speech.say("Checking position, then starting")
         # give robot time to get into position before checking it
-        tme.sleep(6.0)
+        tme.sleep(2.0)
         try:
             self.check_setup('seated')
         except ValueError as e:
@@ -288,9 +288,9 @@ if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
     interface = Interface(setup)
-    interface.speech.say('Battery level at {}'.format(interface.get_angle('BC')[0]))
+    interface.speech.say('Battery level at {:.0f}%'.format(interface.get_angle('BC')[0]*100))
     try:
-        interface.run(300.0, 0.10)
+        interface.run(220.0, 0.10)
     except KeyboardInterrupt:
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)

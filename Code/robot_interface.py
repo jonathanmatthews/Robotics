@@ -5,6 +5,7 @@ A modules containing a class with which to access data about the robot and contr
 Contains class:
   Robot
 """
+from time import sleep
 
 class Robot():
     """
@@ -32,7 +33,8 @@ class Robot():
         self.memory = ALProxy("ALMemory", ip, port)
         self.masses = kwargs.get('masses', True)
         self.set_posture_initial('seated', max_speed = 0.1)
-
+        self.motion.setFallManagerEnabled(False)
+        
     def check_setup(self, position):
         new_dict = {}
         position = self.positions[position]
@@ -41,7 +43,7 @@ class Robot():
         
         for trip in differences:
             if trip[2] > 0.1:
-                raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(*pair))
+                raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(*trip))
 
     def get_gyro(self):
         """
@@ -88,24 +90,28 @@ class Robot():
         
         differences_in_angles = []
         for name in next_posture_dict.keys():
-            differences_in_angles.append(abs(next_posture_dict[name] - current_posture_dict[name]))
-            
+            difference = abs(next_posture_dict[name] - current_posture_dict[name])
+            if difference == 0:
+                differences_in_angles.append(0.01)
+            else:
+                differences_in_angles.append(difference)
         max_difference = max(differences_in_angles)
         speeds = [max_speed * difference / max_difference for difference in differences_in_angles]
             
         part_name = [self.values[name][0] for name in next_posture_dict.keys()]
-        self.motion.setStiffnesses("Body", 1.0)
         
         for name, value, speed in zip(part_name, next_posture_dict.values(), speeds):
             self.motion.setAngles(name, value, speed)
         self.position = next_posture
         
     def set_posture_initial(self, next_posture='seated', max_speed=0.2):
+        self.motion.setStiffnesses("Body", 1.0)
+        
         startup_dict = {}
         for key in self.positions[next_posture].keys():
             startup_dict[key] = self.get_angle(key)[0]
         self.positions['startup'] = startup_dict
-    
+        
         self.set_posture(next_posture, 'startup', max_speed=0.2)
         
         

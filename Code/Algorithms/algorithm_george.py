@@ -58,11 +58,8 @@ class Algorithm(Robot, Encoders):
         #}]
         
         self.order = [{
-            'algo': Start,
-            'duration': 25.0
-        },{
-            'algo': IncreaseQuarterPeriod,
-            'duration': 60.0
+            'algo': Nothing,
+            'duration': 5.0
         },{
             'algo': IncreaseParametric,
             'duration': 250.0

@@ -36,7 +36,7 @@ class IncreaseParametric():
 
             # calculate quarter period based on latest maximum and minimum
             self.max_times = last_maxima(all_data, be_time='time')
-            quarter_period = abs(self.max_times[-1] - true_zero_time)
+            quarter_period = abs(self.max_times - true_zero_time)
 
             # maximum and minimum point
             self.next_max = true_zero_time + quarter_period + self.max_offset
@@ -55,15 +55,17 @@ class IncreaseParametric():
                 return 'raised'
         if values['time'] > self.next_min:
             self.next_min += 100
-            if self.increasing == False:
+            if self.increasing:
                 return 'raised'
             else:
                 return 'lowered'
 
         # switch if angle is big enough or duration is over
         if values['time'] - self.start_time > self.duration:
+            print 'Duration end', values['time'], self.start_time, self.duration
             return 'switch'
         if values['be'] > self.max_angle:
+            print 'Angle end', values['be'], self.max_angle
             return 'switch'
 
 class DecreaseParametric(IncreaseParametric):
