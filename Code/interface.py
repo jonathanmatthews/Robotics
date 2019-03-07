@@ -278,5 +278,11 @@ class Interface(Algorithm):
 
 if __name__ == '__main__':
     interface = Interface(setup)
-    interface.run(30.0, 0.10)
+    
+    try:
+        interface.run(30.0, 0.10)
+    
+    except KeyboardInterrupt:
+        pass
+    
     interface.motion.setStiffnesses("Body", 0.0)
