@@ -6,7 +6,6 @@ Contains class:
   Robot
 """
 
-
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
@@ -32,7 +31,14 @@ class Robot():
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
         self.masses = kwargs.get('masses', True)
-        self.set_posture('seated')
+        self.set_posture('seated', max_speed = 0.4)
+
+    def check_setup(self, position):
+        for key in self.positions[position].keys():
+            value = self.get_angle(key)[0]
+            difference = abs(value - self.positions[position][key])
+            if difference > 0.05:
+                raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(key, difference))
 
     def get_gyro(self):
         """

@@ -112,8 +112,15 @@ class Interface(Algorithm):
         # Store setup mode for later
         self.setup = setup
 
-        self.speech.say("Connected and setup, waiting 2 seconds")
-        tme.sleep(2)
+        self.speech.say("Checking position, then starting")
+        # give robot time to get into position before checking it
+        tme.sleep(4)
+        try:
+            self.check_setup('seated')
+        except ValueError as e:
+            self.motion.setStiffnesses("Body", 0.0)
+            self.speech.say('Failed, loosening')
+            raise e
 
     def next_algo(self, values, all_data):
         """
@@ -277,12 +284,12 @@ class Interface(Algorithm):
 
 
 if __name__ == '__main__':
+    # Raising error after loosening as then script that plots
+    # afterwards doesn't bother
     interface = Interface(setup)
-    
     try:
         interface.run(200.0, 0.10)
-    
     except KeyboardInterrupt:
-        pass
-    
-    interface.motion.setStiffnesses("Body", 0.0)
+        interface.speech.say('Loosening')
+        interface.motion.setStiffnesses("Body", 0.0)
+        raise KeyboardInterrupt
