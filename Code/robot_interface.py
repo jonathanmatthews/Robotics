@@ -34,11 +34,14 @@ class Robot():
         self.set_posture('seated', max_speed = 0.4)
 
     def check_setup(self, position):
-        for key in self.positions[position].keys():
-            value = self.get_angle(key)[0]
-            difference = abs(value - self.positions[position][key])
-            if difference > 0.1:
-                raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(key, difference))
+        position = self.positions[position]
+        values = [self.get_angle(key)[0] for key in position.keys()]
+        differences = [(key, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
+        for pair in differences:
+            print pair
+        for pair in differences:
+            if pair[1] > 0.1:
+                raise ValueError("Position isn't setting correctly, failed first on {}.\nDifference from expected value: {}".format(*pair))
 
     def get_gyro(self):
         """
