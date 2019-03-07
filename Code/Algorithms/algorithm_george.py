@@ -1,14 +1,15 @@
 from robot_interface import Robot
 from encoder_interface import Encoders
 
+from sys import path
+path.insert(0, 'Single_Pendulum')
 from single_startup_const_period import Start
 from single_stop_const_period import Stop
 from single_increase_quarter_period import IncreaseQuarterPeriod, DecreaseQuarterPeriod
 from single_increase_parametric_rework import IncreaseParametric, DecreaseParametric
 from single_maintain_constant import MaintainConstant
 from single_nothing import Nothing
-from sys import path
-path.insert(0, 'Single_Pendulum')
+
 
 class Algorithm(Robot, Encoders):
     """

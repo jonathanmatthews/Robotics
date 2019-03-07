@@ -186,10 +186,10 @@ def last_zero_crossing(values, previous_time, previous_be):
     return min_time
 
 
-def last_maxima(self, all_data, be_time='time', window_size=5):
+def last_maxima(all_data, be_time='time', window_size=5):
     # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
     # only use an odd number for window size, as indexes need to be adjusted below
-    avg_be = np.abs(self.moving_average(all_data['be'][-30:], window_size))
+    avg_be = np.abs(moving_average(all_data['be'][-30:], window_size))
     # extract index corresponding to latest maxima, index_max_angle(number of previous values to return)
     angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
     if be_time == 'time':
