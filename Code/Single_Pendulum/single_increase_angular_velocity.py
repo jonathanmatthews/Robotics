@@ -6,7 +6,7 @@ class IncreaseAngularVelocity():
         self.start_time = values['time']
         self.max_angle = kwargs.get('max_angle', 180)
         self.increasing = kwargs.get('increasing', True)
-        self.duration = kwargs.get('duration', float('int'))
+        self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
 
@@ -17,6 +17,7 @@ class IncreaseAngularVelocity():
         current_av = values['av']
         current_pos = values['pos']
         previous_av = all_data['av'][-1]
+        print 'Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
         if(self.increasing == True):
             if(sign(current_av) != sign(previous_av)):
                 self.previous_max_angle = all_data['be'][-1]

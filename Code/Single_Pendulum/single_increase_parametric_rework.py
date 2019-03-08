@@ -12,7 +12,7 @@ class IncreaseParametric():
         self.increasing = kwargs.get('increasing', True)
 
         # conditions for finishing
-        self.max_angle = kwargs.get('max_angle', 180)
+        self.max_angle = kwargs.get('max_angle', float('inf'))
         self.duration = kwargs.get('duration', float("inf"))
 
         # previous values

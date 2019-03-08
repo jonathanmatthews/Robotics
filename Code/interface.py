@@ -53,7 +53,7 @@ Testing: for seeing how algorithm reacts to old dataset
 Real: for in lab running from lab PC
 Other two are self explanatory
 """
-setup = 'Testing'
+setup = 'Real'
 if argv[-1] == 'Testing':
     setup = argv[-1]
 if argv[-1] == 'Real':
@@ -137,7 +137,7 @@ class Interface(Algorithm):
         try:
             info = self.order.pop(0)
         except IndexError as e:
-            raise IndexError(e, 'Ran out of algorithms')
+            return 'ran out'
 
         self.algo_class = info.pop('algo')
         kwargs = info
@@ -195,6 +195,8 @@ class Interface(Algorithm):
 
             if switch == 'switch' and event != max_runs - 1:
                 self.algorithm = self.next_algo(current_values, self.all_data)
+                if self.algorithm == 'ran out':
+                    break
             switch = self.algorithm(current_values, self.all_data)
 
             if switch in positions.keys():
@@ -247,6 +249,7 @@ class Interface(Algorithm):
 
             if switch == 'switch' and i != (len(data) - 1):
                 self.algorithm = self.next_algo(current_values, self.all_data)
+            
             switch = self.algorithm(current_values, self.all_data)
 
             if switch in positions.keys():
@@ -290,7 +293,7 @@ if __name__ == '__main__':
     interface = Interface(setup)
     interface.speech.say('Battery level at {:.0f}%'.format(interface.get_angle('BC')[0]*100))
     try:
-        interface.run(120.0, 0.10)
+        interface.run(250.0, 0.08)
     except KeyboardInterrupt:
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)

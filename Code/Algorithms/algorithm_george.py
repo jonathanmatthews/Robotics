@@ -24,16 +24,16 @@ class Algorithm(Robot, Encoders):
 
         #self.order = [{
             #'algo': Start,
-            #'max_angle': 3.5
+            #'duration': 25.0
         #},{
             #'algo': IncreaseQuarterPeriod,
-            #'max_angle': 15
+            #'max_angle': 10
         #},{
             #'algo': DecreaseQuarterPeriod,
-            #'min_angle': 10
+            #'min_angle': 6
         #},{
             #'algo': MaintainConstant,
-            #'max_angle': 10,
+            #'max_angle': 6,
             #'duration': 30
         #},{
             #'algo': IncreaseParametric,
@@ -48,6 +48,14 @@ class Algorithm(Robot, Encoders):
             #'algo': Nothing
         #}]
         
+        self.order = [{
+            'algo': Nothing,
+            'duration': 5.0
+        },{
+            'algo': IncreaseParametric,
+            'duration': 300.0
+        }]
+        
         #self.order = [{
             #'algo': Nothing,
             #'duration': 5.0
@@ -57,10 +65,10 @@ class Algorithm(Robot, Encoders):
             #'duration': 60.0
         #}]
         
-        self.order = [{
-            'algo': Nothing,
-            'duration': 5.0
-        },{
-            'algo': IncreaseQuarterPeriod,
-            'duration': 120.0
-        }]
+        #self.order = [{
+            #'algo': Nothing,
+            #'duration': 5.0
+        #},{
+            #'algo': IncreaseQuarterPeriod,
+            #'duration': 120.0
+        #}]

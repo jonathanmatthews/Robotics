@@ -45,7 +45,7 @@ class IncreaseQuarterPeriod():
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
             self.last_maximum = last_maxima(all_data, be_time='be')
-            print 'Next switching time', self.time_switch
+            print 'Next switching time: {:.2f}'.format(self.time_switch), 'Last maximum: {:.2f}'.format(self.last_maximum)
 
         # At the end of the loop, set the value of big encoder to the previous value
         self.previous_be = values['be']
