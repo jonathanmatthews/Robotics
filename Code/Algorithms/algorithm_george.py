@@ -9,6 +9,7 @@ from single_increase_quarter_period import IncreaseQuarterPeriod, DecreaseQuarte
 from single_increase_parametric_rework import IncreaseParametric, DecreaseParametric
 from single_maintain_constant import MaintainConstant
 from single_nothing import Nothing
+from single_increase_angular_velocity import IncreaseAngularVelocity
 
 
 class Algorithm(Robot, Encoders):
@@ -27,14 +28,10 @@ class Algorithm(Robot, Encoders):
             #'duration': 25.0
         #},{
             #'algo': IncreaseQuarterPeriod,
-            #'max_angle': 10
+            #'max_angle': 15
         #},{
             #'algo': DecreaseQuarterPeriod,
-            #'min_angle': 6
-        #},{
-            #'algo': MaintainConstant,
-            #'max_angle': 6,
-            #'duration': 30
+            #'min_angle': 10
         #},{
             #'algo': IncreaseParametric,
             #'duration': 80
@@ -48,13 +45,32 @@ class Algorithm(Robot, Encoders):
             #'algo': Nothing
         #}]
         
+        #self.order = [{
+            #'algo': Nothing,
+            #'duration': 10
+        #},{
+            #'algo': Stop,
+            #'min_angle': 1.0
+        #},{
+            #'algo': Nothing
+        #}]
+        
         self.order = [{
             'algo': Nothing,
-            'duration': 5.0
+            'duration': 10
         },{
-            'algo': IncreaseParametric,
-            'duration': 300.0
+            'algo': IncreaseAngularVelocity,
+            'duration': 60
         }]
+        
+        #self.order = [{
+            #'algo': Nothing,
+            #'duration': 5.0
+        #},{
+            #'algo': MaintainConstant,
+            #'max_angle': 10,
+            #'duration': 60
+        #}]
         
         #self.order = [{
             #'algo': Nothing,

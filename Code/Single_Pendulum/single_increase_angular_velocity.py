@@ -22,17 +22,21 @@ class IncreaseAngularVelocity():
             if(sign(current_av) != sign(previous_av)):
                 self.previous_max_angle = all_data['be'][-1]
                 if(current_pos == 'seated'):
+                    print('extended', values['be'])
                     return 'extended'
                 elif(current_pos == 'extended'):
+                    print('seated', values['be'])
                     return 'seated'
             else:
                 pass
         elif(self.increasing == False):
             if(sign(current_av) != sign(previous_av) and sign(previous_av) == -1):
                 self.previous_max_angle = all_data['be'][-1]
+                print('extended', values['be'])
                 return 'extended'
             elif(sign(current_av) != sign(previous_av) and sign(previous_av) == 1):
                 self.previous_max_angle = all_data['be'][-1]
+                print('seated', values['be'])
                 return 'seated'
 
         # switch conditions

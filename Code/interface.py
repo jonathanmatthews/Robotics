@@ -293,7 +293,7 @@ if __name__ == '__main__':
     interface = Interface(setup)
     interface.speech.say('Battery level at {:.0f}%'.format(interface.get_angle('BC')[0]*100))
     try:
-        interface.run(250.0, 0.08)
+        interface.run(30.0, 0.08)
     except KeyboardInterrupt:
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)
