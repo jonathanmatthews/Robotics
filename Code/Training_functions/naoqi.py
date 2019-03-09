@@ -16,6 +16,9 @@ class ALProxy():
         pass
         
     def say(self, word):
+        """
+        Prints in bold whatever Nao would normally say
+        """
         print("\033[1mNAO: " + word + "\n \033[0m")
 
     def getData(self, key):
@@ -31,6 +34,9 @@ class ALProxy():
         pass
 
     def setAngles(self, names, angles, speed):
+        """
+        Adds angle being set to position dictionary, then can be accessed by ALProxy memory
+        """
         for key in values.keys():
             if values[key][0] == names:
                 position[values[key][1]] = angles
