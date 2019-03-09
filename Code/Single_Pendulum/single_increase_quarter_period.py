@@ -1,4 +1,3 @@
-import time as tme
 import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average
 
