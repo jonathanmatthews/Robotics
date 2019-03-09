@@ -246,6 +246,7 @@ class Interface(Algorithm):
         """
         # Maximum number of loops to collect and run through algorithm
         max_runs = t * 1 / period + 1.0
+        self.period = period
 
         # For good numpy storage need column names and data types
         self.data_type = current_data_types()
@@ -253,16 +254,16 @@ class Interface(Algorithm):
         self.all_data = numpy.empty((0, ), dtype=self.data_type)
 
         # Filename of exact running time
-        filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
+        self.filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
         # Will switch to first algorithm on first loop
         switch = 'switch'
 
-        initial_time = tme.time()
+        self.initial_time = tme.time()
         for event in range(int(max_runs)):
             start_time = tme.time()
 
             # Collect all relevant values
-            time = start_time - initial_time
+            time = start_time - self.initial_time
             ax, ay, az = self.get_acc()
             gx, gy, gz = self.get_gyro()
             se0, se1, se2, se3 = self.get_small_encoders()
@@ -289,15 +290,25 @@ class Interface(Algorithm):
             if cycle_time < period:
                 tme.sleep(period - cycle_time)
 
+        self.finish_script()
+
+    def finish_script(self):
+        """
+        Prints running time, cycle time, and stores current data to file
+        Args:
+            None
+        Returns:
+            None, but stores to file
+        """
         # Check whether everything is running on schedule or not
-        time_taken = tme.time() - initial_time
+        time_taken = tme.time() - self.initial_time
         print('\033[1mFinished in {:.2f}s\033[0m'.format(time_taken))
         # Check how fast code is running
         average_cycle_time = numpy.mean(numpy.diff(self.all_data['time']))
-        print('\033[1mExpected sampling period: {:.3f}s\nActual sampling period: {:.3f}s\033[0m'.format(period, average_cycle_time))
+        print('\033[1mExpected sampling period: {:.3f}s\nActual sampling period: {:.3f}s\033[0m'.format(self.period, average_cycle_time))
 
         # store data in txt file, all original data has ' Org' added to name
-        self.store(filename + ' Org')
+        self.store(self.filename + ' Org')
 
     def __run_test(self, filename, output_directory):
         """
@@ -384,6 +395,7 @@ if __name__ == '__main__':
     try:
         interface.run(period=0.10)
     except KeyboardInterrupt:
+        interface.finish_script()
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)
         raise KeyboardInterrupt
