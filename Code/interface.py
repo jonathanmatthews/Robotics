@@ -11,6 +11,7 @@ from robot_interface import Robot
 from encoder_interface import Encoders
 import numpy
 from collections import OrderedDict
+
 """
 A module containing an interface that connects the robot and encoders to algorithm and storage.
 
@@ -18,6 +19,7 @@ Contains class:
     Interface
 """
 
+# Custom exception for when algorithm finishes
 class AlgorithmFinished(Exception): pass
 
 """To change from webots to real world, change import below."""
@@ -26,13 +28,17 @@ class AlgorithmFinished(Exception): pass
 
 # Allows user to select the algorithm file in Algorithms that they want to run
 files = listdir('Algorithms')
+# Search for files that are .py files and begin with algorithm_
 list_algorithms = [x for x in files if search(
     r"(?<=^algorithm_).+(?=\.py$)", x)]
 algo_dict = {}
 for i, algo in enumerate(list_algorithms):
     algo_dict[i] = algo[:-3]
+# Create dictionary with number key and name of algorithm for value
 text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
 
+# By running this script with the final command line argument '@n' will run the nth algorithm that would
+# otherwise appear in the list.
 if argv[-1][0] is not "@":
     algorithm = str(
         input(
@@ -40,16 +46,6 @@ if argv[-1][0] is not "@":
                 "\n".join(text))))
 else:
     algorithm = argv[-1][1:]
-
-print("running " + algo_dict[int(algorithm)] + "\n")
-# By running this script with the final command line argument '@n' will run the nth algorithm that would
-# otherwise appear in the list.
-
-# Imports correct Algorithm class that interface inherits from
-algorithm_import = algo_dict[int(algorithm)]
-path.insert(0, 'Algorithms')
-Algorithm = __import__(algorithm_import).Algorithm
-
 
 """
 Set mode to run here
@@ -72,6 +68,13 @@ setups = {
 setup = 'Real'
 if argv[-1] in setups.keys():
     setup = argv[-1]
+
+# Imports correct Algorithm class that interface inherits from
+algorithm_import = algo_dict[int(algorithm)]
+print("\033[Running " + algorithm_import + "\n\033[0m")
+path.insert(0, 'Algorithms')
+Algorithm = __import__(algorithm_import).Algorithm
+
 robot, encoders = setups[setup]
 
 try:
@@ -106,7 +109,7 @@ class Interface(Algorithm):
     """
 
     def __init__(self, setup):
-        # Connect properties of algorithm to interface
+        # Connect properties of algorithm to interface, interface has access to all properties on SmallEncoder, BigEncoder, and Algorithm
         Algorithm.__init__(
             self,
             BigEncoder,
@@ -139,7 +142,10 @@ class Interface(Algorithm):
         Arguments:
             values: list of current values, big encoder etc
         Returns:
-            reference to function to switch to
+            Initialized algorithm class
+        Example:
+            > self.next_algo(values, self.all_data)
+
         """
         try:
             # Remove first dictionary element from algorithm and store it
@@ -159,10 +165,15 @@ class Interface(Algorithm):
     def get_ang_vel(self, time, current_angle):
         """
         Function to get the current angular velocity, taking last recorded value and new
-        value. Returns None if not enough data exists yet.
-        Requires arguments:
-        time: time since start of algorithm
-        current_angle: current big encoder value
+        value.
+        Args:
+            time: time since start of algorithm
+            current_angle: current big encoder value
+        Returns:
+            Angular velocity in rad s^-1 is there is previous data, otherwise 0
+        Example:
+            > self.get_ang_vel(0.5, 0.6)
+            -0.2
         """
         # No angular velocity if no old data
         if len(self.all_data) == 0:
@@ -178,6 +189,10 @@ class Interface(Algorithm):
     def algo_name(self):
         """ 
         Extract name of current algorithm, added to storage good for graphs
+        Args:
+            None
+        Returns:
+            Name of class that contains algorithm, if no algorithm (at start) then None
         """
         try:
             algo = self.algo_class.__name__
@@ -194,6 +209,11 @@ class Interface(Algorithm):
             current_values: all values to be passed into the algorithm
         Returns:
             switch: output from this cycle of algorithm
+        Examples:
+            > self.__run_algorithm('extended', current_values)
+            Previous cycle set position to extended
+            > self.__run_algorithm('switch', current_values)
+            Previous cycle switched the algorithm
         """
         # Set current algorithm to next algorithm
         if switch == 'switch':
@@ -213,6 +233,16 @@ class Interface(Algorithm):
 
 
     def __run_real(self, t, period):
+        """
+        Handles running of interface for collecting live data, whether this is real mode or developing mode
+        Args:
+            t: maximum time to run for (seconds), algorithm can stop this early if designed
+            period: cycle time you would like to sample at (seconds)
+        Returns:
+            Non
+        Example:
+            > self.__run_real(30.0, 0.07)
+        """
         # Maximum number of loops to collect and run through algorithm
         max_runs = t * 1 / period + 1.0
 
@@ -268,14 +298,24 @@ class Interface(Algorithm):
         # store data in txt file, all original data has ' Org' added to name
         self.store(filename + ' Org')
 
-    def __run_test(self, t, period, filename, output_directory):
+    def __run_test(self, filename, output_directory):
         """
-        Runs old data line by line through algorithm so that algorithm can be tested
+        Handles running of data through algorithm not live, parses the file and puts data line by line
+        through the algorithm, algorithm will react to it as if the data is being collected real time. Used in testing
+        mode as can be run at home to see how algorithm reacts.
+        Args:
+            filename: name of recorded data to run through, defaults to latest file
+            output_directory: relative path to output_directory folder
+        Returns:
+            None, but stores the logs of the test in a file in output_directory
+        Example:
+            > self.__run_test('data_to_load', '../Output_data')
         """
+
         # Read old data
         print('\033[Using test mode, will apply algorithm to data from file {}\033[0m'.format(filename))
         data = read_file(output_directory + filename)
-
+        
         # Needs to update line by line so only have access to data you would if
         # running real time
         self.data_type = current_data_types()
@@ -300,7 +340,7 @@ class Interface(Algorithm):
         # Data loaded in will have ' Org' file so remove that and replace with ' Tst'
         self.store(filename[:-4] + ' Tst')
 
-    def run(self, t, period, **kwargs):
+    def run(self, **kwargs):
         """
         Either kicks off testing from old data or collects off collection of data
         t: time to run for
@@ -310,8 +350,10 @@ class Interface(Algorithm):
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
-            self.__run_test(t, period, filename, output_directory)
+            self.__run_test(filename, output_directory)
         else:
+            t = kwargs.get('t', 500.0)
+            period = kwargs.get('period', 0.08)
             self.__run_real(t, period)
 
     def store(self, filename):
@@ -333,7 +375,7 @@ if __name__ == '__main__':
     interface = Interface(setup)
     interface.speech.say('Battery level at {:.0f}%'.format(interface.get_angle('BC')[0]*100))
     try:
-        interface.run(30.0, 0.08)
+        interface.run('period'=0.10)
     except KeyboardInterrupt:
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)

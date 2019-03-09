@@ -1,3 +1,8 @@
+"""
+These positions are used to change positions of nao, keys are shorthand, and in limbdata they
+correspond to the values that naoqi requires that are more awkward to use.
+"""
+
 positions = {
     'extended': {
 

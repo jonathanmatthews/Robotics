@@ -19,7 +19,7 @@ class Algorithm(Robot, Encoders):
 
     def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy):
         # Initialise encoder
-        Encoders.__init__(self, BigEncoder, SmallEncoders)
+        Encoders.__init__(self, BigEncoder, SmallEncoders, small_encoders_required=False)
         # Initialise robot
         Robot.__init__(self, values, positions, ALProxy, masses=True)
 
