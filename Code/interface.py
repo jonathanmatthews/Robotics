@@ -156,7 +156,7 @@ class Interface(Algorithm):
 
         # Remove class from dictionary and store it
         self.algo_class = info.pop('algo')
-        print '\033[1mCurrent Algorithm: {}\033[0m'.format(self.algo_name())
+        print '\n\033[1mCurrent Algorithm: {}\033[0m\n'.format(self.algo_name())
         # Rest of dictionary left are kwargs
         kwargs = info
         # Run initializer of next algorithm with kwargs
@@ -281,7 +281,7 @@ class Interface(Algorithm):
             try:
                 switch = self.__run_algorithm(switch, current_values)
             except AlgorithmFinished:
-                print('\033[1mAlgorithm finished, stopping\033[0m')
+                print('\n\033[1mAlgorithm finished, stopping\033[0m\n')
                 break
 
             # wait until end of cycle time before running again
@@ -314,7 +314,7 @@ class Interface(Algorithm):
         """
 
         # Read old data
-        print('\033[1mUsing test mode, will apply algorithm to data from file {}\033[0m'.format(filename))
+        print('\n\033[1mUsing test mode, will apply algorithm to data from file {}\033[0m\n'.format(filename))
         data = read_file(output_directory + filename)
 
         # Needs to update line by line so only have access to data you would if
@@ -336,6 +336,7 @@ class Interface(Algorithm):
             try:
                 switch = self.__run_algorithm(switch, current_values)
             except AlgorithmFinished:
+                print '\n\033[1mAlgorithm finished, stopping now\033[0m\n'
                 break
 
         # Data loaded in will have ' Org' file so remove that and replace with ' Tst'
@@ -373,7 +374,7 @@ class Interface(Algorithm):
                     for line in self.all_data]
             for row in rows:
                 f.write(','.join(row) + '\n')
-        print '\033[1mData saved to {}\033[0m'.format(filename)
+        print '\n\033[1mData saved to {}\033[0m\n'.format(filename)
 
 
 if __name__ == '__main__':

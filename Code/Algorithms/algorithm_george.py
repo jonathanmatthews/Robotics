@@ -60,7 +60,7 @@ class Algorithm(Robot, Encoders):
             'duration': 5
         },{
             'algo': IncreaseAngularVelocity,
-            'duration': 5
+            'duration': 4
         }]
         
         #self.order = [{
