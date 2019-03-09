@@ -16,7 +16,7 @@ class ALProxy():
         pass
         
     def say(self, word):
-        print 'NAO: ', word
+        print("\033[1mNAO: " + word + "\n \033[0m")
 
     def getData(self, key):
         if key in position.keys():

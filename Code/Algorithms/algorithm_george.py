@@ -57,10 +57,10 @@ class Algorithm(Robot, Encoders):
         
         self.order = [{
             'algo': Nothing,
-            'duration': 10
+            'duration': 5
         },{
             'algo': IncreaseAngularVelocity,
-            'duration': 60
+            'duration': 5
         }]
         
         #self.order = [{

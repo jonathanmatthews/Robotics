@@ -42,7 +42,7 @@ class Encoders():
         Example:
             > self.calibrate()
         """
-        print 'Calibrating'
+        '\033[1mCalibrating\033[0m'
         self.SmallEncoders.calibrate()
         self.BigEncoder.calibrate()
 

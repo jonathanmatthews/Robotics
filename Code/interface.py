@@ -42,7 +42,7 @@ text = ["{} {}".format(key, algo_dict[key]) for key in algo_dict]
 if argv[-1][0] is not "@":
     algorithm = str(
         input(
-            'Which algorithm would you like to run? Pick number corresponding to algorithm: \n{}\n'.format(
+            '\033[1mWhich algorithm would you like to run? Pick number corresponding to algorithm\033[0m: \n{}\n'.format(
                 "\n".join(text))))
 else:
     algorithm = argv[-1][1:]
@@ -71,7 +71,7 @@ if argv[-1] in setups.keys():
 
 # Imports correct Algorithm class that interface inherits from
 algorithm_import = algo_dict[int(algorithm)]
-print("\033[Running " + algorithm_import + "\n\033[0m")
+print("\033[1mRunning " + algorithm_import + "\n\033[0m")
 path.insert(0, 'Algorithms')
 Algorithm = __import__(algorithm_import).Algorithm
 
@@ -156,6 +156,7 @@ class Interface(Algorithm):
 
         # Remove class from dictionary and store it
         self.algo_class = info.pop('algo')
+        print '\033[1mCurrent Algorithm: {}\033[0m'.format(self.algo_name())
         # Rest of dictionary left are kwargs
         kwargs = info
         # Run initializer of next algorithm with kwargs
@@ -280,7 +281,7 @@ class Interface(Algorithm):
             try:
                 switch = self.__run_algorithm(switch, current_values)
             except AlgorithmFinished:
-                print('\033[Algorithm finished, stopping\033[0m')
+                print('\033[1mAlgorithm finished, stopping\033[0m')
                 break
 
             # wait until end of cycle time before running again
@@ -290,10 +291,10 @@ class Interface(Algorithm):
 
         # Check whether everything is running on schedule or not
         time_taken = tme.time() - initial_time
-        print('\033[Finished in {:.2f}s\033[0m'.format(time_taken))
+        print('\033[1mFinished in {:.2f}s\033[0m'.format(time_taken))
         # Check how fast code is running
-        average_cycle_time = numpy.mean(numpy.diff(self.all_data['Time']))
-        print('\033[Expected sampling period: {:.3f}s\nActual sampling period: {:.3f}s\033[0m'.format(period, average_cycle_time))
+        average_cycle_time = numpy.mean(numpy.diff(self.all_data['time']))
+        print('\033[1mExpected sampling period: {:.3f}s\nActual sampling period: {:.3f}s\033[0m'.format(period, average_cycle_time))
 
         # store data in txt file, all original data has ' Org' added to name
         self.store(filename + ' Org')
@@ -313,9 +314,9 @@ class Interface(Algorithm):
         """
 
         # Read old data
-        print('\033[Using test mode, will apply algorithm to data from file {}\033[0m'.format(filename))
+        print('\033[1mUsing test mode, will apply algorithm to data from file {}\033[0m'.format(filename))
         data = read_file(output_directory + filename)
-        
+
         # Needs to update line by line so only have access to data you would if
         # running real time
         self.data_type = current_data_types()
@@ -343,9 +344,9 @@ class Interface(Algorithm):
     def run(self, **kwargs):
         """
         Either kicks off testing from old data or collects off collection of data
-        t: time to run for
-        period: period of cycle time
-        filename : string, location of the file to read from if testing. Ignore if not testing.
+        Args:
+            t (optional for real mode): Maximum length of time the interface should run for (seconds)
+            period (optional for real mode): Sampling period (seconds)
         """
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
@@ -358,24 +359,29 @@ class Interface(Algorithm):
 
     def store(self, filename):
         """
-        Saves numpy matrix as txt file
-        filename: name of file to store to in Output_data folder
+        Saves numpy matrix as txt file while retaining data types such that columns can be accessed
+        like a dictionary
+        Args:
+            filename: name of file to store to in Output_data folder
+        Returns:
+            None, but stores to filename
+        Example:
+            > self.store('file_to_store_to')
         """
         with open('Output_data/' + filename, 'w') as f:
             rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
                     for line in self.all_data]
             for row in rows:
                 f.write(','.join(row) + '\n')
-        print 'Data saved to {}'.format(filename)
+        print '\033[1mData saved to {}\033[0m'.format(filename)
 
 
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
     interface = Interface(setup)
-    interface.speech.say('Battery level at {:.0f}%'.format(interface.get_angle('BC')[0]*100))
     try:
-        interface.run('period'=0.10)
+        interface.run(period=0.10)
     except KeyboardInterrupt:
         interface.speech.say('Loosening')
         interface.motion.setStiffnesses("Body", 0.0)
