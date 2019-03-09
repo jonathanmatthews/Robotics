@@ -36,7 +36,6 @@ class Robot():
         self.motion.setFallManagerEnabled(False)
         
     def check_setup(self, position):
-        new_dict = {}
         position = self.positions[position]
         values = [self.get_angle(key)[0] for key in position.keys()]
         differences = [(key, value, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
@@ -87,6 +86,8 @@ class Robot():
     def set_posture(self, next_posture, current_posture, max_speed=1.0):
         next_posture_dict = self.positions[next_posture]
         current_posture_dict = self.positions[current_posture]
+        print next_posture_dict
+        print current_posture_dict
         
         differences_in_angles = []
         for name in next_posture_dict.keys():
@@ -100,6 +101,8 @@ class Robot():
             
         part_name = [self.values[name][0] for name in next_posture_dict.keys()]
         
+        print 'Name', part_name
+        print 'Next posture', next_posture_dict.values()
         for name, value, speed in zip(part_name, next_posture_dict.values(), speeds):
             self.motion.setAngles(name, value, speed)
         self.position = next_posture
