@@ -26,13 +26,13 @@ plt.xticks([])
 plt.yticks([])
 plt.text(0.10, 0.17, r"$(\theta_1, t_1)$", horizontalalignment='center',
      verticalalignment='center',
-     transform=ax.transAxes, size=14)
+     transform=ax.transAxes, size=24)
 plt.text(0.42, 0.17, r"$(\theta_2, t_2)$", horizontalalignment='center',
      verticalalignment='center',
-     transform=ax.transAxes, size=14)
+     transform=ax.transAxes, size=24)
 plt.text(0.30, 0.08, r"$(0, t_c)$", horizontalalignment='center',
      verticalalignment='center',
-     transform=ax.transAxes, size=14)
+     transform=ax.transAxes, size=24)
 
 style="Simple,tail_width=0.5,head_width=4,head_length=8"
 kw = dict(arrowstyle=style, color="k")
@@ -57,10 +57,10 @@ plt.plot([0, 0], [2, 1], linestyle='--')
 
 plt.text(0.44, 0.4, r"$\theta_1$", horizontalalignment='center',
      verticalalignment='center',
-     transform=ax2.transAxes, size=14)
+     transform=ax2.transAxes, size=24)
 plt.text(0.61, 0.4, r"$\theta_2$", horizontalalignment='center',
      verticalalignment='center',
-     transform=ax2.transAxes, size=14)
+     transform=ax2.transAxes, size=24)
 mark_inset(ax, ax2, loc1=2, loc2=3, ec="0.5", fc="w")
 
 fig.tight_layout()
