@@ -11,7 +11,7 @@ class MaintainFeedback():
 
         # offset is time from maximum to swing
         self.time_switch = 100
-        self.offset = -0.2
+        self.offset = 0.0
         self.last_maximum = last_maxima(all_data, be_time='be')
 
         # alternative switch condition
@@ -26,10 +26,12 @@ class MaintainFeedback():
             self.max_time = last_maxima(all_data, be_time='time')
             self.max_angle = last_maxima(all_data, be_time='be')
 
-            if abs(self.max_angle) > self.maintain_angle - 0.5:
-                self.offset -= 0.1
-            if abs(self.max_angle) < self.maintain_angle + 0.5:
+            if abs(self.max_angle) > self.maintain_angle + 0.5:
                 self.offset += 0.1
+                print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
+            if abs(self.max_angle) < self.maintain_angle - 0.5:
+                self.offset -= 0.1
+                print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
 
             # quarter period difference between time at maxima and minima
             self.quart_period = abs(self.min_time - self.max_time)
@@ -49,6 +51,7 @@ class MaintainFeedback():
             return self.next_position_calculation(values)
 
         if values['time'] - self.start_time > self.duration:
+            print '\033[1mSwitching, duration ended\033[0m'
             return 'switch'
 
     def next_position_calculation(self, values):
@@ -57,6 +60,7 @@ class MaintainFeedback():
         elif values['be'] > 0:
             next_position = 'extended'
         else:
+            # This shouldn't happen as this function is only called at the maximum of the motion
             print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
             next_position = values['pos']
         return next_position
