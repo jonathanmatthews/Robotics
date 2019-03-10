@@ -27,7 +27,7 @@
         \vspace{0.5cm}
         \LARGE
         \vspace{1.5cm}
-        \textbf{K. Mogilner, H. Tucker, T. Brent, A. Nicholls, G. Sheppard, D. Thomas, J. Doering, J. Matthews, C. Li} \\
+        \textbf{G. Sheppard, D. Thomas, J. Doering, J. Matthews, C. Li} \\
         \vfill
         \vspace{0.8cm}
         \Large
@@ -47,19 +47,42 @@ Wow look at \ref{angleplot}. \cite{Bae2006}.
 \subsection{Theory}
 
 \section{Connecting}
-\subsection{NAO}
+\subsection{Nao}
 David: you know what to write
 also david write about how you sped up NAO's kicks somewhere it's juicy and tasty info
 \subsection{Hinge Encoders}
-George: difficulties for connecting on own computer, procedure for connecting on lab pc, need for libraries in right place etc, link to wiki in appendix
+\ruleline{George Sheppard}
+There are two sets of hinge encoders used, the large/big encoder, and the small encoders. The large encoder record the angle from the vertical to the largest rod of the swing. The small encoders record the angle with respect to the previous rod, there are 2 on each side of the swing.\\
+
+A large amount of time was invested into connecting to these hinge encoders from any computer other than the lab one. Unfortunately, due to the nature of the shared object files required by the encoders, the set up is complicated and it is advised to use the lab computer when using the hinge encoders.\\
+
+A guide for setting up the hinge encoders is provided in the wiki found in \ref{sec:wiki}.
+
 
 \section{Creating Algorithms}
 
 \ruleline{George Sheppard}
+\subsection{The Interface}
+The creation of each individual algorithm required the use of a substantial amount of common code, such as the logic required for: connecting to Nao, collecting values from the hinge encoders and Nao, handling of previous collected values, switching Nao's position, and storage. For this reason an interface was created that functioned as a base that all algorithms were built off, the logic of this base code is illustrated in figure \ref{InterfaceLogic}. The interface starts by collecting all values required for the algorithm decision making process, it then passes these values through the algorithm, depending on the output of the algorithm it will either change Nao's position, switch to the next algorithm, or finish and store the data. It also fixes the sample rate to a specified frequency.\\
 
-The creation of each individual algorithm required a substantial amount of common code, for example: connecting to NAO, collecting angle values from both sets of hinge encoders, and processing these data. For this reason the code was structured such that new algorithms could be freely created that each integrated with the base code. This base code collected all values relating to the swinging motion, passed these values through an algorithm, stored these values, and fixed the cycle rate. Additionally, due to this structure, mock classes for NAO and the hinge encoders were created such that this interface could be developed away from the lab, and a testing setup was added such that a user would be able to re-run previous recorded data and plot how their algorithm reacted to that scenario.\\
+    \begin{figure}[!htb]
+        \centering
+        \captionbox
+             {The logic behind the interface, all that required changing was the algorithm logic that the decision making was based on.\label{InterfaceLogic}}
+             {\includegraphics[width=1.0\textwidth]{InterfaceLogic.eps}}
+    \end{figure}
 
-With this base structure in place, creating an algorithm involved one function that took a set of values, and decided how to react to them, the algorithm also had access to all past data to help in decision making. As these algorithms were defined in the same way, it is easy to switch between different algorithms mid swing, such that the motion of NAO could be more stringently controlled. For example NAO could be told to increase to $30^o$, then maintain this amplitude for $10s$, and then finally decrease back down to $0^o$.  This base structure also included the pre-defined positions for NAO, such that switching positions could be done by just calling a function with the name of the position.
+With this base structure in place, creating an algorithm involved one function that took a set of values, and decided how to react to them, the algorithm had access to all past data to help in decision making. As these algorithms were defined in the same way, it is easy to switch between different algorithms mid swing, such that the motion of NAO could be more stringently controlled. For example NAO could be told to increase to $30^o$, then maintain this amplitude for $10s$, and then finally decrease back down to $0^o$.\\
+
+With this base structure in place, creating an algorithm had two requirements: it took the set of values given to it by the interface, and it returned either 'switch', None, or any of the named positions that were defined in the Robot subsection of the interface e.g. 'Seated', 'Extended' etc.\\
+
+As the interface required the encoders and the robot to connect to, a series of mock classes were created that aimed to replicate their functionality. This meant that away from the lab these fake classes were used as a substitute such that the interface could be developed.
+
+\subsection{Testing}
+One of the advantages of this setup was the ability to test algorithms without connecting to either the robot or the hinge encoders. As all previous data collected in the lab were stored, a setup was developed that read the file in line by line and passed it through the algorithm. The results of this test were then stored to a file in the same way as normal, and as such data such as the kicking times of Nao could be plotted instantly.\\
+
+One downside of this method was that the data being fed into the algorithm wasn't reactive to the previous decision of the algorithm, as all the data was pre-recorded. This meant that this method was in no way a replacement for testing the algorithm in the lab, but instead was used as a way to check that the algorithm is logically correct before spending time with Nao on it.
+
 
 \section{Simple Pendulum}
 \subsection{Start Up}
@@ -111,7 +134,7 @@ Everyone: Think this should just be how to improve, any difficulties of the setu
         \centering
         \captionbox
              {Angleplot.\label{angleplot}}
-             {\includegraphics[width=1.0\textwidth]{ExtendedPositionDamping.png}}}
+             {\includegraphics[width=1.0\textwidth]{ExtendedPositionDamping.png}}
     \end{figure}
 
 \subsection{Start Up}
