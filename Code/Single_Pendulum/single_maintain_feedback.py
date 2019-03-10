@@ -26,11 +26,14 @@ class MaintainFeedback():
             self.max_time = last_maxima(all_data, be_time='time')
             self.max_angle = last_maxima(all_data, be_time='be')
 
-            if abs(self.max_angle) > self.maintain_angle + 0.5:
-                self.offset += 0.1
+            # only worry is if offset becomes >= the quarter period then nao will never change
+            # position, until the angle decreases enough that the offset rises again mind
+            # same for other way around
+            if abs(self.max_angle) > self.maintain_angle + 0.2:
+                self.offset += 0.05
                 print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
-            if abs(self.max_angle) < self.maintain_angle - 0.5:
-                self.offset -= 0.1
+            if abs(self.max_angle) < self.maintain_angle - 0.2:
+                self.offset -= 0.05
                 print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
 
             # quarter period difference between time at maxima and minima
@@ -47,6 +50,7 @@ class MaintainFeedback():
         self.previous_time = values['time']
 
         if values['time'] > self.time_switch:
+            print 'Time to switch, changing position'
             self.time_switch += 100
             return self.next_position_calculation(values)
 
