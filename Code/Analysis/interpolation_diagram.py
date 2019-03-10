@@ -63,6 +63,6 @@ plt.text(0.61, 0.4, r"$\theta_2$", horizontalalignment='center',
      transform=ax2.transAxes, size=14)
 mark_inset(ax, ax2, loc1=2, loc2=3, ec="0.5", fc="w")
 
-
+fig.tight_layout()
 plt.show()
 fig.savefig('Figures/InterpolationDiagram.eps', format='eps')
