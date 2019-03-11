@@ -7,7 +7,7 @@ from limb_data import values
 from positions2 import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat
 from sys import path, argv
-from robot_interface import Robot
+from robot_interface import Robot, PositionError
 from encoder_interface import Encoders
 import numpy
 from collections import OrderedDict
@@ -47,6 +47,13 @@ if argv[-1][0] is not "@":
 else:
     algorithm = argv[-1][1:]
 
+# Imports correct Algorithm class that interface inherits from
+algorithm_import = algo_dict[int(algorithm)]
+print("\033[1mRunning " + algorithm_import + "\n\033[0m")
+path.insert(0, 'Algorithms')
+Algorithm = __import__(algorithm_import).Algorithm
+
+
 """
 Set mode to run here
 Developing: for running through real code away from encoders
@@ -64,19 +71,15 @@ setups = {
     'Robot_no_encoders': [True, False],
     'Encoders_no_robot': [False, True]
 }
+
 # Can set manually or use argv when running interface or test_plot.sh
 setup = 'Real'
 if argv[-1] in setups.keys():
     setup = argv[-1]
-
-# Imports correct Algorithm class that interface inherits from
-algorithm_import = algo_dict[int(algorithm)]
-print("\033[1mRunning " + algorithm_import + "\n\033[0m")
-path.insert(0, 'Algorithms')
-Algorithm = __import__(algorithm_import).Algorithm
-
 robot, encoders = setups[setup]
 
+# This sequence of import ensures that fake functions or real ones are imported
+# dependant on the setup
 try:
     if robot:
         # Add path to real naoqi if connecting to real robot
@@ -109,6 +112,14 @@ class Interface(Algorithm):
     """
 
     def __init__(self, setup):
+        """
+        Initializes interface, connects to Algorithm class it inherits from, stores the setup mode for later, checks that Nao is sat in the correct position
+        to within a specified tolerance.
+        Args:
+            setup: type of setup to run interface in: Real, Testing, Developing, etc
+        Returns:
+            None
+        """
         # Connect properties of algorithm to interface, interface has access to all properties on SmallEncoder, BigEncoder, and Algorithm
         Algorithm.__init__(
             self,
@@ -127,11 +138,13 @@ class Interface(Algorithm):
         tme.sleep(2.0)
         try:
             self.check_setup('seated')
-        except ValueError as e:
+        except PositionError as e:
             # When position doesn't set properly
             self.motion.setStiffnesses("Body", 0.0)
             self.speech.say('Failed, loosening')
             raise e
+
+        self.algo_name = 'None'
 
     def next_algo(self, values, all_data):
         """
@@ -156,9 +169,12 @@ class Interface(Algorithm):
 
         # Remove class from dictionary and store it
         self.algo_class = info.pop('algo')
-        print '\n\033[1mCurrent Algorithm: {}\033[0m\n'.format(self.algo_name())
         # Rest of dictionary left are kwargs
         kwargs = info
+
+        self.algo_name = self.algo_class.__name__
+        print '\n\033[1mCurrent Algorithm: {}\033[0m\n'.format(self.algo_name)
+            
         # Run initializer of next algorithm with kwargs
         algo_class_initialized = self.algo_class(values, all_data, **kwargs)
         return algo_class_initialized.algo
@@ -187,19 +203,22 @@ class Interface(Algorithm):
 
         return delta_angle / delta_time
 
-    def algo_name(self):
-        """ 
-        Extract name of current algorithm, added to storage good for graphs
+    def initialize_all_data(self):
+        """
+        Sets up all_data for storage of data, should be same for all test modes
         Args:
             None
         Returns:
-            Name of class that contains algorithm, if no algorithm (at start) then None
+            all_data, 2d numpy array with forced data types
+        Example:
+            > self.initialize_all_data()
         """
-        try:
-            algo = self.algo_class.__name__
-        except:
-            algo = 'None'
-        return algo
+        # For good numpy storage need column names and data types
+        self.data_type = current_data_types()
+        # Data will be appended to this with time
+        all_data = numpy.empty((0, ), dtype=self.data_type)
+        return all_data
+
 
     def __run_algorithm(self, switch, current_values):
         """
@@ -248,10 +267,7 @@ class Interface(Algorithm):
         max_runs = t * 1 / period + 1.0
         self.period = period
 
-        # For good numpy storage need column names and data types
-        self.data_type = current_data_types()
-        # Data will be appended to this with time
-        self.all_data = numpy.empty((0, ), dtype=self.data_type)
+        self.all_data = self.initialize_all_data()
 
         # Filename of exact running time
         self.filename = tme.strftime("%d-%m-%Y %H:%M:%S", tme.gmtime())
@@ -270,14 +286,14 @@ class Interface(Algorithm):
             be = self.get_big_encoder()
             cmx, cmy = centre_of_mass_respect_seat(self.position, self.masses)
             av = self.get_ang_vel(time, be)
-
-            algo = self.algo_name()
+            algo = self.algo_name
+            position = self.position
 
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
             # way) aka values['Time'] or all_data['Time']
             current_values = convert_list_dict(
-                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, algo, self.position])
+                [time, event, ax, ay, az, gx, gy, gz, se0, se1, se2, se3, be, av, cmx, cmy, algo, position])
 
             try:
                 switch = self.__run_algorithm(switch, current_values)
@@ -328,19 +344,15 @@ class Interface(Algorithm):
         print('\n\033[1mUsing test mode, will apply algorithm to data from file {}\033[0m\n'.format(filename))
         data = read_file(output_directory + filename)
 
-        # Needs to update line by line so only have access to data you would if
-        # running real time
-        self.data_type = current_data_types()
-        # Data will be added to this with time
-        self.all_data = numpy.empty((0, ), dtype=self.data_type)
+        self.all_data = self.initialize_all_data()
 
         switch = 'switch'
         for i in xrange(len(data)):
-            algo = self.algo_name()
+            algo = self.algo_name
 
-            row_no_pos_algo = list(data[i])[:-2]
             # Make current row out of real values from data minus the position and algorithm
             # as those are the things we are running testing to watch
+            row_no_pos_algo = list(data[i])[:-2]
             current_values = convert_list_dict(
                 row_no_pos_algo + [algo, self.position])
 
@@ -394,9 +406,8 @@ if __name__ == '__main__':
     interface = Interface(setup)
     try:
         interface.run(period=0.005)
-        interface.motion.setStiffnesses("Body", 0.0)
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
+    finally:
         interface.motion.setStiffnesses("Body", 0.0)
-        raise KeyboardInterrupt

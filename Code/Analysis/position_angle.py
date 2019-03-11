@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from graph_functions import *
 from sys import path, argv
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy, get_latest_file
+from utility_functions import read_file, get_latest_file
 
 test = False
 if argv[-1] == 'Testing':
@@ -14,7 +14,6 @@ if argv[-1] == 'Real':
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
 angles = read_file(output_data_directory + filename)
-angles = convert_read_numpy(angles)
 
 # Extract data
 t = angles['time']

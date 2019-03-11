@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from graph_functions import *
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy
+from utility_functions import read_file
 
 output_data_directory = '../Output_data/'
 files = sorted(os.listdir(output_data_directory))
@@ -25,7 +25,6 @@ ax.set_facecolor('#eeeeee')
 
 for each_file in files_to_compare:
     angles = read_file(output_data_directory + each_file)
-    angles = convert_read_numpy(angles)
     time = angles['time'][20:]
     be = angles['be'][20:]
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1

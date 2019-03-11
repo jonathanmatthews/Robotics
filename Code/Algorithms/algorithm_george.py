@@ -22,7 +22,7 @@ class Algorithm(Robot, Encoders):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders, small_encoders_required=False)
         # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy, masses=False)
+        Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
             'algo': Nothing,
