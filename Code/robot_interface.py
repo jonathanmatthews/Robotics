@@ -6,6 +6,8 @@ Contains class:
   Robot
 """
 
+class PositionError(Exception): pass
+
 class Robot():
     """
     Defines the class to access the robot, essentially functioning as an abstraction of the naoqi  and encoder APIs.
@@ -31,6 +33,9 @@ class Robot():
         self.motion = ALProxy("ALMotion", ip, port)
         self.memory = ALProxy("ALMemory", ip, port)
         self.masses = kwargs.get('masses', True)
+        self.acc_required = kwargs.get('acc_required', False)
+        self.gyro_required = kwargs.get('gyro_required', False)
+
         self.set_posture_initial('seated', max_speed = 0.1)
         self.motion.setFallManagerEnabled(False)
         self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
@@ -51,9 +56,10 @@ class Robot():
 
         incorrect_positions = [i for i in differences if i[2] > 0.1]
         if len(incorrect_positions) != 0:        
-            for values in incorrect_positions:
-                print values[0], 'Actual value: {}'.format(values[1]), 'Difference from expected: {}'.format(values[2])
-            raise ValueError("Position isn't setting correctly")
+            # for values in incorrect_positions:
+                # print values[0], 'Actual value: {}'.format(values[1]), 'Difference from expected: {}'.format(values[2])
+            error_amounts = ['{}, Actual value: {}, Difference from expected: {}'.format(*values) for values in incorrect_positions]
+            raise PositionError("Initial check of setup failed\n" + '\n'.join(error_amounts))
 
     def get_gyro(self):
         """
@@ -67,13 +73,15 @@ class Robot():
             > self.get_gyro()
             [0.0, 0.5, 0.6]
         """
-        x_data = self.memory.getData(self.values['GX'][1])
-        y_data = self.memory.getData(self.values['GY'][1])
-        z_data = self.memory.getData(self.values['GZ'][1])
-        # not sure whether the below works on not, worth testing
-        # x_data, y_data, z_data = self.memory.getData([self.values['GX'][1], self.values['GY'][1], self.values['GZ'][1]])
-
-        return [x_data, y_data, z_data]
+        if self.gyro_required: # This is slow and limits interface heavily
+            # not sure whether the below works on not, worth testing
+            # x_data, y_data, z_data = self.memory.getData([self.values['GX'][1], self.values['GY'][1], self.values['GZ'][1]])
+            x_data = self.memory.getData(self.values['GX'][1])
+            y_data = self.memory.getData(self.values['GY'][1])
+            z_data = self.memory.getData(self.values['GZ'][1])
+            return [x_data, y_data, z_data]
+        else:
+            return [0.0, 0.0, 0.0]
 
     def get_acc(self):
         """
@@ -87,13 +95,15 @@ class Robot():
             > self.get_acc()
             [0.0, 1.1, 0.5]
         """
-        x_data = self.memory.getData(self.values['ACX'][1])
-        y_data = self.memory.getData(self.values['ACY'][1])
-        z_data = self.memory.getData(self.values['ACZ'][1])
-        # same again, not sure if this works but would be good to save time
-        # x_data, y_data, z_data = self.memory.getData([self.values['ACX'][1], self.values['ACY'][1], self.values['ACZ'][1]])
-
-        return [x_data, y_data, z_data]
+        if self.acc_required: # This is slow and limits interface heavily
+            # same again, not sure if this works but would be good to save time
+            # x_data, y_data, z_data = self.memory.getData([self.values['ACX'][1], self.values['ACY'][1], self.values['ACZ'][1]])
+            x_data = self.memory.getData(self.values['ACX'][1])
+            y_data = self.memory.getData(self.values['ACY'][1])
+            z_data = self.memory.getData(self.values['ACZ'][1])
+            return [x_data, y_data, z_data]
+        else:
+            return [0.0, 0.0, 0.0]
 
     def get_angle(self, part_name):
         """
@@ -174,7 +184,7 @@ class Robot():
         self.positions['startup'] = startup_dict
         
         # Switch from current position just added to next_posture
-        self.set_posture(next_posture, 'startup', max_speed=0.2)
+        self.set_posture(next_posture, 'startup', max_speed=max_speed)
         
         
         

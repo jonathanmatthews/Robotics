@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from graph_functions import *
 from sys import path, argv
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy, get_latest_file
+from utility_functions import read_file, get_latest_file
 
 test = False
 if argv[-1] == 'Testing':
@@ -14,7 +14,6 @@ if argv[-1] == 'Real':
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
 angles = read_file(output_data_directory + filename)
-angles = convert_read_numpy(angles)
 
 # Extract data
 t = angles['time']
@@ -27,11 +26,7 @@ fig, ax = plt.subplots(
     1, 1, figsize=(
         13, 8))
 
-# make a copy of axis and overlay it, this way can have angles and named position on same plot
-ax2 = ax.twinx()
-# format them both
 ax = format_graph(ax)
-ax2 = format_graph(ax2)
 
 
 # editing plot that will show angle
@@ -49,9 +44,17 @@ plt.xlim([0, max(t)])
 
 # editing axis that will have named positions on
 if test:
+    # make a copy of axis and overlay it, this way can have angles and named position on same plot
+    ax2 = ax.twinx()
+    ax2 = format_graph(ax2)
     plt.sca(ax2)
     add_named_position_plot(t, position)
+    # make one big legend not two smaller ones
+    combine_multiple_legends([ax, ax2], custom_location='lower left')
+else:
+    plt.legend(loc='best')
 
-# make one big legend not two smaller ones
-combine_multiple_legends([ax, ax2], custom_location='lower left')
+fig.tight_layout()
 plt.show()
+fig.savefig(
+    'Figures/SeminarCombined.png', format='png')

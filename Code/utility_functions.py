@@ -7,6 +7,17 @@ import numpy as np
 
 
 def flatten(values):
+    """
+    Takes a list that can contain a mixture of lists and values, and recursively
+    flattens the list until everything is one layer deep
+    Args:
+        values: list to flatten
+    Returns:
+        flattened list
+    Example:
+        > flatten([1, [3, 5, [6, 7]], [[[3]]]])
+        [1, 3, 5, 6, 7, 3]
+    """
     final_list = []
     for list_value in values:
         if isinstance(list_value, list):
@@ -18,7 +29,11 @@ def flatten(values):
 
 def read_file(filename):
     """
-    Reads old data
+    Reads data file with rows that have the same structure as current data types
+    Args:
+        filename: name of file to read
+    Returns:
+        2d numpy array containing named columns of current_data_types
     """
     data_type = current_data_types()
 
@@ -34,19 +49,15 @@ def read_file(filename):
     return all_data
 
 
-def convert_read_numpy(data):
-    data_type = current_data_types()
-    # Data will be added to this with time
-    all_data = numpy.empty((0, ), dtype=data_type)
-
-    for i in xrange(len(data)):
-        row = list(data[i])
-        all_data = numpy.append(all_data, numpy.array(
-            [tuple(row)], dtype=data_type), axis=0)
-    return all_data
-
-
 def current_data_types():
+    """
+    Contains list of tuples that define the data types of self.all_data, type coercion helps with easily accessing
+    data with names instead of index number
+    Args:
+        None
+    Returns: 
+        list of tuples containing name of column and data type
+    """
     return [('time', 'f4'), ('event', 'i4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
             ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
                                                          'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
@@ -57,8 +68,8 @@ def get_latest_file(current_dir, test=True):
     """
     Get latest data file, if test = True will collect latest tst file, if not then only
     original files will be loaded
-    current_dir:
-        current directory: Code or Analysis
+    Args:
+        current_dir: Code or Analysis
         test: include test files or not
     Returns:
         filename + ' Tst' or filename + ' Org'
@@ -91,7 +102,10 @@ def convert_list_dict(current_values):
     """
     Converts list of values into a dictionary with keys of names current_data_types(), this way data
     can be accessed via values['time'] etc
-    current_values: list of values with same length as current_data_types()
+    Args:
+        current_values: list of values with same length as current_data_types()
+    Returns:
+        ordered dictionary with keys of correct data type, and values of corresponding values
     """
 
     data_types = current_data_types()
@@ -106,9 +120,16 @@ def convert_list_dict(current_values):
 
 def cm_to_cartesian(angle1, angle2, angle3, position):
     """
-    Returns cartesian coordinate of centre of mass of nao, with respect to the origin
+    Returns cartesian coordinate of centre of mass of nao, with respect to the big encoder
     angles need to be in radians
     position is centre of mass from centre_of_mass_respect_seat
+    Args:
+        angle1: big encoder angle (radians)
+        angle2: encoder after big encoder value (radians)
+        angle3: encoder value after other small encoder (radians)
+        position: named position defined in positions.py
+    Returns:
+        cartesian coordinate of centre of mass of nao with respect to big encoder
     """
     cartesian_position_seat = position_seat_cartesian(angle1, angle2, angle3)
     centre_of_mass_nao_seat = position
@@ -128,10 +149,13 @@ def cm_to_cartesian(angle1, angle2, angle3, position):
 
 def position_seat_cartesian(angle1, angle2, angle3):
     """
-    Calculates the cartesian coordinate of the seat given all angles in radians
-    angle1: big encoder
-    angle2: small encoder 0
-    angle3: small encoder 1
+    Calculates the cartesian coordinate of the seat with respect to the big encoder given all angles in radians
+    Args:
+        angle1: big encoder
+        angle2: small encoder 0
+        angle3: small encoder 1
+    Returns:
+        cartesian coordinate for seat with respect to big encoder
     """
     L1 = 1.5  # length of pendulum 1 in m
     L2 = 0.12  # length of pendulum 2 in m
@@ -146,6 +170,11 @@ def position_seat_cartesian(angle1, angle2, angle3):
 def centre_of_mass_respect_seat(position, masses):
     """
     Returns centre of mass coordinates of nao in different positions, with respect to the SEAT
+    Args:
+        position: named position defined in positions.py
+        masses: boolean as to whether masses are attached or not
+    Returns:
+        centre of mass of nao with respect to the seat in metres
     """
     if position == "seated" and masses == False:
         x_com = (0.03674 - 0.03)
@@ -177,6 +206,12 @@ def centre_of_mass_respect_seat(position, masses):
 
 
 def moving_average(values, window_size):
+    """
+    Calculates the moving average on a list of values
+    Args:
+        values: list of values to take moving average on
+        window_size: how many values to use to average
+    """
     ma = [np.sum(values[i:i+window_size])/window_size for i,
           _ in enumerate(values[:-window_size+1])]
     return ma
@@ -186,6 +221,12 @@ def last_zero_crossing(values, previous_time, previous_be):
     """
     Interpolates between two times and big encoder values, should be used when sign
     of encoder changes.
+    Args:
+        values: dictionary containing all current values being recorded
+        previous_time: value of time before crossing
+        previous_be: big encoder value at time before crossing
+    Returns:
+        estimated last zero crossing point, uses linear interpolation
     """
     current_be = values['be']
     dt = values['time'] - previous_time
@@ -197,27 +238,63 @@ def last_zero_crossing(values, previous_time, previous_be):
     return min_time
 
 
-def last_maxima(all_data, be_time='time', window_size=5):
+def last_maxima(all_data, be_time='time', window_size=49):
+    """
+    Calculates when the last maxima happened, and returns either the time at which it happened, or the value
+    when it happened. Uses a moving average on data first to remove most local maxima
+    Args:
+        all_data: self.all_data from interface, contains all recorded data
+        be_time: whether to return the time of the maxima, or the value at the maxima
+        window_size: how many values to calculate the moving average from
+    Returns:
+        time of maxima or value at maxima
+    """
     # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
     # only use an odd number for window size, as indexes need to be adjusted below
-    avg_be = np.abs(moving_average(all_data['be'][-30:], window_size))
+    avg_be = np.abs(moving_average(all_data['be'][-500:], window_size))
     # extract index corresponding to latest maxima, index_max_angle(number of previous values to return)
     angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
     if be_time == 'time':
-        return all_data['time'][-30:][angle_max_index[-1]]
+        return all_data['time'][-500:][angle_max_index[-1]]
     elif be_time == 'be':
-        return all_data['be'][-30:][angle_max_index[-1]]
+        return all_data['be'][-500:][angle_max_index[-1]]
 
 
-def last_minima(self, all_data):
+def last_minima(all_data):
     """
     Obtain the time at which the swing was last at the bottom of its arc.
+    Args:
+        all_data: interface self.all_data, contains all recorded values
+    Returns:
+        time at which latest minima occured
     """
-    be = np.abs(all_data['be'][-30:])
-    time = all_data['time'][-30:]
+    # Collect the latest n results to find minimas from, don't want to use all of all_data
+    # as it's slow, depending on sample rate of interface may need to be less or more, want
+    # a couple of seconds worth of data
+    be = np.abs(all_data['be'][-500:])
+    time = all_data['time'][-500:]
 
-    # Obtain index.
+    # Obtain index of latest minima
     angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1
     min_times = time[angle_max_index]
 
     return min_times
+    
+def sign_zero(value):
+    """
+    Returns -1 if the value is less than 0, and 1 if it is greater than or equal to 0. 
+    This ensures that when comparing crossing point sign_zero(value_before) != sign_zero(value_after)
+    and there is a value of zero then the if statement won't trigger twice.
+    Args:
+        value: value to check sign of
+    Returns:
+        -1 or 1, depending on sign
+    Example:
+        > if sign_zero(0) != sign_zero(-2):
+        >    print 'Ran'
+        'Ran'
+    """
+    if value < 0:
+        return -1
+    elif value >= 0:
+        return 1

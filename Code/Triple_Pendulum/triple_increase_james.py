@@ -12,17 +12,20 @@ class TripleIncreaseQuarterPeriod():
         return np.arctan(x/y) * 180/np.pi
 
     def last_maxima_ta(self, all_data, ta_time='time', window_size=5):
+
         times = all_data['time']
         be = all_data['be']
         se0 = all_data['se0']
         se1 = all_data['se1']
+
         ta_list = [self.total_angle(*values) for values in zip(be, se0, se1)]
         avg_ta = np.abs(moving_average(ta_list[-500:], window_size))
+
         angle_max_index = (np.diff(np.sign(np.diff(avg_ta))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
         if ta_time == 'time':
             return times[-500:][angle_max_index[-1]]
         elif ta_time == 'ta':
-            return ta_list[-500:][angle_max_index[-1]]
+            return ta[-500:][angle_max_index[-1]]
 
 
 
