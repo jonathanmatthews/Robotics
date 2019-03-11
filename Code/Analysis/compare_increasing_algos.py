@@ -4,7 +4,7 @@ import numpy as np
 from sys import path
 from scipy.optimize import curve_fit
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy, get_latest_file
+from utility_functions import read_file, get_latest_file
 
 def linear_fit(t, a, b):
     return a * t + b
@@ -41,7 +41,6 @@ ax = format_graph(ax)
 for i, _file in enumerate(files_to_compare):
     # collect the data
     angles = read_file(output_data_directory + _file)
-    angles = convert_read_numpy(angles)
 
     # Extract data
     t = angles['time']
