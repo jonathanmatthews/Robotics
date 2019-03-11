@@ -27,11 +27,7 @@ fig, ax = plt.subplots(
     1, 1, figsize=(
         13, 8))
 
-# make a copy of axis and overlay it, this way can have angles and named position on same plot
-ax2 = ax.twinx()
-# format them both
 ax = format_graph(ax)
-ax2 = format_graph(ax2)
 
 
 # editing plot that will show angle
@@ -49,9 +45,14 @@ plt.xlim([0, max(t)])
 
 # editing axis that will have named positions on
 if test:
+    # make a copy of axis and overlay it, this way can have angles and named position on same plot
+    ax2 = ax.twinx()
+    ax2 = format_graph(ax2)
     plt.sca(ax2)
     add_named_position_plot(t, position)
+    # make one big legend not two smaller ones
+    combine_multiple_legends([ax, ax2], custom_location='lower left')
+else:
+    plt.legend(loc='best')
 
-# make one big legend not two smaller ones
-combine_multiple_legends([ax, ax2], custom_location='lower left')
 plt.show()

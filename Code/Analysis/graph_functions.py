@@ -59,7 +59,7 @@ def shade_background_based_on_algorithm(time, algorithm):
 
     # for each change in algorithm shade background slightly darker
     for i, index in enumerate(algorithm_change_indexes[:-1]):
-        plt.axvspan(time[index], time[index + algorithm_change_diff[i]], alpha = (i+1) * 0.15, color='grey', label='{}'.format(algorithm[index+1]))
+        plt.axvspan(time[index], time[index + algorithm_change_diff[i]], alpha = (i+1) * 0.10, color='grey', label='{}'.format(algorithm[index+1]))
     return algorithm_change_indexes
 
 def algorithm_change_indexes(algorithm):
@@ -105,6 +105,7 @@ def add_named_position_plot(time, positions):
     y_tick_labels = [position_numbers[i] for i in y_tick_values]
     plt.yticks(y_tick_values, y_tick_labels)
     plt.yticks(rotation=-45)
+    plt.ylim([min(y_tick_values)-0.2, max(y_tick_values)+0.2])
 
     position_number = [position_numbers[i] for i in positions]
     plt.plot(time, position_number, color='r', label='Position of Nao', linewidth=0.5)

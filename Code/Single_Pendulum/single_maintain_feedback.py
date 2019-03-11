@@ -11,7 +11,7 @@ class MaintainFeedback():
 
         # offset is time from maximum to swing
         self.time_switch = 100
-        self.offset = 0.0
+        self.offset = -0.25
         self.last_maximum = last_maxima(all_data, be_time='be')
 
         # alternative switch condition

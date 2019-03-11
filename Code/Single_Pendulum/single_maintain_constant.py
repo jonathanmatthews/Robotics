@@ -16,7 +16,12 @@ class MaintainConstant():
         self.max_angle = kwargs.get('max_angle', 180)
         self.maintain_angle = kwargs.get('maintain_angle', 10)
         self.duration = kwargs.get('duration', 20)
-        self.offset_angle = 10
+        
+        masses = kwargs.get('masses', True)
+        if masses:
+            self.offset_angle = 15
+        else:
+            self.offset_angle = 5
 
         self.previous_be = values['be']
 
@@ -24,6 +29,7 @@ class MaintainConstant():
                 # sign of big encoder changes when crossing zero point
         if sign(values['be']) != sign(self.previous_be):
             self.max_angle = last_maxima(all_data, be_time='be')
+            print 'Last maximum angle {}'.format(self.max_angle)
 
             # If angle of last swing is greater than the maintain angle then 
             # want to kick earlier to counteract it, vice versa for smaller
