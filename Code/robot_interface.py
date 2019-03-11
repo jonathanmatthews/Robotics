@@ -49,7 +49,7 @@ class Robot():
         values = [self.get_angle(key)[0] for key in position.keys()]
         differences = [(key, value, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
 
-        incorrect_positions = [i for i in differences if i[2] > 0.1]
+        incorrect_positions = [i for i in differences if i[2] > 3]
         if len(incorrect_positions) != 0:        
             for values in incorrect_positions:
                 print values[0], 'Actual value: {}'.format(values[1]), 'Difference from expected: {}'.format(values[2])

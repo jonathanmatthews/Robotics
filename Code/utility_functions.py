@@ -209,7 +209,7 @@ def last_maxima(all_data, be_time='time', window_size=49):
         return all_data['be'][-500:][angle_max_index[-1]]
 
 
-def last_minima(self, all_data):
+def last_minima(all_data):
     """
     Obtain the time at which the swing was last at the bottom of its arc.
     """
@@ -221,3 +221,9 @@ def last_minima(self, all_data):
     min_times = time[angle_max_index]
 
     return min_times
+    
+def sign_zero(value):
+    if value < 0:
+        return -1
+    elif value >= 0:
+        return 1
