@@ -11,7 +11,12 @@ class MaintainFeedback():
 
         # offset is time from maximum to swing
         self.time_switch = 100
-        self.offset = -0.2
+        
+        masses = kwargs.get('masses', True)
+        if masses:
+            self.offset = 0.20
+        else:
+            self.offset = -0.25
         self.last_maximum = last_maxima(all_data, be_time='be')
 
         # alternative switch condition
@@ -26,10 +31,15 @@ class MaintainFeedback():
             self.max_time = last_maxima(all_data, be_time='time')
             self.max_angle = last_maxima(all_data, be_time='be')
 
-            if abs(self.max_angle) > self.maintain_angle - 0.5:
-                self.offset -= 0.1
-            if abs(self.max_angle) < self.maintain_angle + 0.5:
-                self.offset += 0.1
+            # only worry is if offset becomes >= the quarter period then nao will never change
+            # position, until the angle decreases enough that the offset rises again mind
+            # same for other way around
+            if abs(self.max_angle) > self.maintain_angle + 0.2:
+                self.offset += 0.01
+                print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
+            if abs(self.max_angle) < self.maintain_angle - 0.2:
+                self.offset -= 0.01
+                print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
 
             # quarter period difference between time at maxima and minima
             self.quart_period = abs(self.min_time - self.max_time)
@@ -45,10 +55,12 @@ class MaintainFeedback():
         self.previous_time = values['time']
 
         if values['time'] > self.time_switch:
+            print 'Time to switch, changing position'
             self.time_switch += 100
             return self.next_position_calculation(values)
 
         if values['time'] - self.start_time > self.duration:
+            print '\033[1mSwitching, duration ended\033[0m'
             return 'switch'
 
     def next_position_calculation(self, values):
@@ -57,6 +69,7 @@ class MaintainFeedback():
         elif values['be'] > 0:
             next_position = 'extended'
         else:
+            # This shouldn't happen as this function is only called at the maximum of the motion
             print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
             next_position = values['pos']
         return next_position
