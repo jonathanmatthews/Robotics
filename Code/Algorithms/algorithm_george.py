@@ -31,8 +31,16 @@ class Algorithm(Robot, Encoders):
             #'masses': True
         #}]
         
+        #self.order = [{
+            #'algo': Nothing,
+            #'duration': 90
+        #}]
+
         self.order = [{
             'algo': Nothing,
+            'duration': 10
+        },{
+            'algo': IncreaseParametric,
             'duration': 90
         }]
 

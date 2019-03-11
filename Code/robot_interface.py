@@ -67,6 +67,7 @@ class Robot():
             > self.get_gyro()
             [0.0, 0.5, 0.6]
         """
+        return [0.0, 0.0, 0.0]
         x_data = self.memory.getData(self.values['GX'][1])
         y_data = self.memory.getData(self.values['GY'][1])
         z_data = self.memory.getData(self.values['GZ'][1])
@@ -87,6 +88,7 @@ class Robot():
             > self.get_acc()
             [0.0, 1.1, 0.5]
         """
+        return [0.0, 0.0, 0.0]
         x_data = self.memory.getData(self.values['ACX'][1])
         y_data = self.memory.getData(self.values['ACY'][1])
         z_data = self.memory.getData(self.values['ACZ'][1])

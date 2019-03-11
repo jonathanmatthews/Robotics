@@ -393,7 +393,7 @@ if __name__ == '__main__':
     # afterwards doesn't bother
     interface = Interface(setup)
     try:
-        interface.run(period=0.10)
+        interface.run(period=0.005)
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
