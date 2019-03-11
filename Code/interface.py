@@ -394,6 +394,7 @@ if __name__ == '__main__':
     interface = Interface(setup)
     try:
         interface.run(period=0.005)
+        interface.motion.setStiffnesses("Body", 0.0)
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
