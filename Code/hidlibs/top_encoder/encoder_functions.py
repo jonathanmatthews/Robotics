@@ -25,7 +25,11 @@ def getAngle():
     raw = my_pmd.digin16()
     raw2 = raw & 2047
     angle = float(raw2) * (360.0 / 2048.0) - calibration_factor
-    return angle
+    
+    if angle > 180:
+        return angle - 360
+    else:
+        return angle
 
 
 '''

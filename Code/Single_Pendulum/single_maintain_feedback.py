@@ -11,7 +11,12 @@ class MaintainFeedback():
 
         # offset is time from maximum to swing
         self.time_switch = 100
-        self.offset = -0.25
+        
+        masses = kwargs.get('masses', True)
+        if masses:
+            self.offset = 0.20
+        else:
+            self.offset = -0.25
         self.last_maximum = last_maxima(all_data, be_time='be')
 
         # alternative switch condition
@@ -30,10 +35,10 @@ class MaintainFeedback():
             # position, until the angle decreases enough that the offset rises again mind
             # same for other way around
             if abs(self.max_angle) > self.maintain_angle + 0.2:
-                self.offset += 0.05
+                self.offset += 0.01
                 print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
             if abs(self.max_angle) < self.maintain_angle - 0.2:
-                self.offset -= 0.05
+                self.offset -= 0.01
                 print '\033[1mChanging offset to {}\033[0m'.format(self.offset)
 
             # quarter period difference between time at maxima and minima

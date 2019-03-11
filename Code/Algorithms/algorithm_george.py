@@ -22,29 +22,43 @@ class Algorithm(Robot, Encoders):
         # Initialise robot
         Robot.__init__(self, values, positions, ALProxy, masses=True)
 
+        #self.order = [{
+            #'algo': Nothing,
+            #'duration': 10
+        #},{
+            #'algo': MaintainFeedback,
+            #'duration': 90,
+            #'masses': True
+        #}]
+        
         self.order = [{
-            'algo': Start,
-            'duration': 25
-        },{
-            'algo': IncreaseQuarterPeriod,
-            'max_angle': 15
-        },{
-            'algo': DecreaseQuarterPeriod,
-            'increasing': False,
-            'min_angle': 10
-        },{
-            'algo': MaintainConstant,
-            'duration': 45
-        },{
-            'algo': IncreaseParametric,
-            'duration': 60,
-            'max_angle': 20
-        },{
-            'algo': DecreaseParametric,
-            'duration': 60,
-            'increasing': False,
-            'min_angle': 5
-        },{
             'algo': Nothing,
-            'duration': 30
+            'duration': 90
         }]
+
+        #self.order = [{
+            #'algo': Start,
+            #'duration': 25
+        #},{
+            #'algo': IncreaseQuarterPeriod,
+            #'max_angle': 15
+        #},{
+            #'algo': DecreaseQuarterPeriod,
+            #'increasing': False,
+            #'min_angle': 10
+        #},{
+            #'algo': MaintainConstant,
+            #'duration': 45
+        #},{
+            #'algo': IncreaseParametric,
+            #'duration': 60,
+            #'max_angle': 20
+        #},{
+            #'algo': DecreaseParametric,
+            #'duration': 60,
+            #'increasing': False,
+            #'min_angle': 5
+        #},{
+            #'algo': Nothing,
+            #'duration': 30
+        #}]
