@@ -21,6 +21,7 @@ fig, ax = plt.subplots(
     1, 1, figsize=(
         8, 6))
 ax = format_graph(ax)
+ax.set_facecolor('#eeeeee')
 
 for each_file in files_to_compare:
     angles = read_file(output_data_directory + each_file)
@@ -28,16 +29,22 @@ for each_file in files_to_compare:
     time = angles['time'][20:]
     be = angles['be'][20:]
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-    true_max = time[angle_max_index][0]
+    true_max = time[angle_max_index][0] + 8.5
     plt.plot(time-true_max, be, label=each_file)
+    plt.xlim([0, max(time) - 8.5])
     #plt.show()
 
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
-plt.title('Comparison between different recorded motions')
+# plt.title('Comparison between different recorded motions')
+plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
 plt.legend(loc='best')
+fig.tight_layout()
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
+# fig.savefig(
+    # 'Figures/Comparison.eps', format='eps')
 fig.savefig(
-    'Figures/Comparison.eps', format='eps')
+    'Figures/MaintainComparison.png', format='png'
+)
