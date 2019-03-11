@@ -3,6 +3,7 @@ from encoder_interface import Encoders
 
 from sys import path
 path.insert(0, 'Single_Pendulum')
+path.insert(0, 'Triple_Pendulum')
 from single_nothing import Nothing
 from single_startup_const_period import Start
 from single_maintain_constant import MaintainConstant
@@ -10,6 +11,7 @@ from single_maintain_feedback import MaintainFeedback
 from single_stop_const_period import Stop
 from single_increase_quarter_period import DecreaseQuarterPeriod, IncreaseQuarterPeriod
 from single_increase_parametric_rework import DecreaseParametric, IncreaseParametric
+from triple_increase_james import TripleIncreaseQuarterPeriod
 
 class Algorithm(Robot, Encoders):
     """
@@ -20,15 +22,16 @@ class Algorithm(Robot, Encoders):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders, small_encoders_required=False)
         # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy, masses=True)
+        Robot.__init__(self, values, positions, ALProxy, masses=False)
 
         self.order = [{
             'algo': Nothing,
             'duration': 10
         },{
-            'algo': DecreaseQuarterPeriod,
-            'duration': 30,
-            'increasing': False
+            'algo': MaintainFeedback,
+            'duration': 60,
+            'maintain_angle': 10,
+            'masses': False
         }]
 
         #self.order = [{
