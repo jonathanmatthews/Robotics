@@ -2,20 +2,21 @@ from time import time
 
 import time as tme
 import numpy as np
-from utility_functions import last_maxima, last_zero_crossing, moving_average
+from utility_functions import last_maxima, last_zero_crossing, moving_average, position_seat_cartesian
 
 
 class IncreaseQuarterPeriod():
+
+    def total_angle(be, se0, se1):
+        x, y = position_seat_cartesian(be, se0, se1)
+        return np.arctan(x/y) * 180/np.pi
 
     def last_maxima_ta(all_data, ta_time='time', window_size=5):
         times = all_data['time']
         be = all_data['be']
         se0 = all_data['se0']
         se1 = all_data['se1']
-        ta = [total_angle(*values) for values in zip(be, se0, se1)]
-        # ta_list = []
-        # for i in enumerate(all_data):
-        #     ta_list.append(total_angle(be[i], se0[i], se1[i]))
+        ta = [self.total_angle(*values) for values in zip(be, se0, se1)]
         avg_ta = np.abs(moving_average(ta_list[-500:], window_size))
         angle_max_index = (np.diff(np.sign(np.diff(avg_ta))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
         if ta_time == 'time':
@@ -34,7 +35,7 @@ class IncreaseQuarterPeriod():
         # setting up times
         self.start_time = values['time']
         self.previous_time = values['time']
-        self.previous_te = total_angle(values['be'], values['se0'], values['se1'])
+        self.previous_ta = self.total_angle(values['be'], values['se0'], values['se1'])
 
         # max_angle used for increasing min_angle for decreasing
         self.increasing = kwargs.get('increasing', True)
@@ -52,10 +53,11 @@ class IncreaseQuarterPeriod():
     def algo(self, values, all_data):
 
         # sign of big encoder changes when crossing zero point
-        if np.sign(total_angle(values['be'], values['se0'], values['se1'])) != np.sign(self.previous_te):
+        current_ta = self.total_angle(values['be'], values['se0'], values['se1'])
+        if np.sign(current_ta) != np.sign(self.previous_ta):
 
-            self.min_time = last_zero_crossing(values, self.previous_time, self.previous_te)
-            self.max_time = last_maxima(all_data['time'], total_angle_list[all_data], be_time='time')
+            self.min_time = last_zero_crossing(values, self.previous_time, self.previous_ta)
+            self.max_time = last_maxima(all_data, be_time='time')
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
@@ -65,7 +67,7 @@ class IncreaseQuarterPeriod():
             print 'Next switching time', self.time_switch
 
         # At the end of the loop, set the value of big encoder to the previous value
-        self.previous_te = total_angle(values['be'], values['se0'], values['se1'])
+        self.previous_ta = current_ta
         self.previous_time = values['time']
 
         if values['time'] > self.time_switch:
@@ -91,7 +93,7 @@ class IncreaseQuarterPeriod():
         return 'no change'
 
     def next_position_calculation(self, values):
-        ta = total_angle(values['be'], values['se0'], values['se1'])
+        ta = self.total_angle(values['be'], values['se0'], values['se1'])
         if ta < 0 and self.increasing == True:
             next_position = 'seated'
         elif ta > 0 and self.increasing == True:
