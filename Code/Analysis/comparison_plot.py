@@ -39,5 +39,5 @@ plt.legend(loc='best')
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-# fig.savefig(
-    # 'Figures/Comparison.eps', format='eps')
+fig.savefig(
+    'Figures/Comparison.eps', format='eps')
