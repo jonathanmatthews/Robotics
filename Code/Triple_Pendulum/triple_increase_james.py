@@ -5,18 +5,18 @@ import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average, position_seat_cartesian
 
 
-class IncreaseQuarterPeriod():
+class TripleIncreaseQuarterPeriod():
 
-    def total_angle(be, se0, se1):
+    def total_angle(self, be, se0, se1):
         x, y = position_seat_cartesian(be, se0, se1)
         return np.arctan(x/y) * 180/np.pi
 
-    def last_maxima_ta(all_data, ta_time='time', window_size=5):
+    def last_maxima_ta(self, all_data, ta_time='time', window_size=5):
         times = all_data['time']
         be = all_data['be']
         se0 = all_data['se0']
         se1 = all_data['se1']
-        ta = [self.total_angle(*values) for values in zip(be, se0, se1)]
+        ta_list = [self.total_angle(*values) for values in zip(be, se0, se1)]
         avg_ta = np.abs(moving_average(ta_list[-500:], window_size))
         angle_max_index = (np.diff(np.sign(np.diff(avg_ta))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
         if ta_time == 'time':
@@ -84,10 +84,10 @@ class IncreaseQuarterPeriod():
             else:
                 print 'Switching from decreasing, duration ended'
             return 'switch'
-        if (self.last_maximum > self.max_angle and self.increasing == True):
+        if (abs(self.last_maximum) > self.max_angle and self.increasing == True):
             print 'Maximum angle reached, switching'
             return 'switch'
-        if (self.last_maximum < self.min_angle and self.increasing == False):
+        if (abs(self.last_maximum) < self.min_angle and self.increasing == False):
             print 'Minimum angle reached, switching'
             return 'switch'
         return 'no change'
@@ -108,6 +108,6 @@ class IncreaseQuarterPeriod():
         return next_position
 
 
-class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
+class DecreaseQuarterPeriod(TripleIncreaseQuarterPeriod):
     def __init__(self, values, all_data, **kwargs):
         IncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)
