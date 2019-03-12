@@ -8,10 +8,11 @@ class IncreaseQuarterPeriod():
     """
 
     def __init__(self, values, all_data, **kwargs):
+        self.period = kwargs.get('period', 0.005)
         # offset is time from maximum to swing
         self.time_switch = 100
         self.offset = -0.1
-        self.last_maximum = last_maxima(all_data, 'be')
+        self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)
 
         # setting up times
         self.start_time = values['time']
@@ -38,14 +39,13 @@ class IncreaseQuarterPeriod():
             print 'After {}'.format(values['be']), 'Before {}'.format(self.previous_be)
 
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
-            self.max_time = last_maxima(all_data, be_time='time')
+            self.max_time, self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='both', dt=self.period)
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
             print 'Ran at time {}'.format(values['time'])
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
-            self.last_maximum = last_maxima(all_data, be_time='be')
             print 'Next switching time: {:.3f}'.format(self.time_switch), 'Last maximum: {:.3f}'.format(self.last_maximum)
 
         # At the end of the loop, set the value of big encoder to the previous value

@@ -18,7 +18,7 @@ class Algorithm(Robot, Encoders):
     This is an example algorithm class, as everyone will be working on different algorithms
     """
 
-    def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy):
+    def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy, period):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders, small_encoders_required=False)
         # Initialise robot
@@ -28,10 +28,9 @@ class Algorithm(Robot, Encoders):
             'algo': Nothing,
             'duration': 10
         },{
-            'algo': MaintainFeedback,
+            'algo': IncreaseQuarterPeriod,
             'duration': 60,
-            'maintain_angle': 10,
-            'masses': False
+            'maintain_angle': 10        
         }]
 
         #self.order = [{
@@ -79,3 +78,6 @@ class Algorithm(Robot, Encoders):
             #'algo': Nothing,
             #'duration': 10
         #}]
+
+        for dictionary in self.order:
+            dictionary['period'] = period

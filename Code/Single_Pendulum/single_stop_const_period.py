@@ -7,6 +7,7 @@ from utility_functions import last_maxima
 
 class Stop():
     def __init__(self, values, all_data, **kwargs):
+        self.period = kwargs.get('period', 0.005)
         self.start_time = values['time']
         self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 1.0)
@@ -28,7 +29,7 @@ class Stop():
         t = values['time']
 
         if t > self.last_move + self.wait_time + self.offset:
-            print 'Last maxima {}'.format(abs(last_maxima(all_data, 'be')))
+            print 'Last maxima {}'.format(abs(last_maxima(all_data['time'], all_data['be'], values_time='values', dt=self.period)))
             print 'Stop swing', values['time']
             self.last_move = t
             return self.next_position()
@@ -37,7 +38,7 @@ class Stop():
         if t - self.start_time > self.duration:
             print 'duration reached, stopping'
             return 'switch'
-        if abs(last_maxima(all_data, 'be')) < self.min_angle:
+        if abs(last_maxima(all_data['time'], all_data['values'], values_time='values', dt=self.period)) < self.min_angle:
             print 'min angle reached, stopping'
             return 'switch'
 

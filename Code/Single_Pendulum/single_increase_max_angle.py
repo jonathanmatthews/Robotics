@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from utility_functions import sign_zero
 
 
 class IncreaseDecrease():
@@ -26,7 +27,7 @@ class IncreaseDecrease():
 
         # Check if the sign of the big encoder data has changed
         # If not changed, we know the swing is not at its lowest point
-        if (np.sign(previous_be) == np.sign(current_be)):
+        if (sign_zero(previous_be) == sign_zero(current_be)):
             pass
         # If the sign changed, calculate the approximation of the highest point it can reach
         else:
@@ -36,19 +37,19 @@ class IncreaseDecrease():
             # The -2 degree at end is because we want to start change the position a little bit early
             self.next_highest_angle = math.degrees(
                 math.acos((self.pendulum_length-h)/self.pendulum_length))-2
-            self.next_highest_angle = np.sign(
+            self.next_highest_angle = sign_zero(
                 current_be) * self.next_highest_angle
             print values['time'], 'At lowest point', 'Big encoder {:.2f}'.format(values['be']) 
 
         if (self.next_highest_angle):
             next_pos = None
 
-            if(np.sign(self.next_highest_angle) < 0 and current_be < self.next_highest_angle):
+            if(sign_zero(self.next_highest_angle) < 0 and current_be < self.next_highest_angle):
                 if(self.increase == True):
                     next_pos = 'seated'
                 else:
                     next_pos = 'extended'
-            elif(np.sign(self.next_highest_angle) > 0 and current_be > self.next_highest_angle):
+            elif(sign_zero(self.next_highest_angle) > 0 and current_be > self.next_highest_angle):
                 if(self.increase == True):
                     next_pos = 'extended'
                 else:
@@ -58,7 +59,7 @@ class IncreaseDecrease():
                 self.next_highest_angle = None
                 return next_pos
 
-        if(np.sign(current_av) != np.sign(previous_av) and np.sign(previous_av) == -1):
+        if(sign_zero(current_av) != sign_zero(previous_av) and sign_zero(previous_av) == -1):
             self.previous_max_angle = all_data['be'][-1]
             if(self.max_angle < abs(self.previous_max_angle) and self.increase == True):
                 return 'switch'

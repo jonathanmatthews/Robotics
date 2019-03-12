@@ -5,7 +5,7 @@ import time as tme
 from limb_data import values
 #from positions import positions
 from positions2 import positions
-from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat
+from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat, store
 from sys import path, argv
 from robot_interface import Robot, PositionError
 from encoder_interface import Encoders
@@ -111,7 +111,7 @@ class Interface(Algorithm):
     on old data. It inherits from Algorithm which inherits from Robot and Encoder so has access to all their methods in the normal way (self.get_gyro() etc).
     """
 
-    def __init__(self, setup):
+    def __init__(self, setup, period=0.005):
         """
         Initializes interface, connects to Algorithm class it inherits from, stores the setup mode for later, checks that Nao is sat in the correct position
         to within a specified tolerance.
@@ -120,6 +120,9 @@ class Interface(Algorithm):
         Returns:
             None
         """
+        # Stores cycle time for use in algorithms
+        self.period = period
+
         # Connect properties of algorithm to interface, interface has access to all properties on SmallEncoder, BigEncoder, and Algorithm
         Algorithm.__init__(
             self,
@@ -127,7 +130,9 @@ class Interface(Algorithm):
             SmallEncoders,
             values,
             positions,
-            ALProxy)
+            ALProxy,
+            period
+        )
 
         # Store setup mode for later, (Testing, Developing etc)
         self.setup = setup
@@ -265,7 +270,6 @@ class Interface(Algorithm):
         """
         # Maximum number of loops to collect and run through algorithm
         max_runs = t * 1 / period + 1.0
-        self.period = period
 
         self.all_data = self.initialize_all_data()
 
@@ -324,7 +328,7 @@ class Interface(Algorithm):
         print('\033[1mExpected sampling period: {:.3f}s\nActual sampling period: {:.3f}s\033[0m'.format(self.period, average_cycle_time))
 
         # store data in txt file, all original data has ' Org' added to name
-        self.store(self.filename + ' Org')
+        store(self.filename + ' Org', self.all_data)
 
     def __run_test(self, filename, output_directory):
         """
@@ -363,7 +367,7 @@ class Interface(Algorithm):
                 break
 
         # Data loaded in will have ' Org' file so remove that and replace with ' Tst'
-        self.store(filename[:-4] + ' Tst')
+        store(filename[:-4] + ' Tst', self.all_data)
 
     def run(self, **kwargs):
         """
@@ -377,35 +381,16 @@ class Interface(Algorithm):
             filename = kwargs.get('filename', latest)
             self.__run_test(filename, output_directory)
         else:
-            t = kwargs.get('t', 500.0)
-            period = kwargs.get('period', 0.08)
-            self.__run_real(t, period)
-
-    def store(self, filename):
-        """
-        Saves numpy matrix as txt file while retaining data types such that columns can be accessed
-        like a dictionary
-        Args:
-            filename: name of file to store to in Output_data folder
-        Returns:
-            None, but stores to filename
-        Example:
-            > self.store('file_to_store_to')
-        """
-        with open('Output_data/' + filename, 'w') as f:
-            rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
-                    for line in self.all_data]
-            for row in rows:
-                f.write(','.join(row) + '\n')
-        print '\n\033[1mData saved to {}\033[0m\n'.format(filename)
+            t = kwargs.get('t', 1000.0)
+            self.__run_real(t, self.period)
 
 
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup)
+    interface = Interface(setup, period=0.005)
     try:
-        interface.run(period=0.005)
+        interface.run()
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')

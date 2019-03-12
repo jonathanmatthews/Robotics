@@ -48,7 +48,6 @@ def read_file(filename):
                 [tuple(line)], dtype=data_type), axis=0)
     return all_data
 
-
 def current_data_types():
     """
     Contains list of tuples that define the data types of self.all_data, type coercion helps with easily accessing
@@ -238,49 +237,74 @@ def last_zero_crossing(values, previous_time, previous_be):
     return min_time
 
 
-def last_maxima(all_data, be_time='time', window_size=49):
+def last_maxima(time_list, values_list, time_values='time', dt=0.005):
     """
     Calculates when the last maxima happened, and returns either the time at which it happened, or the value
     when it happened. Uses a moving average on data first to remove most local maxima
     Args:
-        all_data: self.all_data from interface, contains all recorded data
-        be_time: whether to return the time of the maxima, or the value at the maxima
-        window_size: how many values to calculate the moving average from
+        time_list: list of times data was sampled at, or any list that functions as an index
+        values_list: list of values corresponding to time_list
+        time_values: whether to return the time at maximum or the value at maximum, or both
+        dt: rough average of difference between sampling times
     Returns:
-        time of maxima or value at maxima
+        time of latest maxima or value at this maxima
+    Example:
+        > time_list = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
+        > values_list = [1.0, 3.0, 5.0, 7.0, 9.0, 7.0, 5.0]
+        > last_maxima(time_list, values_list, 'values', dt=0.5)
+        9.0
     """
-    # extracting a moving average of the previous encoder values to prevent incorrect maximas begin evaluated
-    # only use an odd number for window size, as indexes need to be adjusted below
-    avg_be = np.abs(moving_average(all_data['be'][-500:], window_size))
-    # extract index corresponding to latest maxima, index_max_angle(number of previous values to return)
-    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
-    if be_time == 'time':
-        return all_data['time'][-500:][angle_max_index[-1]]
-    elif be_time == 'be':
-        return all_data['be'][-500:][angle_max_index[-1]]
+    return zero_maxima('max', time_list, values_list, time_values=time_values, dt=dt)
 
-
-def last_minima(all_data):
+def last_minima(time_list, values_list, time_values='time', dt=0.005):
     """
-    Obtain the time at which the swing was last at the bottom of its arc.
+    Calculates when the last bottom of the arc happened, and returns either the time at which it happened, or the value
+    when it happened. Uses a moving average on data first to remove most local minima
     Args:
-        all_data: interface self.all_data, contains all recorded values
+        time_list: list of times data was sampled at, or any list that functions as an index
+        values_list: list of values corresponding to time_list
+        time_values: whether to return the time at minima or the value at minima, or both
+        dt: rough average of difference between sampling times
     Returns:
-        time at which latest minima occured
+        time of latest minima or value at this minima
+    Example:
+        > time_list = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
+        > values_list = [7.0, 5.0, 3.0, 2.5, 4.5, 7.0,9.0]
+        > last_minima(time_list, values_list, 'values', dt=0.5)
+        2.5
     """
-    # Collect the latest n results to find minimas from, don't want to use all of all_data
-    # as it's slow, depending on sample rate of interface may need to be less or more, want
-    # a couple of seconds worth of data
-    be = np.abs(all_data['be'][-500:])
-    time = all_data['time'][-500:]
+    return zero_maxima('min', time_list, values_list, time_values=time_values, dt=dt)
 
-    # Obtain index of latest minima
-    angle_max_index = (np.diff(np.sign(np.diff(be))) > 0).nonzero()[0] + 1
-    min_times = time[angle_max_index]
-
-    return min_times
+def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
+    """
+    Generalised function that calculates zero crossing point or maxima value 
+    """
+    n = int(3.0 / dt)
+    window_number = int(0.8 / dt)
+    if window_number % 2 == 0:
+        window_number += 1
+    if window_number == 1:
+        window_number = 3
     
-def sign_zero(value):
+    avg_values_list = np.abs(moving_average(values_list[-n:], window_number))
+    if min_max == 'min':
+        max_index = (np.diff(sign_zero(np.diff(np.abs(avg_values_list)))) > 0).nonzero()[0] + 1 + (window_number - 1)/2
+    elif min_max == 'max':
+        max_index = (np.diff(sign_zero(np.diff(avg_values_list))) < 0).nonzero()[0] + 1 + (window_number - 1)/2
+    else:
+        raise ValueError('Choice of min or max not provided')
+        
+
+    if time_values == 'time':
+        return time_list[-n:][max_index[-1]]
+    elif time_values == 'values':
+        return values_list[-n:][max_index[-1]]
+    elif time_values == 'both':
+        return time_list[-n:][max_index[-1]], values_list[-n:][max_index[-1]]
+    else:
+        raise ValueError('Last maxima is not returning anything')
+
+def sign_zero(value_s):
     """
     Returns -1 if the value is less than 0, and 1 if it is greater than or equal to 0. 
     This ensures that when comparing crossing point sign_zero(value_before) != sign_zero(value_after)
@@ -294,7 +318,29 @@ def sign_zero(value):
         >    print 'Ran'
         'Ran'
     """
-    if value < 0:
-        return -1
-    elif value >= 0:
-        return 1
+    if isinstance(value_s, list) or isinstance(value_s, numpy.ndarray):
+        return [sign_zero(value) for value in value_s]
+    else:
+        if value_s < 0:
+            return -1
+        elif value_s >= 0:
+            return 1
+
+
+def store(filename, all_data):
+    """
+    Saves numpy matrix as txt file while retaining data types such that columns can be accessed
+    like a dictionary
+    Args:
+        filename: name of file to store to in Output_data folder
+    Returns:
+        None, but stores to filename
+    Example:
+        > store('file_to_store_to')
+    """
+    with open('Output_data/' + filename, 'w') as f:
+        rows = [[str(i) for i in list(line)[:-1]] + [line[-1]]
+                for line in all_data]
+        for row in rows:
+            f.write(','.join(row) + '\n')
+    print '\n\033[1mData saved to {}\033[0m\n'.format(filename)

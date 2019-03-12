@@ -1,5 +1,4 @@
-from numpy import sign
-from utility_functions import last_maxima
+from utility_functions import last_maxima, sign_zero
 """
 This algorithm is garbage, it still gains amplitude when run, worth talking about
 flaw in the report, isn't adaptive.
@@ -12,6 +11,7 @@ class MaintainConstant():
 
     def __init__(self, values, all_data, **kwargs):
         print 'Starting maintain'
+        self.period = kwargs.get('period', 0.005)
         self.start_time = values['time']
         self.max_angle = kwargs.get('max_angle', 180)
         self.maintain_angle = kwargs.get('maintain_angle', 10)
@@ -26,9 +26,9 @@ class MaintainConstant():
         self.previous_be = values['be']
 
     def algo(self, values, all_data):
-                # sign of big encoder changes when crossing zero point
-        if sign(values['be']) != sign(self.previous_be):
-            self.max_angle = last_maxima(all_data, be_time='be')
+                # sign_zero of big encoder changes when crossing zero point
+        if sign_zero(values['be']) != sign_zero(self.previous_be):
+            self.max_angle = last_maxima(all_data['time'], all_data['be'], values_time='values', dt=self.period)
             print 'Last maximum angle {}'.format(self.max_angle)
 
             # If angle of last swing is greater than the maintain angle then 
