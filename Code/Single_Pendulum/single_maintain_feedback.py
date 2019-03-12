@@ -1,9 +1,9 @@
-from utility_functions import last_maxima, last_zero_crossing
-from numpy import sign
+from utility_functions import last_maxima, last_zero_crossing, sign_zero
 
 class MaintainFeedback():
 
     def __init__(self, values, all_data, **kwargs):
+        self.period = kwargs.get('period', 0.005)
         self.start_time = values['time']
         self.previous_be = values['be']
         self.previous_time = values['time']
@@ -17,19 +17,18 @@ class MaintainFeedback():
             self.offset = 0.20
         else:
             self.offset = -0.25
-        self.last_maximum = last_maxima(all_data, be_time='be')
+        self.last_maximum = last_maxima(all_data['time'], all_data['be'], values_time='values', dt=self.period)
 
         # alternative switch condition
         self.duration = kwargs.get('duration', float('inf'))
 
     def algo(self, values, all_data):
         
-        # sign of big encoder changes when crossing zero point
-        if sign(values['be']) != sign(self.previous_be):
+        # sign_zero_zero of big encoder changes when crossing zero point
+        if sign_zero(values['be']) != sign_zero(self.previous_be):
 
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
-            self.max_time = last_maxima(all_data, be_time='time')
-            self.max_angle = last_maxima(all_data, be_time='be')
+            self.max_time, self.max_angle = last_maxima(all_data['time'], all_data['be'], values_time='both', dt=self.period)
 
             # only worry is if offset becomes >= the quarter period then nao will never change
             # position, until the angle decreases enough that the offset rises again mind

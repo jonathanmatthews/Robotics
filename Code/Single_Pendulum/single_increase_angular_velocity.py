@@ -1,4 +1,4 @@
-from numpy import sign
+from utility_functions import sign_zero
 
 class IncreaseAngularVelocity():
 
@@ -19,7 +19,7 @@ class IncreaseAngularVelocity():
         previous_av = all_data['av'][-1]
         print 'Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
         if(self.increasing == True):
-            if(sign(current_av) != sign(previous_av)):
+            if(sign_zero(current_av) != sign_zero(previous_av)):
                 self.previous_max_angle = all_data['be'][-1]
                 if(current_pos == 'seated'):
                     print('extended', values['be'])
@@ -30,11 +30,11 @@ class IncreaseAngularVelocity():
             else:
                 pass
         elif(self.increasing == False):
-            if(sign(current_av) != sign(previous_av) and sign(previous_av) == -1):
+            if(sign_zero(current_av) != sign_zero(previous_av) and sign_zero(previous_av) == -1):
                 self.previous_max_angle = all_data['be'][-1]
                 print('extended', values['be'])
                 return 'extended'
-            elif(sign(current_av) != sign(previous_av) and sign(previous_av) == 1):
+            elif(sign_zero(current_av) != sign_zero(previous_av) and sign_zero(previous_av) == 1):
                 self.previous_max_angle = all_data['be'][-1]
                 print('seated', values['be'])
                 return 'seated'

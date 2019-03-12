@@ -256,6 +256,24 @@ def last_maxima(time_list, values_list, time_values='time', dt=0.005):
     """
     return zero_maxima('max', time_list, values_list, time_values=time_values, dt=dt)
 
+def last_minima(time_list, values_list, time_values='time', dt=0.005):
+    """
+    Calculates when the last bottom of the arc happened, and returns either the time at which it happened, or the value
+    when it happened. Uses a moving average on data first to remove most local minima
+    Args:
+        time_list: list of times data was sampled at, or any list that functions as an index
+        values_list: list of values corresponding to time_list
+        time_values: whether to return the time at minima or the value at minima, or both
+        dt: rough average of difference between sampling times
+    Returns:
+        time of latest minima or value at this minima
+    Example:
+        > time_list = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
+        > values_list = [7.0, 5.0, 3.0, 2.5, 4.5, 7.0,9.0]
+        > last_minima(time_list, values_list, 'values', dt=0.5)
+        2.5
+    """
+    return zero_maxima('min', time_list, values_list, time_values=time_values, dt=dt)
 
 def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     """
@@ -286,46 +304,6 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     else:
         raise ValueError('Last maxima is not returning anything')
 
-def last_minima(time_list, values_list, time_values='time', dt=0.005):
-    """
-    Calculates when the last bottom of the arc happened, and returns either the time at which it happened, or the value
-    when it happened. Uses a moving average on data first to remove most local minima
-    Args:
-        time_list: list of times data was sampled at, or any list that functions as an index
-        values_list: list of values corresponding to time_list
-        time_values: whether to return the time at minima or the value at minima, or both
-        dt: rough average of difference between sampling times
-    Returns:
-        time of latest minima or value at this minima
-    Example:
-        > time_list = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
-        > values_list = [7.0, 5.0, 3.0, 2.5, 4.5, 7.0,9.0]
-        > last_minima(time_list, values_list, 'values', dt=0.5)
-        2.5
-    """
-    return zero_maxima('min', time_list, values_list, time_values=time_values, dt=dt)
-
-
-# def last_minima(all_data):
-#     """
-#     Obtain the time at which the swing was last at the bottom of its arc.
-#     Args:
-#         all_data: interface self.all_data, contains all recorded values
-#     Returns:
-#         time at which latest minima occured
-#     """
-#     # Collect the latest n results to find minimas from, don't want to use all of all_data
-#     # as it's slow, depending on sample rate of interface may need to be less or more, want
-#     # a couple of seconds worth of data
-#     be = np.abs(all_data['be'][-500:])
-#     time = all_data['time'][-500:]
-
-#     # Obtain index of latest minima
-#     angle_max_index = (np.diff(sign_zero(np.diff(be))) > 0).nonzero()[0] + 1
-#     min_times = time[angle_max_index]
-
-#     return min_times
-    
 def sign_zero(value_s):
     """
     Returns -1 if the value is less than 0, and 1 if it is greater than or equal to 0. 
@@ -366,7 +344,3 @@ def store(filename, all_data):
         for row in rows:
             f.write(','.join(row) + '\n')
     print '\n\033[1mData saved to {}\033[0m\n'.format(filename)
-
-time_list = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
-values_list = [7.0, 5.0, 3.0, 2.5,4.5, 7.0,9.0]
-print last_minima(time_list, values_list, 'values', dt=0.5)
