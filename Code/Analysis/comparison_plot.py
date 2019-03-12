@@ -6,7 +6,7 @@ from sys import path
 path.insert(0, '..')
 from utility_functions import read_file
 
-output_data_directory = '../Output_data/Lab data 08-03/'
+output_data_directory = '../Output_data'
 files = sorted(os.listdir(output_data_directory))
 text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
 compare = str(
@@ -36,7 +36,7 @@ for each_file in files_to_compare:
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 # plt.title('Comparison between different recorded motions')
-plt.title('Comparing the start-up script with and without masses.') #+ r"$10^o$")
+plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
 plt.legend(loc='best')
 fig.tight_layout()
 plt.show()
