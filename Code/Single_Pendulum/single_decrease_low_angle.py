@@ -2,7 +2,7 @@ import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average, sign_zero
 
 
-class IncreaseQuarterPeriod():
+class DecreaseSmallAngle():
     """
     This shouldn't work!
     """
@@ -92,4 +92,4 @@ class IncreaseQuarterPeriod():
 
 class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
     def __init__(self, values, all_data, **kwargs):
-        IncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)
+        DecreaseSmallAngle.__init__(self, values, all_data, **kwargs)
