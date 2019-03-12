@@ -1,17 +1,14 @@
-from time import time
-
-import time as tme
 import numpy as np
-from utility_functions import last_maxima, last_zero_crossing, moving_average, position_seat_cartesian
+from utility_functions import last_maxima, last_zero_crossing, moving_average, position_seat_cartesian, sign_zero
 
 
 class TripleIncreaseQuarterPeriod():
 
     def total_angle(self, be, se0, se1):
-        x, y = position_seat_cartesian(be, se0, se1)
-        return np.arctan(x/y) * 180/np.pi
+        x, y = position_seat_cartesian(be * np.pi/180, se0 * np.pi/180, se1 * np.pi/180)
+        return - np.arctan(x/y) * 180/np.pi
 
-    def last_maxima_ta(self, all_data, ta_time='time', window_size=5):
+    def last_maxima_ta(self, all_data, time_values='time'):
 
         times = all_data['time']
         be = all_data['be']
@@ -19,21 +16,17 @@ class TripleIncreaseQuarterPeriod():
         se1 = all_data['se1']
 
         ta_list = [self.total_angle(*values) for values in zip(be, se0, se1)]
-        avg_ta = np.abs(moving_average(ta_list[-500:], window_size))
 
-        angle_max_index = (np.diff(np.sign(np.diff(avg_ta))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
-        if ta_time == 'time':
-            return times[-500:][angle_max_index[-1]]
-        elif ta_time == 'ta':
-            return ta[-500:][angle_max_index[-1]]
+        return last_maxima(times, ta_list, time_values=time_values, dt=self.period)
 
 
 
     def __init__(self, values, all_data, **kwargs):
+        self.period = kwargs.get('period', 0.005)
         # offset is time from maximum to swing
         self.time_switch = 1000
         self.offset = -0.2
-        self.last_maximum = self.last_maxima(all_data, 'ta')
+        self.last_maximum = self.last_maxima_ta(all_data, 'values')
 
         # setting up times
         self.start_time = values['time']
@@ -57,16 +50,15 @@ class TripleIncreaseQuarterPeriod():
 
         # sign of big encoder changes when crossing zero point
         current_ta = self.total_angle(values['be'], values['se0'], values['se1'])
-        if np.sign(current_ta) != np.sign(self.previous_ta):
 
+        if sign_zero(current_ta) != sign_zero(self.previous_ta):
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_ta)
-            self.max_time = last_maxima(all_data, be_time='time')
+            self.max_time, self.last_maximum = self.last_maxima_ta(all_data, time_values='both')
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
             # set time for position to switch
             self.time_switch = self.min_time + self.quart_period + self.offset
-            self.last_maximum = last_maxima(all_data, be_time='be')
             print 'Next switching time', self.time_switch
 
         # At the end of the loop, set the value of big encoder to the previous value
@@ -111,6 +103,6 @@ class TripleIncreaseQuarterPeriod():
         return next_position
 
 
-class DecreaseQuarterPeriod(TripleIncreaseQuarterPeriod):
+class TripleDecreaseQuarterPeriod(TripleIncreaseQuarterPeriod):
     def __init__(self, values, all_data, **kwargs):
-        IncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)
+        TripleIncreaseQuarterPeriod.__init__(self, values, all_data, **kwargs)

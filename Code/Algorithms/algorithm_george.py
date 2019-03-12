@@ -28,7 +28,7 @@ class Algorithm(Robot, Encoders):
             'algo': Nothing,
             'duration': 10
         },{
-            'algo': IncreaseQuarterPeriod,
+            'algo': TripleIncreaseQuarterPeriod,
             'duration': 60,
             'maintain_angle': 10        
         }]
