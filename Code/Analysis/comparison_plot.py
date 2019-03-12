@@ -7,15 +7,48 @@ path.insert(0, '..')
 from utility_functions import read_file
 
 output_data_directory = '../Output_data/'
-files = sorted(os.listdir(output_data_directory))
-text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
-compare = str(
-    input(
-        'Select all files to compare, seperate by commas: \n{}\n'.format(
-            "\n".join(text))))
-# print list(compare)
-numbers = list(compare.replace(')', '').replace('(', '').split(','))
-files_to_compare = [files[int(i)] for i in numbers if int(i) <= len(files)]
+
+def get_files(folder):
+    files = sorted(os.listdir(folder))
+    text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
+    compare = str(
+        input(
+            'Select all files to compare, seperate by commas: \n{}\n'.format(
+                "\n".join(text))))
+    # print list(compare)
+    numbers = list(compare.replace(')', '').replace('(', '').split(','))
+    responses = [files[int(i)] for i in numbers if int(i) <= len(files)]
+    files = []
+
+    for response in responses:
+        try:
+            open(folder + response).close()
+            files.append(folder + response)
+        except IOError: # Response is a folder.
+            other = get_files(folder + response + "/")
+            for i in other:
+                files.append(i)
+    
+    return files
+
+
+def get_name(location):
+    """
+    Get the file name from a path, eg: /home/me/file.jpg -> file.jpg
+    """
+    result = ""
+    for i in range(len(location)):
+        if location[-i] == "/":
+            break
+
+        result = location[-i] + result
+    
+    return result
+
+
+files_to_compare = get_files(output_data_directory)
+print(files_to_compare)
+
 
 fig, ax = plt.subplots(
     1, 1, figsize=(
@@ -24,12 +57,13 @@ ax = format_graph(ax)
 ax.set_facecolor('#eeeeee')
 
 for each_file in files_to_compare:
-    angles = read_file(output_data_directory + each_file)
+    angles = read_file(each_file)
+    #angles = convert_read_numpy(angles) # Not sure if this should be here, it seems it was removed since my last pull.
     time = angles['time'][20:]
     be = angles['be'][20:]
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
     true_max = time[angle_max_index][0] + 8.5
-    plt.plot(time-true_max, be, label=each_file)
+    plt.plot(time-true_max, be, label=get_name(each_file))
     plt.xlim([0, max(time) - 8.5])
     #plt.show()
 
