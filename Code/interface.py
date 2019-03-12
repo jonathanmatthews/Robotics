@@ -94,7 +94,9 @@ try:
         # Add path to real encoder functions if connected to them
         path.insert(0, "hidlibs")
         import top_encoder.encoder_functions as BigEncoder
-        import bottom_encoder.hingeencoder as SmallEncoders
+        #import bottom_encoder.hingeencoder as SmallEncoders
+        path.insert(0, "Training_functions")
+        import SmallEncoders
     else:
         # Add path to fake encoder functions if not connecting to encoders
         path.insert(0, "Training_functions")
@@ -388,7 +390,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.005)
+    interface = Interface(setup, period=0.05)
     try:
         interface.run()
     except KeyboardInterrupt:

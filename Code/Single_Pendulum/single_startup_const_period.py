@@ -1,10 +1,13 @@
 '''Start-up algorithm that simply kicks, waits a half period,
     and kicks again.'''
+    
+from utility_functions import last_maxima
 
 
 class Start():
     def __init__(self, values, all_data, **kwargs):
         print 'Startup script'
+        self.period = kwargs.get('period', 0.005)
         self.start_time = values['time']
         self.duration = kwargs.get('duration', float('inf'))
         self.max_angle = kwargs.get('max_angle', 5)
@@ -44,7 +47,8 @@ class Start():
                 print 'last move', self.last_move
                 print 'Switch on duration'
                 return 'switch'
-            if values['be'] > self.max_angle:
-                print 'last move', self.last_move
-                print 'Switched on max angle'
-                return 'switch'
+            if t > 10:
+                if last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period) > self.max_angle:
+                    print 'last move', self.last_move
+                    print 'Switched on max angle'
+                    return 'switch'

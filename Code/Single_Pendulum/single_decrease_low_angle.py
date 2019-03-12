@@ -21,8 +21,7 @@ class DecreaseSmallAngle():
 
         # max_angle used for increasing min_angle for decreasing
         self.increasing = kwargs.get('increasing', False)
-        self.max_angle = kwargs.get('max_angle', 180)
-        self.min_angle = kwargs.get('min_angle', 5)
+        self.min_angle = kwargs.get('min_angle', 0)
         
         # alternative switch condition
         self.duration = kwargs.get('duration', float('inf'))
@@ -55,7 +54,7 @@ class DecreaseSmallAngle():
         if values['time'] > self.time_switch:
             self.time_switch += 100
             #return self.next_position_calculation(values)
-            self.set_posture(self.next_position_calculation(values), 0.2)
+            return self.next_position_calculation(values)
 
         return self.end_conditions(values)
 
@@ -88,8 +87,3 @@ class DecreaseSmallAngle():
             print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
             next_position = values['pos']
         return next_position
-
-
-class DecreaseQuarterPeriod(IncreaseQuarterPeriod):
-    def __init__(self, values, all_data, **kwargs):
-        DecreaseSmallAngle.__init__(self, values, all_data, **kwargs)

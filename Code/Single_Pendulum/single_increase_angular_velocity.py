@@ -1,4 +1,5 @@
-from utility_functions import sign_zero
+from numpy import sign
+
 
 class IncreaseAngularVelocity():
 
@@ -9,35 +10,32 @@ class IncreaseAngularVelocity():
         self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
+        
 
     def algo(self, values, all_data):
         """
         Use the angular velosity to estimate the time to switch the posture
         """
-        current_av = values['av']
         current_pos = values['pos']
-        previous_av = all_data['av'][-1]
+        current_be = values['be']
+        previous_be = all_data['be'][-1]
         print 'Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
-        if(self.increasing == True):
-            if(sign_zero(current_av) != sign_zero(previous_av)):
-                self.previous_max_angle = all_data['be'][-1]
-                if(current_pos == 'seated'):
-                    print('extended', values['be'])
-                    return 'extended'
-                elif(current_pos == 'extended'):
-                    print('seated', values['be'])
-                    return 'seated'
-            else:
-                pass
-        elif(self.increasing == False):
-            if(sign_zero(current_av) != sign_zero(previous_av) and sign_zero(previous_av) == -1):
-                self.previous_max_angle = all_data['be'][-1]
-                print('extended', values['be'])
-                return 'extended'
-            elif(sign_zero(current_av) != sign_zero(previous_av) and sign_zero(previous_av) == 1):
-                self.previous_max_angle = all_data['be'][-1]
-                print('seated', values['be'])
+        
+        if(sign(previous_be)==-1 and previous_be - current_be <0):
+            if(self.increasing == True):
                 return 'seated'
+            elif(self.increasing == False):
+                return 'extended'
+            self.previous_max_angle = previous_be
+            print('max_angle',previous_be)
+        elif(sign(previous_be)==1 and previous_be - current_be >0):
+            if(self.increasing == True):
+                return 'extended'
+            elif(self.increasing == False):
+                return 'seated'
+            self.previous_max_angle = previous_be
+            print('max_angle',previous_be)
+            
 
         # switch conditions
         if(self.increasing == True):
@@ -50,6 +48,13 @@ class IncreaseAngularVelocity():
                 return 'switch'
         if values['time'] - self.start_time > self.duration:
             return 'switch'
+    
+    def sign_zero(self,value):
+        if value < 0:
+            return -1
+        elif value >= 0:
+            return 1
+        
 
 class DecreaseAngularVelocity(IncreaseAngularVelocity):
     def __init__(self, values, all_data, **kwargs):

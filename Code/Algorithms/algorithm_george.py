@@ -12,6 +12,8 @@ from single_stop_const_period import Stop
 from single_increase_quarter_period import DecreaseQuarterPeriod, IncreaseQuarterPeriod
 from single_increase_parametric_rework import DecreaseParametric, IncreaseParametric
 from triple_increase_james import TripleIncreaseQuarterPeriod
+from single_decrease_low_angle import DecreaseSmallAngle
+from single_increase_max_angle import IncreaseMaxAngle
 
 class Algorithm(Robot, Encoders):
     """
@@ -25,12 +27,10 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
-            'algo': Nothing,
-            'duration': 10
+            'algo': Start,
+            'max_angle': 3.0
         },{
-            'algo': TripleIncreaseQuarterPeriod,
-            'duration': 60,
-            'maintain_angle': 10        
+            'algo': IncreaseQuarterPeriod
         }]
 
         #self.order = [{
