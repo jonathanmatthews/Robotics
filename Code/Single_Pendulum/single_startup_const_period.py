@@ -8,7 +8,7 @@ class Start():
         self.start_time = values['time']
         self.duration = kwargs.get('duration', float('inf'))
         self.max_angle = kwargs.get('max_angle', 5)
-        self.wait_time = 1.25   # defined by the half period of a swing
+        self.wait_time = 1.2735   # defined by the half period of a swing
         self.last_move = 0      # time last kick was performed
         self.first_kick = True  # used to check if it is first kick
 
