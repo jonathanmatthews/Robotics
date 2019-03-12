@@ -6,7 +6,7 @@ from sys import path
 path.insert(0, '..')
 from utility_functions import read_file
 
-output_data_directory = '../Output_data'
+output_data_directory = '../Output_data/'
 files = sorted(os.listdir(output_data_directory))
 text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
 compare = str(
