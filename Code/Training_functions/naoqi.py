@@ -12,6 +12,9 @@ from limb_data import values
 position = {}
 
 class ALProxy():
+    """
+    Mock class to replace naoqi when not in lab
+    """
     def __init__(self, name, ip, port):
         pass
         
@@ -35,7 +38,8 @@ class ALProxy():
 
     def setAngles(self, names, angles, speed):
         """
-        Adds angle being set to position dictionary, then can be accessed by ALProxy memory
+        Adds angle being set to position dictionary, then can be accessed when it is called
+        by ALProxy memory
         """
         for key in values.keys():
             if values[key][0] == names:
