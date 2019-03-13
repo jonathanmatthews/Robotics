@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from graph_functions import *
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file
+from utility_functions import read_file, moving_average
 
 output_data_directory = '../Output_data/'
 
@@ -57,26 +57,48 @@ ax.set_facecolor('#eeeeee')
 
 for each_file in files_to_compare:
     angles = read_file(each_file)
-    #angles = convert_read_numpy(angles) # Not sure if this should be here, it seems it was removed since my last pull.
-    time = angles['time'][20::10]
-    be = angles['be'][20::10]
-    angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-    true_max = time[angle_max_index][0]
-    plt.plot(time-true_max, be, label=get_name(each_file))
-    plt.xlim([0, max(time)])
+    time = angles['time']
+    be = angles['be']
+
+    be -= be[0]
+    avg_be = np.array(moving_average(be, window_size=9))
+    avg_time = np.array(moving_average(time, window_size=9))
+    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1
+    # true_max = time[angle_max_index][0]
+    avg_be = avg_be[angle_max_index]
+    avg_time = avg_time[angle_max_index]
+
+    time, be = [], []
+    for time_, be_ in zip(avg_time, avg_be):
+        if time_ > 200:
+            if be_ > 8.4:
+                time.append(time_)
+                be.append(be_)
+        if time_ <= 200:
+            time.append(time_)
+            be.append(be_)
+    time, be = np.array(time), np.array(be)
+
+    avg_time = time[be >= 0]
+    avg_be = be[be >= 0]
+    avg_be = np.array(moving_average(avg_be, window_size=15))
+    avg_time = np.array(moving_average(avg_time, window_size=15))
+    plt.plot(avg_time, avg_be, label=get_name(each_file)[:-1])
+    # plt.plot(time, be, label=get_name(each_file))
+    plt.xlim([0, 415])
     #plt.show()
 
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 # plt.title('Comparison between different recorded motions')
-plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
+plt.title('Comparison between different methods for\ncalculating the best time to kick')
 plt.legend(loc='best')
 fig.tight_layout()
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-# fig.savefig(
-    # 'Figures/Comparison.eps', format='eps')
 fig.savefig(
-    'Figures/MaintainComparison.png', format='png'
+    'Figures/BestTimingIncreasingMethod.eps', format='eps')
+fig.savefig(
+    'Figures/BestTimingIncreasingMethod.png', format='png'
 )

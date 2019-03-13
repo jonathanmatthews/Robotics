@@ -13,6 +13,7 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
+filename = 'Quarter Period'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -39,7 +40,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 
 # plotting angle versus time
-plt.plot(t, be, label='Big Encoder', color='b')
+plt.plot(t, be-be[0], label='Big Encoder', color='b')
 plt.xlim([0, max(t)])
 
 # editing axis that will have named positions on
@@ -57,4 +58,4 @@ else:
 fig.tight_layout()
 plt.show()
 fig.savefig(
-    'Figures/SeminarCombined.png', format='png')
+    'Figures/{}.png'.format(filename), format='png')

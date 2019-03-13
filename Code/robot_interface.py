@@ -132,7 +132,7 @@ class Robot():
         Returns:
             None
         Example:
-            selt.set_posture('extended', self.position)
+            self.set_posture('extended', self.position)
         """
         # Extract dictionaries corresponding to both positions
         next_posture_dict = self.positions[next_posture]
