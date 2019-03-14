@@ -48,8 +48,20 @@ Wow look at \ref{angleplot}. \cite{Bae2006}.
 
 \section{Connecting}
 \subsection{Nao}
+
+
 David: you know what to write
-also david write about how you sped up NAO's kicks somewhere it's juicy and tasty info
+also David write about how you sped up NAO's kicks somewhere it's juicy and tasty info/
+Connecting to NAO: 
+
+Include diagram of joints and talk about connecting and extracting sensor values and calling joints using python dictionaries:
+Normalising speeds, creating algorithms to ensure simultaneity.
+Slowing initial speed of NAO to prevent injury during initialisation of positions.
+Defining positions to ensure left and right side was symmetric and improved on previous years positions my maximising the range of motion with fail safes to ensure a correct position was reached by comparing joint data with expected position\\
+
+Small amount about compatibility issues and that these were resolved by using the same python SDK and choreagraph versions and running code via linux to prevent issues with compiling and installing : limit section to 100 words.
+
+
 \subsection{Hinge Encoders}
 \ruleline{George Sheppard}
 There are two sets of hinge encoders used, the large/big encoder, and the small encoders. The large encoder record the angle from the vertical to the largest rod of the swing. The small encoders record the angle with respect to the previous rod, there are 2 on each side of the swing.\\
@@ -109,7 +121,7 @@ This start-up was made even more effective by adding extra weight to the robot's
 
     \begin{figure}
         \centering
-        \includegraphics{}
+        \includegraphics[width=0.6\textwidth]{}
         \caption{A plot showing the difference in amplitude gained for the start-up script with the default robot and the robot with extra weight in its feet.}
         \label{fig:startupcomparison}
     \end{figure}
@@ -120,6 +132,16 @@ This start-up was made even more effective by adding extra weight to the robot's
 \ruleline{George Sheppard}
 To create algorithms that are efficient at applying Nao's energy into the motion of the swing requires an accurate estimate of the maximum angle of the swing, or the time at which this occurs. To early a swing dissipates the energy, and too late doesn't take advantage of the boost in velocity caused by changing position.\\
 For this reason a discussion of the best method for determining the maximum of the swing is outlined below.
+
+
+
+
+\subsubsection{Angular Velocity}
+\ruleline{Chenglong Li}
+The angular Velocity algorithms uses the fact that the sign of the angular velocity will change just after the Nao hits its maxima. Therefore one can instruct the Nao to change its posture whenever the angular velocity change its sign. This algorithm is very easy to implement and very reliable. However, there are two serious weakness for this algorithm.The first one is that this algorithm do not learn from old data, which means that it will not keep improving itself. Before talking about the second weakness, one should understand the concept of 'offset' for the algorithm. Assuming the algorithm predicts Nao should change its posture at time T or angle A and one would like it to start change its position a little bit earlier before  
+
+\subsubsection{Calculation of Max Angle}
+Chenglong: Same as above
 
 \subsubsection{Quarter Period}
 \ruleline{George Sheppard}
@@ -154,23 +176,22 @@ TODO: Advantages and disadvantages of this method
 Advantages: Can predict much before the peak allowing offset to decide when is best  
 Disadvantages: Only works for small amplitude increases at a time, linear interpolation only works for fast sample speed, smoothing won't remove all local maxima
 
-
-\subsubsection{Angular Velocity}
-Chenglong: Outline how using the angular velocity can determine the maximum of the motion, what are the benefits of this method, what are the downfalls.
-
-\subsection{Calculation of Max Angle}
-Chenglong: Same as above
-
 \subsection{Increasing and Decreasing Amplitude}
 
 
 \subsubsection{Parametric Pumping}
 Jon: Talk about two extra positions defined for this motion, the idea behind the algorithm, results try to fit to exponential curve to see if it multiplies amplitude by fixed fraction like worksheet showed, any limitations, were two positions just different in vertical centre of mass or did horizontal distance change too
+
 \subsubsection{Torque Method TODO: BETTER NAME FOR THIS}
-George/David: Say used previous defined positions, different methods for each algorithm (quarter period, theory team calculation of max angle), results for each, try to fit maximum amplitude peaks to linear to see if proportional to distance rocked or not, how results varied on different parameters such as if he swings before peak, during, or after, limitations to each method
+David: Say used previous defined positions, different methods for each algorithm (quarter period, integreation of theory team calculation of max angle), results for each, try to fit maximum amplitude peaks to linear to see if proportional to distance rocked or not, how results varied on different parameters such as if he swings before peak, during, or after, limitations to each method.
+Calculations of offset parameters to maximise amplitude gain and comparison of each plot
 
 \subsection{Maintaining Amplitude}
 Chenglong: different subsubsection for each method you used, first outline the idea behind each algorithm, then show the results for each, compare and contrast after you have shown results for each, which was easiest to code, had the finest control over the angle (calculate variance on the maximum amplitude of the swing), which is most efficient, anything else you decide is good
+
+\subsection{Chaining together algorithms}
+\textit{If i get old joe working I'll write about it briefly here - james}
+
 
 \subsubsection{Conclusion}
 Everyone: Think this should just be how to improve, any difficulties of the setup, which is the best method and why etc
