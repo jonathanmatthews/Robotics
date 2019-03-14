@@ -347,6 +347,6 @@ def store(filename, all_data):
     print '\n\033[1mData saved to {}\033[0m\n'.format(filename)
         
 
-    def total_angle(be, se0, se1):
-        x, y = position_seat_cartesian(be * np.pi/180, se0 * np.pi/180, se1 * np.pi/180)
-        return - np.arctan(x/y) * 180/np.pi
+def total_angle(be, se0, se1):
+    x, y = position_seat_cartesian(be * np.pi/180, se0 * np.pi/180, se1 * np.pi/180)
+    return - np.arctan(x/y) * 180/np.pi
