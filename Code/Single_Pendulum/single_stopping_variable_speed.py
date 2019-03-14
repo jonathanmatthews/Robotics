@@ -12,7 +12,7 @@ class StoppingVariableSpeed():
         self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 0.5)
         self.wait_time = 1.4
-        self.last_move = last_maxima(all_data, 'time')
+        self.last_move = last_maxima(all_data['time'], all_data['be'], time_values='time')
         self.offset = -0.3
 
         # sets up correct position
@@ -24,28 +24,29 @@ class StoppingVariableSpeed():
             # opposite of above
             self.next_pos = 'extended'
         print 'Stopping swing, constant period'
+        
+        
 
     def algo(self, values, all_data):
         t = values['time']
         
-        speed = abs(all_data['be'])*0.12
-
-
+        speed = abs(values['be'])*0.12
+        print speed
         if t > self.last_move + self.wait_time + self.offset:
-            print 'Last maxima {}'.format(abs(last_maxima(all_data['time'], all_data['be'], values_time='values', dt=self.period)))
+            print 'Last maxima {}'.format(abs(last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)))
             print 'Stop swing', values['time']
             self.last_move = t
-            return self.next_position()
+            return self.next_position(speed)
 
         # ending if duration is over or minimum angle is reached
         if t - self.start_time > self.duration:
             print 'duration reached, stopping'
             return 'switch'
-        if abs(last_maxima(all_data['time'], all_data['values'], values_time='values', dt=self.period)) < self.min_angle:
+        if abs(last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)) < self.min_angle:
             print 'min angle reached, stopping'
             return 'switch'
 
-    def next_position(self):
+    def next_position(self, speed):
         if self.next_pos == 'seated':
             self.next_pos = 'extended'
             return ['seated', speed]

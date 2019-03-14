@@ -294,8 +294,7 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
         max_index = (np.diff(sign_zero(np.diff(avg_values_list))) < 0).nonzero()[0] + 1 + (window_number - 1)/2
     else:
         raise ValueError('Choice of min or max not provided')
-        
-
+    
     if time_values == 'time':
         return time_list[-n:][max_index[-1]]
     elif time_values == 'values':
