@@ -35,9 +35,9 @@ plt.sca(ax)
 shade_background_based_on_algorithm(t, algorithm)
 
 # adding titles etc, this will add to ax
-# plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
+plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
 # plt.title('Parametric pumping using quarter period algorithm')
-plt.title('Rotational pumping using quarter period algorithm')
+# plt.title('Rotational pumping using quarter period algorithm')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 
