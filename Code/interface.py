@@ -72,7 +72,7 @@ setups = {
 }
 
 # Can set manually or use argv when running interface or test_plot.sh
-setup = 'Real'
+setup = 'Testing'
 if argv[-1] in setups.keys():
     setup = argv[-1]
 robot, encoders = setups[setup]
