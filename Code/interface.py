@@ -72,8 +72,10 @@ setups = {
     'Encoders_no_robot': [False, True, True]
 }
 
+
 # Can set manually or use argv when running interface or plot.sh
 setup = 'Real'
+
 if argv[-1] in setups.keys():
     setup = argv[-1]
 robot, big_encoder, small_encoders = setups[setup]
