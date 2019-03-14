@@ -21,10 +21,10 @@ t = angles['time']
 be = angles['be']
 position = angles['pos']
 algorithm = angles['algo']
-se0 = angles['se0']
-se1 = angles['se1']
+# se0 = angles['se0']
+# se1 = angles['se1']
 
-adjusted_angle = total_angle(be-be[0], se0, se1) 
+# adjusted_angle = total_angle(be-be[0], se0, se1) 
 
 # setup figure
 fig, ax = plt.subplots(
@@ -37,7 +37,7 @@ ax = format_graph(ax)
 # editing plot that will show angle
 plt.sca(ax)
 shade_background_based_on_algorithm(t, algorithm)
-plt.plot(t, adjusted_angle, label='Adjusted Angle')
+# plt.plot(t, adjusted_angle, label='Adjusted Angle')
 
 # adding titles etc, this will add to ax
 plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
