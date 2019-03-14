@@ -70,7 +70,7 @@ def plot_maxima_curve(filename, plot=True):
     be = be[be > 1]
 
     # calculate maximas after smoothing results together
-    window_size = 9
+    window_size = 5
     avg_be = np.array(moving_average(be, window_size=window_size))
     angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
 
@@ -146,6 +146,11 @@ for each_file in files_to_compare:
     avg_time = moving_average(time, 5)
     gradient = [diff/(avg_time[i+1] - avg_time[i]) for i, diff in enumerate(np.diff(avg_be))]
     plt.scatter(avg_be[1:], gradient, label=get_name(each_file)[:-1], s=20.0)
+    
+    fit = np.poly1d(np.polyfit(avg_be[1:], gradient, 2)) # Fit polynomial.
+    plt.plot(avg_be[1:], fit(avg_be[1:]), label="Fit of" + get_name(each_file)[:-1]) # Plot polynomial.
+    
+    
 
 plt.legend(loc='best')
 fig.tight_layout()
