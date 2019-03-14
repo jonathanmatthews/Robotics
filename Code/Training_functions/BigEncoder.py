@@ -9,4 +9,4 @@ def calibrate():
 
 
 def getAngle():
-    return 1
+    return 0
