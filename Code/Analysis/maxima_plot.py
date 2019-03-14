@@ -49,72 +49,78 @@ def get_name(location):
 files_to_compare = get_files(output_data_directory)
 
 
+
+def plot_maxima_curve(filename, plot=True):
+    angles = read_file(filename)
+    time = angles['time']
+    be = angles['be']
+    algo = angles['algo']
+
+    algo_change_indexes = shade_background_based_on_algorithm(time, algo, plot=False)
+
+    # only take values from when algorithm is switched to increasing
+    time = time[algo_change_indexes[1]:]
+    be = be[algo_change_indexes[1]:]
+
+    # there is a weird spike that goes really high, this filters that out
+    time = time[be < 30]
+    be = be[be < 30]
+    # again something else to filter
+    time = time[be > 1]
+    be = be[be > 1]
+
+    # calculate maximas after smoothing results together
+    window_size = 9
+    avg_be = np.array(moving_average(be, window_size=window_size))
+    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
+
+    # take times and values at maximas
+    time = time[angle_max_index]
+    be = be[angle_max_index]
+
+    # Remove as many weird spikes as possible
+    filtered_time, filtered_be = [], []
+    for time_, be_ in zip(time, be):
+        if time_ <= 260 or 400 <= time_ <= 600 or time_ >= 700:
+            filtered_time.append(time_)
+            filtered_be.append(be_)
+        elif 260 < time_ < 400:
+            if be_ > 8.4:
+                filtered_time.append(time_)
+                filtered_be.append(be_)
+        elif 600 < time_ < 700:
+            if be_ > 17.5:
+                filtered_time.append(time_)
+                filtered_be.append(be_)
+        else:
+            print "Doesn't fit category", time_, be_   
+
+
+    # convert to numpy arrays get some weird error without
+    time, be = np.array(filtered_time), np.array(filtered_be)
+    # centre them so they both start the plot at zero
+    time -= time[0]
+
+    if plot:
+        # plot against each other
+        plt.plot(time, be, label=get_name(each_file)[:-1])
+    return time, be
+
 fig, ax = plt.subplots(
     1, 1, figsize=(
         8, 6))
 ax = format_graph(ax)
-
 for each_file in files_to_compare:
-    angles = read_file(each_file)
-    time = angles['time']
-    be = angles['be']
-    algo = angles['algo']
-    algo_change_indexes = shade_background_based_on_algorithm(time, algo, plot=False)
-    time = time[algo_change_indexes[1]:]
-    be = be[algo_change_indexes[1]:]
-    new_time = time[be < 30]
-    new_be = be[be < 30]
+    time, be = plot_maxima_curve(each_file)
 
-
-    window_size = 3
-    avg_be = np.array(moving_average(new_be, window_size=window_size))
-    avg_time = np.array(moving_average(new_time, window_size=window_size))
-    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
-    # true_max = time[angle_max_index][0]
-
-    new_time = time[angle_max_index]
-    new_be = be[angle_max_index]
-
-    final_time, final_be = new_time, new_be
-    final_time, final_be = np.array(final_time), np.array(final_be)
-    final_time -= final_time[0]
-
-    # avg_time = time[be >= 0]
-    # avg_be = be[be >= 0]
-    avg_be = final_be[final_be > 1]
-    avg_time = final_time[final_be > 1]
-    # avg_be = np.array(moving_average(final_be, window_size=5))
-    # avg_time = np.array(moving_average(final_time, window_size=5))
-    plt.plot(avg_time, avg_be, label=get_name(each_file)[:-1])
-
-    avg_be = moving_average(avg_be, 25)
-    avg_time = moving_average(avg_time, 25)
-    gradient = [diff/(avg_time[i+1] - avg_time[i]) for i, diff in enumerate(np.diff(avg_be))]
-    plt.plot(avg_be[1:], gradient)
-
-    # values = {}
-    # for i, angle in enumerate(avg_be[:-1]):
-    #     rounded_angle = round(angle, 1)
-    #     if rounded_angle not in values.keys():
-    #         values[rounded_angle] = []
-    #     values[rounded_angle].append(avg_be[i+1] - avg_be[i])
-    # for key in values:
-    #     values[key] = np.mean(values[key])
-
-    # plt.scatter(values.keys(), values.values(), label='Rate of change')
-    # plt.plot(time, be, label=get_name(each_file))
-    # plt.xlim([0, 415])
-    #plt.show()
-
-ax.set_facecolor('white')
 ax.set_facecolor('#eeeeee')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
-# plt.title('Comparison between different recorded motions')
-plt.title('Comparison between rotational and parametric pumping')
+plt.title('Comparison between different methods for calculating\nthe best time to kick')
+# plt.title('Comparison between rotational and parametric pumping')
 plt.legend(loc='best')
 fig.tight_layout()
-plt.show()
+plt.show()  
 
 # eps is vector graphic doesn't get worse in quality when in latex
 fig.savefig(
@@ -122,3 +128,34 @@ fig.savefig(
 fig.savefig(
     'Figures/RotationalVsParametric.png', format='png'
 )
+
+# second plot of gradient here
+fig, ax = plt.subplots(
+    1, 1, figsize=(
+    8, 6))
+ax = format_graph(ax)
+ax.set_facecolor('#eeeeee')
+plt.xlabel(r"$\theta$ " + r"$(^o)$")
+plt.ylabel(r"$\frac{d\theta}{dt} $" + r"$(^os^{-1})$")
+# plt.title('Comparison between different recorded motions')
+plt.title('Rate of increase of angle for\nrotational and parametric pumping')
+for each_file in files_to_compare:
+    time, be= plot_maxima_curve(each_file, plot=False)
+    # smooth results then calculate gradient and plot
+    avg_be = moving_average(be, 5)
+    avg_time = moving_average(time, 5)
+    gradient = [diff/(avg_time[i+1] - avg_time[i]) for i, diff in enumerate(np.diff(avg_be))]
+    plt.scatter(avg_be[1:], gradient, label=get_name(each_file)[:-1], s=20.0)
+
+plt.legend(loc='best')
+fig.tight_layout()
+plt.show()
+
+# eps is vector graphic doesn't get worse in quality when in latex
+fig.savefig(
+    'Figures/RotationalVsParametricGradient.eps', format='eps')
+fig.savefig(
+    'Figures/RotationalVsParametricGradient.png', format='png'
+)
+
+
