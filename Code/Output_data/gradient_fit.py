@@ -1,52 +1,63 @@
+"""
+This is designed specifically to work with parametric/rotational,
+in this order. The fitted functions may not be correct for other
+motions.
+"""
+
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from graph_functions import *
+
 from sys import path
+path.insert(0, "../Analysis")
 path.insert(0, '..')
+from graph_functions import *
 from utility_functions import read_file, moving_average
 
 output_data_directory = '../Output_data/'
 
-def get_files(folder):
-    files = sorted(os.listdir(folder))
-    text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
-    compare = str(
-        input(
-            'Select all files to compare, seperate by commas: \n{}\n'.format(
-                "\n".join(text))))
-    # print list(compare)
-    numbers = list(compare.replace(')', '').replace('(', '').split(','))
-    responses = [files[int(i)] for i in numbers if int(i) <= len(files)]
-    files = []
+#def get_files(folder):
+    #files = sorted(os.listdir(folder))
+    #text = ["{} {}".format(i, file_) for i, file_ in enumerate(files)]
+    #compare = str(
+        #input(
+            #'Select all files to compare, seperate by commas: \n{}\n'.format(
+                #"\n".join(text))))
+    ## print list(compare)
+    #numbers = list(compare.replace(')', '').replace('(', '').split(','))
+    #responses = [files[int(i)] for i in numbers if int(i) <= len(files)]
+    #files = []
 
-    for response in responses:
-        try:
-            open(folder + response).close()
-            files.append(folder + response)
-        except IOError: # Response is a folder.
-            other = get_files(folder + response + "/")
-            for i in other:
-                files.append(i)
+    #for response in responses:
+        #try:
+            #open(folder + response).close()
+            #files.append(folder + response)
+        #except IOError: # Response is a folder.
+            #other = get_files(folder + response + "/")
+            #for i in other:
+                #files.append(i)
     
-    return files
+    #return files
 
 
-def get_name(location):
-    """
-    Get the file name from a path, eg: /home/me/file.jpg -> file.jpg
-    """
-    result = ""
-    for i in range(len(location)):
-        if location[-i] == "/":
-            break
+#def get_name(location):
+    #"""
+    #Get the file name from a path, eg: /home/me/file.jpg -> file.jpg
+    #"""
+    #result = ""
+    #for i in range(len(location)):
+        #if location[-i] == "/":
+            #break
 
-        result = location[-i] + result
+        #result = location[-i] + result
     
-    return result
+    #return result
 
 
-files_to_compare = get_files(output_data_directory)
+#files_to_compare = get_files(output_data_directory)
+
+files_to_compare = ["Parametric No Masses 800secs",
+		    "Rotational No Masses 400secs"]
 
 
 
@@ -101,33 +112,33 @@ def plot_maxima_curve(filename, plot=True):
     # centre them so they both start the plot at zero
     time -= time[0]
 
-    if plot:
-        # plot against each other
-        plt.plot(time, be, label=get_name(each_file)[:-1])
-    return time, be
+    #if plot:
+        ## plot against each other
+        #plt.plot(time, be, label=get_name(each_file)[:-1])
+    #return time, be
 
-fig, ax = plt.subplots(
-    1, 1, figsize=(
-        8, 6))
-ax = format_graph(ax)
-for each_file in files_to_compare:
-    time, be = plot_maxima_curve(each_file)
+#fig, ax = plt.subplots(
+    #1, 1, figsize=(
+        #8, 6))
+#ax = format_graph(ax)
+#for each_file in files_to_compare:
+    #time, be = plot_maxima_curve(each_file)
 
-ax.set_facecolor('#eeeeee')
-plt.xlabel('Time (s)')
-plt.ylabel('Angle ' + r"$(^o)$")
-plt.title('Comparison between different methods for calculating\nthe best time to kick')
-# plt.title('Comparison between rotational and parametric pumping')
-plt.legend(loc='best')
-fig.tight_layout()
-plt.show()  
+#ax.set_facecolor('#eeeeee')
+#plt.xlabel('Time (s)')
+#plt.ylabel('Angle ' + r"$(^o)$")
+#plt.title('Comparison between different methods for calculating\nthe best time to kick')
+## plt.title('Comparison between rotational and parametric pumping')
+#plt.legend(loc='best')
+#fig.tight_layout()
+#plt.show()  
 
-# eps is vector graphic doesn't get worse in quality when in latex
-fig.savefig(
-    'Figures/RotationalVsParametric.eps', format='eps')
-fig.savefig(
-    'Figures/RotationalVsParametric.png', format='png'
-)
+## eps is vector graphic doesn't get worse in quality when in latex
+#fig.savefig(
+    #'Figures/RotationalVsParametric.eps', format='eps')
+#fig.savefig(
+    #'Figures/RotationalVsParametric.png', format='png'
+#)
 
 # second plot of gradient here
 fig, ax = plt.subplots(
