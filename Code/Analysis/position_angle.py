@@ -13,7 +13,7 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
-filename = 'Quarter Period'
+filename = 'Rotational No Masses 400secs'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -35,9 +35,14 @@ plt.sca(ax)
 shade_background_based_on_algorithm(t, algorithm)
 
 # adding titles etc, this will add to ax
-plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
+# plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
+# plt.title('Parametric pumping using quarter period algorithm')
+plt.title('Rotational pumping using quarter period algorithm')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
+
+# t = t[be < 30]
+# be = be[be < 30]
 
 # plotting angle versus time
 plt.plot(t, be-be[0], label='Big Encoder', color='b')
@@ -53,7 +58,7 @@ if test:
     # make one big legend not two smaller ones
     combine_multiple_legends([ax, ax2], custom_location='lower left')
 else:
-    plt.legend(loc='best')
+    plt.legend(loc='upper left')
 
 fig.tight_layout()
 plt.show()

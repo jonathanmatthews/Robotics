@@ -46,7 +46,7 @@ def format_axis(ax):
     ax.spines['left'].set_color('black')
     return ax
     
-def shade_background_based_on_algorithm(time, algorithm):
+def shade_background_based_on_algorithm(time, algorithm, plot=True):
     """
     Shades axis darker and darker grey whenever algorithm changes
     ax: singular matplotlib axis to be shaded
@@ -57,9 +57,10 @@ def shade_background_based_on_algorithm(time, algorithm):
     algorithm_change_indexes = np.append(np.where(algorithm[:-1] != algorithm[1:])[0], np.array(len(algorithm) - 1))
     algorithm_change_diff = np.diff(algorithm_change_indexes)
 
-    # for each change in algorithm shade background slightly darker
-    for i, index in enumerate(algorithm_change_indexes[:-1]):
-        plt.axvspan(time[index], time[index + algorithm_change_diff[i]], alpha = (i+1) * 0.10, color='grey', label='{}'.format(algorithm[index+1]))
+    if plot:
+        # for each change in algorithm shade background slightly darker
+        for i, index in enumerate(algorithm_change_indexes[:-1]):
+            plt.axvspan(time[index], time[index + algorithm_change_diff[i]], alpha = (i+1) * 0.10, color='grey', label='{}'.format(algorithm[index+1]))
     return algorithm_change_indexes
 
 def algorithm_change_indexes(algorithm):

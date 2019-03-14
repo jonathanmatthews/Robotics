@@ -58,11 +58,11 @@ ax.set_facecolor('#eeeeee')
 for each_file in files_to_compare:
     angles = read_file(each_file)
     #angles = convert_read_numpy(angles) # Not sure if this should be here, it seems it was removed since my last pull.
-    time = angles['time'][20::10]
-    be = angles['be'][20::10]
+    time = angles['time']
+    be = angles['be']
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-    true_max = time[angle_max_index][0]
-    plt.plot(time-true_max, be, label=get_name(each_file))
+    # true_max = time[angle_max_index][0]
+    plt.plot(time, be, label=get_name(each_file))
     plt.xlim([0, max(time)])
     #plt.show()
 
@@ -78,5 +78,5 @@ plt.show()
 # fig.savefig(
     # 'Figures/Comparison.eps', format='eps')
 fig.savefig(
-    'Figures/MaintainComparison.png', format='png'
+    'Figures/ParametricRotationalComparison.png', format='png'
 )

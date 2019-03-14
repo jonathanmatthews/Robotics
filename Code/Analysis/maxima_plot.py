@@ -53,45 +53,69 @@ fig, ax = plt.subplots(
     1, 1, figsize=(
         8, 6))
 ax = format_graph(ax)
-ax.set_facecolor('#eeeeee')
 
 for each_file in files_to_compare:
     angles = read_file(each_file)
     time = angles['time']
     be = angles['be']
+    algo = angles['algo']
+    algo_change_indexes = shade_background_based_on_algorithm(time, algo, plot=False)
+    print algo_change_indexes
+    print time[algo_change_indexes[0]], time[algo_change_indexes[1]], time[algo_change_indexes[2]]
+    time = time[algo_change_indexes[1]:]
+    be = be[algo_change_indexes[1]:]
+    # plt.plot(time, be)
+    print 'Big encoder at change', be[0]
+    new_time = time[be < 30]
+    new_be = be[be < 30]
 
-    be -= be[0]
-    avg_be = np.array(moving_average(be, window_size=9))
-    avg_time = np.array(moving_average(time, window_size=9))
-    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1
+
+    window_size = 3
+    avg_be = np.array(moving_average(new_be, window_size=window_size))
+    avg_time = np.array(moving_average(new_time, window_size=window_size))
+    angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
     # true_max = time[angle_max_index][0]
-    avg_be = avg_be[angle_max_index]
-    avg_time = avg_time[angle_max_index]
 
-    time, be = [], []
-    for time_, be_ in zip(avg_time, avg_be):
-        if time_ > 200:
+    new_time = time[angle_max_index]
+    new_be = be[angle_max_index]
+    # avg_be = avg_be[angle_max_index]
+    # avg_time = avg_time[angle_max_index]
+
+    final_time, final_be = [], []
+    for time_, be_ in zip(new_time, new_be):
+        if time_ > 600:
+            if be_ > 17.0:
+                final_time.append(time_)
+                final_be.append(be_)           
+        elif time_ > 200:
             if be_ > 8.4:
-                time.append(time_)
-                be.append(be_)
+                final_time.append(time_)
+                final_be.append(be_)
         if time_ <= 200:
-            time.append(time_)
-            be.append(be_)
-    time, be = np.array(time), np.array(be)
+            if be_ > 2.0:
+                final_time.append(time_)
+                final_be.append(be_)
+    final_time, final_be = np.array(final_time), np.array(final_be)
+    final_time -= final_time[0]
+    final_be -= final_be[0]
 
-    avg_time = time[be >= 0]
-    avg_be = be[be >= 0]
-    avg_be = np.array(moving_average(avg_be, window_size=15))
-    avg_time = np.array(moving_average(avg_time, window_size=15))
+    # avg_time = time[be >= 0]
+    # avg_be = be[be >= 0]
+    avg_be = final_be[final_be > 1]
+    avg_time = final_time[final_be > 1]
+    # avg_be = np.array(moving_average(final_be, window_size=5))
+    # avg_time = np.array(moving_average(final_time, window_size=5))
     plt.plot(avg_time, avg_be, label=get_name(each_file)[:-1])
     # plt.plot(time, be, label=get_name(each_file))
-    plt.xlim([0, 415])
+    # plt.xlim([0, 415])
     #plt.show()
 
+ax.set_facecolor('white')
+ax.set_facecolor('#eeeeee')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 # plt.title('Comparison between different recorded motions')
-plt.title('Comparison between different methods for\ncalculating the best time to kick')
+plt.title('Comparison between rotational and parametric pumping')
 plt.legend(loc='best')
 fig.tight_layout()
 plt.show()
