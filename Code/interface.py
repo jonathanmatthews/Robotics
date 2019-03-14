@@ -72,13 +72,10 @@ setups = {
     'Encoders_no_robot': [False, True, True]
 }
 
-<<<<<<< HEAD
-# Can set manually or use argv when running interface or test_plot.sh
-setup = 'Testing'
-=======
+
 # Can set manually or use argv when running interface or plot.sh
 setup = 'Real'
->>>>>>> master
+
 if argv[-1] in setups.keys():
     setup = argv[-1]
 robot, big_encoder, small_encoders = setups[setup]
