@@ -60,12 +60,8 @@ for each_file in files_to_compare:
     be = angles['be']
     algo = angles['algo']
     algo_change_indexes = shade_background_based_on_algorithm(time, algo, plot=False)
-    print algo_change_indexes
-    print time[algo_change_indexes[0]], time[algo_change_indexes[1]], time[algo_change_indexes[2]]
     time = time[algo_change_indexes[1]:]
     be = be[algo_change_indexes[1]:]
-    # plt.plot(time, be)
-    print 'Big encoder at change', be[0]
     new_time = time[be < 30]
     new_be = be[be < 30]
 
@@ -78,26 +74,10 @@ for each_file in files_to_compare:
 
     new_time = time[angle_max_index]
     new_be = be[angle_max_index]
-    # avg_be = avg_be[angle_max_index]
-    # avg_time = avg_time[angle_max_index]
 
-    final_time, final_be = [], []
-    for time_, be_ in zip(new_time, new_be):
-        if time_ > 600:
-            if be_ > 17.0:
-                final_time.append(time_)
-                final_be.append(be_)           
-        elif time_ > 200:
-            if be_ > 8.4:
-                final_time.append(time_)
-                final_be.append(be_)
-        if time_ <= 200:
-            if be_ > 2.0:
-                final_time.append(time_)
-                final_be.append(be_)
+    final_time, final_be = new_time, new_be
     final_time, final_be = np.array(final_time), np.array(final_be)
     final_time -= final_time[0]
-    final_be -= final_be[0]
 
     # avg_time = time[be >= 0]
     # avg_be = be[be >= 0]
@@ -106,6 +86,22 @@ for each_file in files_to_compare:
     # avg_be = np.array(moving_average(final_be, window_size=5))
     # avg_time = np.array(moving_average(final_time, window_size=5))
     plt.plot(avg_time, avg_be, label=get_name(each_file)[:-1])
+
+    avg_be = moving_average(avg_be, 25)
+    avg_time = moving_average(avg_time, 25)
+    gradient = [diff/(avg_time[i+1] - avg_time[i]) for i, diff in enumerate(np.diff(avg_be))]
+    plt.plot(avg_be[1:], gradient)
+
+    # values = {}
+    # for i, angle in enumerate(avg_be[:-1]):
+    #     rounded_angle = round(angle, 1)
+    #     if rounded_angle not in values.keys():
+    #         values[rounded_angle] = []
+    #     values[rounded_angle].append(avg_be[i+1] - avg_be[i])
+    # for key in values:
+    #     values[key] = np.mean(values[key])
+
+    # plt.scatter(values.keys(), values.values(), label='Rate of change')
     # plt.plot(time, be, label=get_name(each_file))
     # plt.xlim([0, 415])
     #plt.show()
@@ -122,7 +118,7 @@ plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
 fig.savefig(
-    'Figures/BestTimingIncreasingMethod.eps', format='eps')
+    'Figures/RotationalVsParametric.eps', format='eps')
 fig.savefig(
-    'Figures/BestTimingIncreasingMethod.png', format='png'
+    'Figures/RotationalVsParametric.png', format='png'
 )
