@@ -78,6 +78,23 @@ def plot_maxima_curve(filename, plot=True):
     time = time[angle_max_index]
     be = be[angle_max_index]
 
+    # Some specific filtering for the rotational datafile
+    if filename == '../Output_data/Rotational No Masses 400secs':
+        filtered_time, filtered_be = [], []
+        for time_, be_ in zip(time, be):
+            # print time_, be_
+            if time_ <= 165 or time_ >= 185:
+                filtered_time.append(time_)
+                filtered_be.append(be_)
+            elif 165 < time_ < 185:
+                if be_ > 8.4:
+                    filtered_time.append(time_)
+                    filtered_be.append(be_)
+            else:
+                print "Doesn't fit category", time_, be_   
+        time, be = filtered_time, filtered_be
+
+
     # Remove as many weird spikes as possible
     filtered_time, filtered_be = [], []
     for time_, be_ in zip(time, be):
@@ -85,7 +102,7 @@ def plot_maxima_curve(filename, plot=True):
             filtered_time.append(time_)
             filtered_be.append(be_)
         elif 260 < time_ < 400:
-            if be_ > 8.4:
+            if be_ > 6.8:
                 filtered_time.append(time_)
                 filtered_be.append(be_)
         elif 600 < time_ < 700:
@@ -99,6 +116,7 @@ def plot_maxima_curve(filename, plot=True):
     # convert to numpy arrays get some weird error without
     time, be = np.array(filtered_time), np.array(filtered_be)
     # centre them so they both start the plot at zero
+    print 'Time offset for file {}: {}s'.format(filename, time[0])
     time -= time[0]
 
     if plot:
@@ -142,10 +160,18 @@ plt.title('Rate of increase of angle for\nrotational and parametric pumping')
 for each_file in files_to_compare:
     time, be= plot_maxima_curve(each_file, plot=False)
     # smooth results then calculate gradient and plot
-    avg_be = moving_average(be, 5)
-    avg_time = moving_average(time, 5)
+    avg_be = moving_average(be, 29)
+    avg_time = moving_average(time, 29)
     gradient = [diff/(avg_time[i+1] - avg_time[i]) for i, diff in enumerate(np.diff(avg_be))]
-    plt.scatter(avg_be[1:], gradient, label=get_name(each_file)[:-1], s=20.0)
+
+    dictionary_gradient = {}
+    for value, gradient_ in zip(avg_be[1:], gradient):
+        round_value = round(value, 0)
+        if round_value not in dictionary_gradient.keys():
+            dictionary_gradient[round_value] = []
+        dictionary_gradient[round_value].append(gradient_) 
+    avg_grad = [np.mean(dictionary_gradient[key]) for key in dictionary_gradient.keys()]
+    plt.scatter(dictionary_gradient.keys(), avg_grad, label=get_name(each_file)[:-1], s=20.0)
 
 plt.legend(loc='best')
 fig.tight_layout()

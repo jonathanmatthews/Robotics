@@ -61,15 +61,17 @@ for each_file in files_to_compare:
     time = angles['time']
     be = angles['be']
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
-    # true_max = time[angle_max_index][0]
-    plt.plot(time, be, label=get_name(each_file))
+    # true_max = time[angle_max_index][5]
+    # print time[angle_max_index]
+    plt.plot(time-5.5, be, label=get_name(each_file)[:-1])
     plt.xlim([0, max(time)])
     #plt.show()
 
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 # plt.title('Comparison between different recorded motions')
-plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
+# plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
+plt.title('Comparison between different decreasing algorithms')
 plt.legend(loc='best')
 fig.tight_layout()
 plt.show()

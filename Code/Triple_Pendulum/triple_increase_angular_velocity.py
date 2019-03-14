@@ -8,7 +8,7 @@ class TripleIncreaseAngularVelocity():
         self.increasing = kwargs.get('increasing', True)
         self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 5)
-        self.previous_max_angle = all_data['be'].max()
+        self.previous_max_angle = total_angle(all_data['be'], all_data['se0'], all_data['se1']).max()
         self.previous_be = total_angle(values['be'], values['se0'], values['se1'])
     
 
@@ -17,7 +17,7 @@ class TripleIncreaseAngularVelocity():
         Use the angular velosity to estimate the time to switch the posture
         """
         self.current_be = total_angle(values['be'], values['se0'], values['se1'])
-        print 'Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
+        print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
         if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
             if(self.increasing == True):
@@ -38,7 +38,7 @@ class TripleIncreaseAngularVelocity():
         # switch conditions
         if(self.increasing == True):
             print 'Increase', values['time']
-            if abs(values['be']) > self.max_angle:
+            if abs(self.current_be) > self.max_angle:
                 return 'switch'
         elif(self.increasing == False):
             print 'Decrease', values['time']
@@ -47,3 +47,7 @@ class TripleIncreaseAngularVelocity():
         if values['time'] - self.start_time > self.duration:
             return 'switch'
         
+class TripleDecreaseAngularVelocity(TripleIncreaseAngularVelocity):
+    def __init__(self, values, all_data, **kwargs):
+        TripleIncreaseAngularVelocity.__init__(self, values, all_data, **kwargs)
+ 

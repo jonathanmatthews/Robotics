@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from graph_functions import *
 from sys import path, argv
 path.insert(0, '..')
-from utility_functions import read_file, get_latest_file
+from utility_functions import read_file, get_latest_file, total_angle
 
 test = False
 if argv[-1] == 'Testing':
@@ -13,7 +13,7 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
-filename = 'Rotational No Masses 400secs'
+filename = '12-03-2019 17:21:45 Org'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -21,6 +21,10 @@ t = angles['time']
 be = angles['be']
 position = angles['pos']
 algorithm = angles['algo']
+# se0 = angles['se0']
+# se1 = angles['se1']
+
+# adjusted_angle = total_angle(be-be[0], se0, se1) 
 
 # setup figure
 fig, ax = plt.subplots(
@@ -33,11 +37,12 @@ ax = format_graph(ax)
 # editing plot that will show angle
 plt.sca(ax)
 shade_background_based_on_algorithm(t, algorithm)
+# plt.plot(t, adjusted_angle, label='Adjusted Angle')
 
 # adding titles etc, this will add to ax
-# plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
+plt.title('Plot of angle, named position, and algorithm being run. \n Data taken from {}'.format(filename))
 # plt.title('Parametric pumping using quarter period algorithm')
-plt.title('Rotational pumping using quarter period algorithm')
+# plt.title('Rotational pumping using quarter period algorithm')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 
