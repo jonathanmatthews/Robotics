@@ -3,8 +3,7 @@ from re import search
 from os import listdir
 import time as tme
 from limb_data import values
-#from positions import positions
-from positions2 import positions
+from positions import positions
 from utility_functions import flatten, read_file, current_data_types, get_latest_file, convert_list_dict, centre_of_mass_respect_seat, store
 from sys import path, argv
 from robot_interface import Robot, PositionError
@@ -57,26 +56,29 @@ Algorithm = __import__(algorithm_import).Algorithm
 """
 Set mode to run here
 Developing: for running through real code away from encoders
+All: connect to robot, and all encoders 
 Testing: for seeing how algorithm reacts to old dataset
-Real: for in lab running from lab PC
+Robot_big_no_small: Connect to robot and big encoder, but not small encoders
 Other two are self explanatory
 """
-
 # Each setup either has access to real robot (True) or fake robot (False) and
 # has access to real encoders (True) or fake encoders (False)
 setups = {
-    'Testing': [False, False],
-    'Developing': [False, False],
-    'Real': [True, True],
-    'Robot_no_encoders': [True, False],
-    'Encoders_no_robot': [False, True]
+    'Testing': [False, False, False],
+    'Developing': [False, False, False],
+    'Real': [True, True, True],
+    'Robot_no_encoders': [True, False, False],
+    'Robot_big_no_small': [True, True, False],
+    'Encoders_no_robot': [False, True, True]
 }
 
-# Can set manually or use argv when running interface or test_plot.sh
+
+# Can set manually or use argv when running interface or plot.sh
 setup = 'Real'
+
 if argv[-1] in setups.keys():
     setup = argv[-1]
-robot, encoders = setups[setup]
+robot, big_encoder, small_encoders = setups[setup]
 
 # This sequence of import ensures that fake functions or real ones are imported
 # dependant on the setup
@@ -90,17 +92,21 @@ try:
         # Add path to fake naoqi if not connecting to robot
         path.insert(0, "Training_functions")
         from naoqi import ALProxy
-    if encoders:
-        # Add path to real encoder functions if connected to them
+    if big_encoder:
+        # Add path to real big encoder
         path.insert(0, "hidlibs")
         import top_encoder.encoder_functions as BigEncoder
-        #import bottom_encoder.hingeencoder as SmallEncoders
-        path.insert(0, "Training_functions")
-        import SmallEncoders
     else:
-        # Add path to fake encoder functions if not connecting to encoders
+        # Add path to fake big encoder
         path.insert(0, "Training_functions")
         import BigEncoder
+    if small_encoders:
+        # Add path to real small encoders
+        path.insert(0, "hidlibs")
+        import bottom_encoder.encoder_functions as SmallEncoders
+    else:
+        # Add path to fake small encoders
+        path.insert(0, "Training_functions")
         import SmallEncoders
 except ImportError as e:
     print "Couldn't import, you are most likely in the wrong directory, try again from Code directory"
@@ -246,12 +252,18 @@ class Interface(Algorithm):
         if switch == 'switch':
             self.algorithm = self.next_algo(current_values, self.all_data)
 
-        # Algorithm returns name of position to switch to or 'switch' to change algorithm
-        switch = self.algorithm(current_values, self.all_data)
+        # Algorithm returns name of position to switch to or 'switch' to change algorithm,
+        # can optionally return speed as well
+        return_values = self.algorithm(current_values, self.all_data)
+
+        if isinstance(return_values, list):
+            switch, speed = return_values
+        else:
+            switch, speed = return_values, 1.0
 
         # If text returned is a possible position switch to it
         if switch in positions.keys():
-            self.set_posture(switch, self.position)
+            self.set_posture(switch, self.position, speed)
 
         # Add current values to list of all values
         self.all_data = numpy.append(self.all_data, numpy.array(

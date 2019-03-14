@@ -1,6 +1,6 @@
-from utility_functions import sign_zero
+from utility_functions import sign_zero, total_angle
 
-class IncreaseAngularVelocity():
+class TripleIncreaseAngularVelocity():
 
     def __init__(self, values, all_data, **kwargs):
         self.start_time = values['time']
@@ -9,30 +9,30 @@ class IncreaseAngularVelocity():
         self.duration = kwargs.get('duration', float('inf'))
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = all_data['be'].max()
-        
+        self.previous_be = total_angle(values['be'], values['se0'], values['se1'])
+    
 
     def algo(self, values, all_data):
         """
         Use the angular velosity to estimate the time to switch the posture
         """
-        current_be = values['be']
-        previous_be = all_data['be'][-1]
+        self.current_be = total_angle(values['be'], values['se0'], values['se1'])
         print 'Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
         
-        if(sign_zero(previous_be)==-1 and previous_be - current_be <0):
+        if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
             if(self.increasing == True):
                 return 'seated'
             elif(self.increasing == False):
                 return 'extended'
-            self.previous_max_angle = previous_be
-            print('max_angle',previous_be)
-        elif(sign_zero(previous_be)==1 and previous_be - current_be >0):
+            self.previous_max_angle = self.previous_be
+            print('max_angle', self.previous_be)
+        elif(sign_zero(self.previous_be)==1 and self.previous_be - self.current_be >0):
             if(self.increasing == True):
                 return 'extended'
             elif(self.increasing == False):
                 return 'seated'
-            self.previous_max_angle = previous_be
-            print('max_angle',previous_be)
+            self.previous_max_angle = self.previous_be
+            print('max_angle', self.previous_be)
             
 
         # switch conditions
@@ -47,7 +47,3 @@ class IncreaseAngularVelocity():
         if values['time'] - self.start_time > self.duration:
             return 'switch'
         
-
-class DecreaseAngularVelocity(IncreaseAngularVelocity):
-    def __init__(self, values, all_data, **kwargs):
-        IncreaseAngularVelocity.__init__(self, values, all_data, **kwargs)
