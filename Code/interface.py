@@ -246,12 +246,18 @@ class Interface(Algorithm):
         if switch == 'switch':
             self.algorithm = self.next_algo(current_values, self.all_data)
 
-        # Algorithm returns name of position to switch to or 'switch' to change algorithm
-        switch = self.algorithm(current_values, self.all_data)
+        # Algorithm returns name of position to switch to or 'switch' to change algorithm,
+        # can optionally return speed as well
+        return_values = self.algorithm(current_values, self.all_data)
+
+        if isinstance(return_values, list):
+            switch, speed = return_values
+        else:
+            switch, speed = return_values, 1.0
 
         # If text returned is a possible position switch to it
         if switch in positions.keys():
-            self.set_posture(switch, self.position)
+            self.set_posture(switch, self.position, speed)
 
         # Add current values to list of all values
         self.all_data = numpy.append(self.all_data, numpy.array(
