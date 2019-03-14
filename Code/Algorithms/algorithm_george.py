@@ -14,11 +14,9 @@ from single_increase_parametric_rework import DecreaseParametric, IncreaseParame
 # from triple_increase_james import TripleIncreaseQuarterPeriod
 from single_decrease_low_angle import DecreaseSmallAngle
 from single_increase_max_angle import IncreaseMaxAngle
-<<<<<<< HEAD
 from single_stopping_variable_speed import StoppingVariableSpeed
-=======
 from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
->>>>>>> master
+
 
 class Algorithm(Robot, Encoders):
     """
@@ -35,12 +33,9 @@ class Algorithm(Robot, Encoders):
             'algo': Start,
             'max_angle': 5.0
         },{
-<<<<<<< HEAD
             'algo': StoppingVariableSpeed,
-            'duration': 30
-=======
+            'duration': 30,
             'algo': TripleIncreaseAngularVelocity
->>>>>>> master
         }]
 
         #self.order = [{
