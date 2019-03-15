@@ -54,7 +54,8 @@ plt.plot(t, be-be[0], label='Big Encoder', color='b')
 plt.xlim([0, max(t)])
 
 # editing axis that will have named positions on
-if test:
+#if test:
+if True:
     # make a copy of axis and overlay it, this way can have angles and named position on same plot
     ax2 = ax.twinx()
     ax2 = format_graph(ax2)

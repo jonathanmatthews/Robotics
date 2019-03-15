@@ -103,7 +103,7 @@ try:
     if small_encoders:
         # Add path to real small encoders
         path.insert(0, "hidlibs")
-        import bottom_encoder.encoder_functions as SmallEncoders
+        import bottom_encoder.hingeencoder as SmallEncoders
     else:
         # Add path to fake small encoders
         path.insert(0, "Training_functions")
@@ -149,7 +149,6 @@ class Interface(Algorithm):
         self.speech.say("Checking position, then starting")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
-        tme.sleep(5.0)
         tme.sleep(2.0)
         try:
             self.check_setup('seated')
@@ -158,10 +157,7 @@ class Interface(Algorithm):
             self.motion.setStiffnesses("Body", 0.0)
             self.speech.say('Failed, loosening')
             raise e
-            
-        self.motion.setStiffnesses("Body", 1.0)
-        tme.sleep(5.0)
-        self.check_setup('seated')
+
 
         self.algo_name = 'None'
 
@@ -260,7 +256,7 @@ class Interface(Algorithm):
 
         # Algorithm returns name of position to switch to or 'switch' to change algorithm,
         # can optionally return speed as well
-        return_values = self.algorithm(current_values, self.all_data)
+        return_values = self.algorithm(current_values, self.all_data[-200:])
 
         if isinstance(return_values, list):
             switch, speed = return_values
@@ -312,6 +308,9 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
             algo = self.algo_name
             position = self.position
+            
+            ax = self.get_angle('AX')[0]
+            ay = self.get_angle('AY')[0]
 
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
@@ -408,7 +407,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.05)
+    interface = Interface(setup, period=0.02)
     try:
         interface.run()
     except KeyboardInterrupt:
