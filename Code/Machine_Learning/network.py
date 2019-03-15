@@ -31,6 +31,7 @@ class Node:
 
     def _output(self):
         total = sum(link.output() for link in self.links)
+        print(f"\033[1mTotal after links work {total}\033[0m")
         total += self.bias
         self.output = sigmoid(total)
 
@@ -43,10 +44,12 @@ class Node:
         self.bias += np.random.normal(0, std_dev)
 
     def __repr__(self):
-        strng = "Node(bias={},links=".format(self.bias)
+        strng = f"Node(bias={self.bias}, \nlinks=\n"
         for link in self.links:
-            strng += "(weight={},connection={})".format(link.weight, link.connection)
-        strng += ")"
+            strng += f"(weight={link.weight}, connection{link.connection})\n"
+        if len(self.links) == 0:
+            strng += 'None'
+        strng += ")\n"
         return strng
 
 class Net:
@@ -75,7 +78,9 @@ class Net:
         for i, inp in enumerate(inputs):
             self.nodes[0][i].bias = inp
         for layer in self.nodes:
+            # print(f"\nWorking on layer: {layer}\n")
             for node in layer:
+                # print(f"\nWorking on node: {node}\n")
                 node._output()
         return [node.output for node in self.nodes[-1]]
 
