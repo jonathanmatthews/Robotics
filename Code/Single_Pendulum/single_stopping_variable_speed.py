@@ -29,11 +29,11 @@ class StoppingVariableSpeed():
 
     def algo(self, values, all_data):
         t = values['time']
-        
-        speed = abs(values['be'])*0.12
+        max_encoder_angle = last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)
+        speed = abs(max_encoder_angle*0.3)
         print speed
         if t > self.last_move + self.wait_time + self.offset:
-            print 'Last maxima {}'.format(abs(last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)))
+            print 'Last maxima {}'.format(abs(max_encoder_angle))
             print 'Stop swing', values['time']
             self.last_move = t
             return self.next_position(speed)
@@ -42,7 +42,7 @@ class StoppingVariableSpeed():
         if t - self.start_time > self.duration:
             print 'duration reached, stopping'
             return 'switch'
-        if abs(last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)) < self.min_angle:
+        if abs(max_encoder_angle) < self.min_angle:
             print 'min angle reached, stopping'
             return 'switch'
 
