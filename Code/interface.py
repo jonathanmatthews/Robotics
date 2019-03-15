@@ -208,13 +208,13 @@ class Interface(Algorithm):
             -0.2
         """
         # No angular velocity if no old data
-        if len(self.all_data) == 0:
+        if len(self.all_data) < 5:
             return 0
 
-        latest_values = self.all_data[-1]
+        old_values = self.all_data[-5]
 
-        delta_time = time - latest_values['time']
-        delta_angle = current_angle - latest_values['be']
+        delta_time = time - old_values['time']
+        delta_angle = current_angle - old_values['be']
 
         return delta_angle / delta_time
 
