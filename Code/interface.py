@@ -74,7 +74,7 @@ setups = {
 
 
 # Can set manually or use argv when running interface or plot.sh
-setup = 'Real'
+setup = 'Robot_big_no_small'
 
 if argv[-1] in setups.keys():
     setup = argv[-1]
@@ -148,6 +148,8 @@ class Interface(Algorithm):
         # Robot initialises and moves to start position
         self.speech.say("Checking position, then starting")
         # Give robot time to get into position before checking it
+        self.motion.setStiffnesses("Body", 1.0)
+        tme.sleep(5.0)
         tme.sleep(2.0)
         try:
             self.check_setup('seated')
@@ -156,6 +158,10 @@ class Interface(Algorithm):
             self.motion.setStiffnesses("Body", 0.0)
             self.speech.say('Failed, loosening')
             raise e
+            
+        self.motion.setStiffnesses("Body", 1.0)
+        tme.sleep(5.0)
+        self.check_setup('seated')
 
         self.algo_name = 'None'
 

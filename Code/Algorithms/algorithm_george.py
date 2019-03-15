@@ -31,10 +31,10 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 3
+            'duration': 5
         },{
             'algo': StoppingVariableSpeed,
-            'duration': 30
+            'duration': 60
         }]
 
         #self.order = [{

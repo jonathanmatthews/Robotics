@@ -13,7 +13,7 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
-filename = '12-03-2019 17:21:45 Org'
+#filename = '15-03-2019 13:46:32 Org'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
