@@ -83,7 +83,7 @@ class Net:
     generated be conver_pkl
     """
 
-    def __init__(self, data_file):
+    def __init__(self):
         """
         Reads from the provided file to generate the net as it was in python 3
         """
@@ -104,8 +104,6 @@ class Net:
 
                 formatted_links = [((int(dictionary['connection'][0]), int(dictionary['connection']
                                      [1])), dictionary['weight']) for dictionary in links]
-
-                print bias
 
                 # print bias, formatted_links
                 node = Node(self, bias, formatted_links)
@@ -130,6 +128,5 @@ class Net:
         return [node.output for node in self.nodes[-1]]
 
 
-net = Net("net_data.txt")
 
 
