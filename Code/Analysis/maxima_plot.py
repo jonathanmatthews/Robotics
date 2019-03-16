@@ -119,9 +119,13 @@ def plot_maxima_curve(filename, plot=True):
     print 'Time offset for file {}: {}s'.format(filename, time[0])
     time -= time[0]
 
+
+    label = get_name(each_file)[:-1]
+    if label == 'Rotational No Masses 400secs':
+        label = 'Quarter Period'
     if plot:
         # plot against each other
-        plt.plot(time, be, label=get_name(each_file)[:-1])
+        plt.plot(time, be, label=label)
     return time, be
 
 fig, ax = plt.subplots(
@@ -156,7 +160,8 @@ ax.set_facecolor('#eeeeee')
 plt.xlabel(r"$\theta$ " + r"$(^o)$")
 plt.ylabel(r"$\frac{d\theta}{dt} $" + r"$(^os^{-1})$")
 # plt.title('Comparison between different recorded motions')
-plt.title('Rate of increase of angle for\nrotational and parametric pumping')
+# plt.title('Rate of increase of angle for\nrotational and parametric pumping')
+plt.title('Comparison between different methods for calculating when to kick')
 for each_file in files_to_compare:
     time, be= plot_maxima_curve(each_file, plot=False)
     # smooth results then calculate gradient and plot
@@ -171,7 +176,11 @@ for each_file in files_to_compare:
             dictionary_gradient[round_value] = []
         dictionary_gradient[round_value].append(gradient_) 
     avg_grad = [np.mean(dictionary_gradient[key]) for key in dictionary_gradient.keys()]
-    plt.scatter(dictionary_gradient.keys(), avg_grad, label=get_name(each_file)[:-1], s=20.0)
+
+    label = get_name(each_file)[:-1]
+    if label == 'Rotational No Masses 400secs':
+        label = 'Quarter Period'
+    plt.scatter(dictionary_gradient.keys(), avg_grad, label=label, s=20.0)
 
 plt.legend(loc='best')
 fig.tight_layout()

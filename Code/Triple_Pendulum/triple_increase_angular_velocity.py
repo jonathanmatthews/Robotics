@@ -21,16 +21,16 @@ class TripleIncreaseAngularVelocity():
         
         if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
             if(self.increasing == True):
-                return 'seated'
+                return ['seated', 0.4]
             elif(self.increasing == False):
-                return 'extended'
+                return ['extended', 0.4]
             self.previous_max_angle = self.previous_be
             print('max_angle', self.previous_be)
         elif(sign_zero(self.previous_be)==1 and self.previous_be - self.current_be >0):
             if(self.increasing == True):
-                return 'extended'
+                return ['extended', 0.4]
             elif(self.increasing == False):
-                return 'seated'
+                return ['seated', 0.4]
             self.previous_max_angle = self.previous_be
             print('max_angle', self.previous_be)
             
