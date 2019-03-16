@@ -15,12 +15,6 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
-<<<<<<< HEAD
-filename = 'Max Angle'
-# filename = 'Quarter Period'
-=======
-
->>>>>>> 51c45e272b4d5a54e1537338b85adb1aa13f4b70
 angles = read_file(output_data_directory + filename)
 
 # Extract data
