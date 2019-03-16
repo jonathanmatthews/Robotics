@@ -19,7 +19,9 @@ class TripleIncreaseAngularVelocity():
         self.current_be = total_angle(values['be'], values['se0'], values['se1'])
         print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
+        print sign_zero(self.previous_be), sign_zero(self.current_be)
         if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
+            self.previous_be = self.current_be
             if(self.increasing == True):
                 return ['seated', 0.4]
             elif(self.increasing == False):
@@ -27,6 +29,7 @@ class TripleIncreaseAngularVelocity():
             self.previous_max_angle = self.previous_be
             print('max_angle', self.previous_be)
         elif(sign_zero(self.previous_be)==1 and self.previous_be - self.current_be >0):
+            self.previous_be = self.current_be
             if(self.increasing == True):
                 return ['extended', 0.4]
             elif(self.increasing == False):
@@ -34,10 +37,10 @@ class TripleIncreaseAngularVelocity():
             self.previous_max_angle = self.previous_be
             print('max_angle', self.previous_be)
             
-
+        self.previous_be = self.current_be
+        
         # switch conditions
         if(self.increasing == True):
-            print 'Increase', values['time']
             if abs(self.current_be) > self.max_angle:
                 return 'switch'
         elif(self.increasing == False):

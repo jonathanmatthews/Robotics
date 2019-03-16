@@ -20,7 +20,7 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 3
+            'duration': 5
         },{
             'algo': Neural,
         }]
