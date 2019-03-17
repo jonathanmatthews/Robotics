@@ -15,6 +15,7 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
+# filename = 'Rotational No Masses 400 Tst'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -68,31 +69,37 @@ if True:
     combine_multiple_legends([ax, ax2], custom_location='lower left')
 else:
     plt.legend(loc='upper left')
-plt.xlim([40, 50])
+# plt.xlim([30, 40])
+# plt.xlim([16, 24])
+# plt.axvspan(16, 24, alpha = 0.1, color='grey')
 
-# Only want this to illustrate how Nao figures out when to change for seminar
-ax3 = zoomed_inset_axes(ax, 18, loc=1)
-plt.sca(ax3)
+# # Only want this to illustrate how Nao figures out when to change for seminar
+# ax3 = zoomed_inset_axes(ax, 14, loc=1)
+# plt.sca(ax3)
+
+# x1, x2, y1, y2 = 17.5, 17.8, 1.0, 2.0
+# # x1, x2, y1, y2 = 43.0, 43.2, 3.0, 4.0
+# # x1, x2, y1, y2 = 43.1, 43.6, 2.3, 3.7
+# ax3.set_xlim(x1, x2)
+# ax3.set_ylim(y1, y2)
+# ax3.set_facecolor('#eeeeee')
+# plt.xticks(visible=False)
+# plt.yticks(visible=False)
+# plt.plot(t, be-be[0])
+# plt.ylabel('')
+# plt.xticks([])
+# plt.yticks([])
+# # position_number = [position_numbers[i]*0.4 + 3.5 for i in position]
+# # position_number = [position_numbers[i]*0.4 + 3.0 for i in position]
+# position_number = [position_numbers[i]*0.4 + 1.5 for i in position]
 
 
-x1, x2, y1, y2 = 43.0, 43.2, 3.0, 4.0
-# x1, x2, y1, y2 = 43.1, 43.6, 2.3, 3.7
-ax3.set_xlim(x1, x2)
-ax3.set_ylim(y1, y2)
-ax3.set_facecolor('#eeeeee')
-plt.xticks(visible=False)
-plt.yticks(visible=False)
-plt.plot(t, be-be[0])
-plt.ylabel('')
-plt.xticks([])
-plt.yticks([])
-position_number = [position_numbers[i]*0.4 + 3.5 for i in position]
-# position_number = [position_numbers[i]*0.4 + 3.0 for i in position]
+# plt.plot(t, position_number, color='r', linewidth=0.5)
+# # plt.axvspan(16, 24, alpha = 0.1, color='grey')
 
-plt.plot(t, position_number, color='r', linewidth=0.5)
-# plt.plot(t + 0.25, position_number, color='g', linewidth=0.5)
+# # plt.plot(t + 0.25, position_number, color='g', linewidth=0.5)
 
-mark_inset(ax, ax3, loc1=2, loc2=3, ec="0.5", fc="w")
+# mark_inset(ax, ax3, loc1=2, loc2=3, ec="0.5", fc="w")
 
 # fig.tight_layout()
 plt.show()

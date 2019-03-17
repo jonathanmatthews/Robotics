@@ -407,9 +407,9 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.02)
+    interface = Interface(setup, period=0.05)
     try:
-        interface.run()
+        interface.run(filename='Rotational No Masses 400secs')
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
