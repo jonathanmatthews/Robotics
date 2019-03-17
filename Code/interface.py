@@ -158,7 +158,6 @@ class Interface(Algorithm):
             self.speech.say('Failed, loosening')
             raise e
 
-
         self.algo_name = 'None'
 
     def next_algo(self, values, all_data):
@@ -328,6 +327,8 @@ class Interface(Algorithm):
             cycle_time = tme.time() - start_time
             if cycle_time < period:
                 tme.sleep(period - cycle_time)
+            else:
+                print '\033[1mSampled behind schedule\033[0m'
 
         self.finish_script()
 
@@ -367,7 +368,14 @@ class Interface(Algorithm):
         print('\n\033[1mUsing test mode, will apply algorithm to data from file {}\033[0m\n'.format(filename))
         data = read_file(output_directory + filename)
 
+
         self.all_data = self.initialize_all_data()
+
+        # some functions depend on sampling period, therefore extract correct
+        # period and place into algorithm data so that it can be passed through
+        average_cycle_time = numpy.mean(numpy.diff(data['time']))
+        for algorithm in self.order:
+            algorithm['period'] = average_cycle_time
 
         switch = 'switch'
         for i in xrange(len(data)):
@@ -407,7 +415,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.05)
+    interface = Interface(setup, period=0.01)
     try:
         interface.run(filename='Rotational No Masses 400secs')
     except KeyboardInterrupt:
