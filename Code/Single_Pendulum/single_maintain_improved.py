@@ -67,10 +67,10 @@ class MaintainGoodBadKick():
         # position changes, move slower to hopefully control amplitude better
         if values['time'] >= self.time_switch_sea:
             self.time_switch_sea = float('inf')
-            return ['seated', 0.6]
+            return ['seated', 0.4]
         if values['time'] >= self.time_switch_ext:
             self.time_switch_ext = float('inf')
-            return ['extended', 0.6]
+            return ['extended', 0.4]
 
         # duration over
         if values['time'] - self.start_time > self.duration:

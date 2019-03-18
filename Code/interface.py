@@ -415,7 +415,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.02)
+    interface = Interface(setup, period=0.06)
     try:
         interface.run()
     except KeyboardInterrupt:

@@ -31,10 +31,10 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
-            'algo': Start,
-            'duration': 30
+            'algo': Nothing,
+            'duration': 10
         },{
-            'algo': IncreaseAngularVelocity 
+            'algo': TripleIncreaseAngularVelocity 
         }]
 
         #self.order = [{

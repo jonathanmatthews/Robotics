@@ -23,7 +23,7 @@ class Algorithm(Robot, Encoders):
             'duration': 10.0
         },{
             'algo': MaintainGoodBadKick,
-            'maintain_angle': 5.0
+            'maintain_angle': 7.5
         }]
 
 

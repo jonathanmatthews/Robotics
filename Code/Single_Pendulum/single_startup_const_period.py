@@ -16,7 +16,7 @@ class Start():
         self.first_kick = True  # used to check if it is first kick
 
     def algo(self, values, all_data):
-        t = values['time']  # renames current time to t
+        t = values['time'] - self.start_time  # renames current time to t
         print 'Time: {:.2f}'.format(values['time']), 'Big encoder: {:.2f}'.format(values['be'])
 
         if t < 0.1:
@@ -43,7 +43,7 @@ class Start():
                     return 'extended'
 
         if 0.15 < t - self.last_move < 0.5:
-            if t - self.start_time > self.duration:
+            if t > self.duration:
                 print 'last move', self.last_move
                 print 'Switch on duration'
                 return 'switch'
