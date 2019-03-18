@@ -20,7 +20,7 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 5.0
+            'duration': 10.0
         },{
             'algo': MaintainGoodBadKick,
             'maintain_angle': 5.0
