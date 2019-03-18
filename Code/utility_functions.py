@@ -235,7 +235,6 @@ def last_zero_crossing(values, previous_time, previous_be):
     current_be = values['be']
     dt = values['time'] - previous_time
 
-    print 'last zero crossing', current_be, previous_be
     interpolate = dt * np.abs(current_be) / \
         np.abs(current_be - previous_be)
 

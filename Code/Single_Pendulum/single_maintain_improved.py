@@ -10,8 +10,9 @@ class MaintainGoodBadKick():
     def __init__(self, values, all_data, **kwargs):
         self.period = kwargs.get('period', 0.005)
         # offset is time from maximum to swing
-        self.time_switch = 100
-        self.offset = -0.1
+        self.time_switch_ext = float('inf')
+        self.time_switch_sea = float('inf')
+
         self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)
 
         # setting up times
@@ -26,54 +27,52 @@ class MaintainGoodBadKick():
 
         self.offsets = {
             'good': -0.25,
-            'poor': -0.5,
-            'standard': 0.0
+            'poor': 0.1,
+            'standard': -0.1
         }
 
     def algo(self, values, all_data):
 
-        # sign of big encoder changes when crossing zero point
-        if sign_zero(values['be']) != sign_zero(self.previous_be):
+        # calculate times to kick one per period, when crossing from positive to negative
+        if sign_zero(values['be']) != sign_zero(self.previous_be) and values['be'] < 0:
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
             self.max_time, self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='both', dt=self.period)
             # quarter period difference between time at maxima and minima
             self.quart_period = np.abs(self.min_time - self.max_time)
 
-            # if at amplitude it's meant to be at then standard offset
-            print 'Values', abs(self.last_maximum), abs(self.maintain_angle)
-            if -0.2 <= abs(self.last_maximum) - abs(self.maintain_angle) <= 0.2:
+            # do two standard, poor, or good kicks, dependent on how far from maintain amplitude it is
+            if -0.1 <= abs(self.last_maximum) - abs(self.maintain_angle) <= 0.1:
                 self.offset = self.offsets['standard']
-            elif abs(self.last_maximum) - abs(self.maintain_angle) > 0.2:
+            elif abs(self.last_maximum) - abs(self.maintain_angle) > 0.1:
                 self.offset = self.offsets['poor']
-            elif abs(self.last_maximum) - abs(self.maintain_angle) < -0.2:
+            elif abs(self.last_maximum) - abs(self.maintain_angle) < -0.1:
                 self.offset = self.offsets['good']
             else:
                 print 'Offset condition not found\nLast maximum: {}, Maintain angle: {}, \
                     Difference between{}'.format(self.last_maximum, self.maintain_angle, abs(self.last_maximum) - abs(self.maintain_angle))
 
             # set time for position to switch
-            self.time_switch = self.min_time + self.quart_period + self.offset
-            print 'Current time: {:.3f}'.format(values['time']), 'Next switching time: {:.3f}'.format(self.time_switch), 'Last maximum: {:.3f}'.format(self.last_maximum)
+            self.time_switch_sea = self.min_time + self.quart_period + self.offset
+            self.time_switch_ext = self.time_switch_sea + 2 * self.quart_period
+            print 'Current time: {:.3f}'.format(values['time']), \
+                'Last maximum: {:.3f} degrees'.format(self.last_maximum)
+                # 'Next seated switching time: {:.3f}'.format(self.time_switch_sea), \
+                # 'Next extended switching time: {:.3f}'.format(self.time_switch_ext), \
+                
 
         # At the end of the loop, set the value of big encoder to the previous value
         self.previous_be = values['be']
         self.previous_time = values['time']
 
-        if values['time'] > self.time_switch:
-            self.time_switch += 100
-            return self.next_position_calculation(values)
+        # position changes, move slower to hopefully control amplitude better
+        if values['time'] >= self.time_switch_sea:
+            self.time_switch_sea = float('inf')
+            return ['seated', 0.6]
+        if values['time'] >= self.time_switch_ext:
+            self.time_switch_ext = float('inf')
+            return ['extended', 0.6]
 
+        # duration over
         if values['time'] - self.start_time > self.duration:
             print 'Switching from maintaining, duration ended'
             return 'switch'
-
-
-    def next_position_calculation(self, values):
-        if values['be'] < 0:
-            next_position = 'seated'
-        elif values['be'] > 0:
-            next_position = 'extended'
-        else:
-            print "CONDITIONS DON'T CORRESPOND TO ANY POSITION, POSITION KEEPING CONSTANT"
-            next_position = values['pos']
-        return next_position
