@@ -19,6 +19,7 @@ L2 = 0.12  # length of pendulum 2 in m
 L3 = 0.20  # length of pendulum 3 in m
 
 filename, output_data_directory = get_latest_file('Analysis')
+filename = '19-03-2019 09:58:47 Org'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -30,9 +31,11 @@ angle3 = angles['se1']
 angle3 = angle3 * pi / 180
 t = angles['time']
 dt = t[-1] - t[-2]
+dt = 0.06
 cmx = angles['cmx']
 cmy = angles['cmy']
 algorithm = angles['algo']
+print angle2
 
 # Convert angles to cartesian coordinates
 x1 = L1 * sin(angle1)
@@ -124,7 +127,7 @@ def animate(i):
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(0, len(t)),
-                              interval=100 * dt/0.1, blit=True, init_func=init)
+                              interval=150 * dt/0.10, blit=True, init_func=init)
 plt.xlabel('x coordinate')
 plt.ylabel('y coordinate')
 plt.title('Recorded motion of pendulum \nTaken from file {}'.format(filename))
@@ -132,5 +135,5 @@ plt.ylim([-3, 0])
 plt.xlim([-1.5, 1.5])
 
 
-#ani.save('Figures/double_pendulum.mp4', fps=15)
+#ani.save('Figures/double_pendulum.mp4', fps=30)
 plt.show()
