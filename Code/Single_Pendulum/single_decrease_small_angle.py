@@ -11,7 +11,7 @@ class IncreaseMaxAngle():
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', float('inf'))
         self.pendulum_length = 1.82
-        self.min_angle = kwargs.get('min_angle', 5)
+        self.min_angle = kwargs.get('min_angle', 0.5)
         self.next_highest_angle = None
         self.previous_max_angle = all_data['be'].max()
         self.offset = 0
@@ -33,10 +33,10 @@ class IncreaseMaxAngle():
         print 'Max angle','Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
 
         if(np.sign(current_be)!= np.sign([previous_be])):
-            if(current_be<0 and values['pos'] != 'extended'):
-                return ['seated', 0.3]
-            elif(current_be > 0 and values['pos'] != 'seated'):
-                return ['extended',0.3]
+            if( (current_be-previous_be)>0 and values['pos'] == 'seated'):
+                return ['extended', 0.3]
+            elif( (current_be-previous_be)<0 and values['pos'] == 'extended'):
+                return ['seated',0.3]
         
         if(np.sign(previous_be)==-1 and previous_be - current_be <0):
             self.previous_max_angle = previous_be
@@ -44,3 +44,6 @@ class IncreaseMaxAngle():
         elif(np.sign(previous_be)==1 and previous_be - current_be >0):
             self.previous_max_angle = previous_be
             print('max_angle',previous_be)
+
+        if(self.previous_max_angle<self.min_angle):
+            return 'switch'
