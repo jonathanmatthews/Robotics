@@ -36,6 +36,9 @@ cmy = angles['cmy']
 algorithm = angles['algo']
 print angle2
 
+print angle2
+print angle3
+
 # Convert angles to cartesian coordinates
 x1 = L1 * sin(angle1)
 y1 = -L1 * cos(angle1)
