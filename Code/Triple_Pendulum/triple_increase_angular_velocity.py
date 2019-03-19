@@ -20,7 +20,6 @@ class TripleIncreaseAngularVelocity():
         self.current_be = total_angle(values['be'], values['se0'], values['se1'])
         print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
-        print sign_zero(self.previous_be), sign_zero(self.current_be)
         if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
             self.previous_be = self.current_be
             if(self.increasing == True):
