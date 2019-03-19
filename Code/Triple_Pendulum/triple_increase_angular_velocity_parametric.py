@@ -11,6 +11,7 @@ class TripleIncreaseAngularVelocity():
         self.min_angle = kwargs.get('min_angle', 5)
         self.previous_max_angle = total_angle(all_data['be'], all_data['se0'], all_data['se1']).max()
         self.previous_be = total_angle(values['be'], values['se0'], values['se1'])
+        self.previous_av = values["av"]
     
 
     def algo(self, values, all_data):
@@ -18,39 +19,35 @@ class TripleIncreaseAngularVelocity():
         Use the angular velosity to estimate the time to switch the posture
         """
         self.current_be = total_angle(values['be'], values['se0'], values['se1'])
+        self.current_av = values["av"]
         print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
-        if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
-            self.previous_be = self.current_be
-            if(self.increasing == True):
-                return ['seated', 0.5]
-	      
-            elif(self.increasing == False):
-                return ['extended', 0.5]
-	      
-            self.previous_max_angle = self.previous_be
-            print('max_angle', self.previous_be)
-            
-        elif(sign_zero(self.previous_be)==1 and self.previous_be - self.current_be >0):
-            self.previous_be = self.current_be
-            
-            if(self.increasing == True):
-                return ['extended', 0.5]
-	      
-            elif(self.increasing == False):
-                return ['seated', 0.5]
-	      
-            self.previous_max_angle = self.previous_be
-            print('max_angle', self.previous_be)
-            
+        if abs(self.previous_be) > abs(self.current_be): # Hit a maxima.
+	    if self.increasing:
+	        return ["lowered", 0.5] # This speed should be tested on the robot.
+	    
+	    else:
+	        return ["raised", 0.5]
+	
+	    self.previous_max_angle = self.previous_be
+	    print("max_angle", self.previous_be)
+	
+        elif abs(self.previous_av) > abs(self.current_av): # Hit a zero.
+	    if self.increasing:
+	        return ["raised", 0.5]
+	    
+	    else:
+	        return ["lowered", 0.5]
+        
         self.previous_be = self.current_be
+        self.previous_av = self.current_av
         
         # switch conditions
-        if(self.increasing == True):
+        if self.increasing:
             if abs(self.current_be) > self.max_angle:
                 return 'switch'
 	      
-        elif(self.increasing == False):
+        else:
             print 'Decrease', values['time']
             
             if abs(self.previous_max_angle) < self.min_angle:

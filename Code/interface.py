@@ -74,7 +74,7 @@ setups = {
 
 
 # Can set manually or use argv when running interface or plot.sh
-setup = 'Robot_big_no_small'
+setup = 'Testing'
 
 if argv[-1] in setups.keys():
     setup = argv[-1]
