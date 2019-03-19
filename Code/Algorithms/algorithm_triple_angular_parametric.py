@@ -6,7 +6,7 @@ path.insert(0, 'Single_Pendulum')
 path.insert(0, 'Triple_Pendulum')
 
 from triple_startup_const_period import Start
-from triple_increase_angular_velocity_parametric import TripleIncreaseAngularVelocity
+from triple_increase_angular_velocity_parametric_2 import TripleIncreaseAngularVelocity
 
 
 
