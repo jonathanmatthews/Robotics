@@ -12,7 +12,7 @@ from single_stop_const_period import Stop
 from single_increase_quarter_period import DecreaseQuarterPeriod, IncreaseQuarterPeriod
 from single_increase_parametric_rework import DecreaseParametric, IncreaseParametric
 # from triple_increase_james import TripleIncreaseQuarterPeriod
-from single_decrease_low_angle import DecreaseSmallAngle
+from single_decrease_small_angle import DecreaseSmallAngle
 from single_increase_max_angle import IncreaseMaxAngle
 from single_stopping_variable_speed import StoppingVariableSpeed
 from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
@@ -33,7 +33,7 @@ class Algorithm(Robot, Encoders):
             'algo': Nothing,
             'duration': 5
         },{
-            'algo': StoppingVariableSpeed,
+            'algo': DecreaseSmallAngle,
             'duration': 60
         }]
 

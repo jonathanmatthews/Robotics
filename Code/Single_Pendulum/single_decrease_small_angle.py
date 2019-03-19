@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-class IncreaseMaxAngle():
+class DecreaseSmallAngle():
 
     def __init__(self, values, all_data, **kwargs):
         print 'Starting'
@@ -13,7 +13,8 @@ class IncreaseMaxAngle():
         self.pendulum_length = 1.82
         self.min_angle = kwargs.get('min_angle', 0.5)
         self.next_highest_angle = None
-        self.previous_max_angle = all_data['be'].max()
+        self.previous_left_max_angle = all_data['be'].max()
+        self.previous_right_max_angle = all_data['be'].max()
         self.offset = 0
         self.previous_1degree = None
         self.previous_1degree_time = None
@@ -33,17 +34,31 @@ class IncreaseMaxAngle():
         print 'Max angle','Time: {:.2f}'.format(values['time']), 'Big encoder value: {:.2f}'.format(values['be'])
 
         if(np.sign(current_be)!= np.sign([previous_be])):
-            if( (current_be-previous_be)>0 and values['pos'] == 'seated'):
+            if( (current_be-previous_be)<0 and values['pos'] == 'seated'):
                 return ['extended', 0.3]
-            elif( (current_be-previous_be)<0 and values['pos'] == 'extended'):
+            elif( (current_be-previous_be)>0 and values['pos'] == 'extended'):
                 return ['seated',0.3]
         
         if(np.sign(previous_be)==-1 and previous_be - current_be <0):
-            self.previous_max_angle = previous_be
+            self.previous_max_left_angle = previous_be
             print('max_angle',previous_be)
         elif(np.sign(previous_be)==1 and previous_be - current_be >0):
-            self.previous_max_angle = previous_be
+            self.previous_max_right_angle = previous_be
             print('max_angle',previous_be)
 
-        if(self.previous_max_angle<self.min_angle):
+        if(abs(self.previous_left_max_angle)<self.min_angle and abs(self.previous_right_max_angle )<self.min_angle):
             return 'switch'
+        
+        av_list = []
+        
+        for x in range(10):
+            if(all_data['av'][-x] == 0):
+                av_list.append(True)
+            else:
+                av_list.append(False)
+        
+        if(False in av_list):
+            pass
+        else:
+            return 'switch'
+        
