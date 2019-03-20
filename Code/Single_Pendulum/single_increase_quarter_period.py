@@ -66,10 +66,10 @@ class IncreaseQuarterPeriod():
             else:
                 print 'Switching from decreasing, duration ended'
             return 'switch'
-        if (abs(self.last_maximum) > self.max_angle and self.increasing == True):
+        if (self.last_maximum > 0 and self.last_maximum > self.max_angle and self.increasing == True):
             print 'Maximum angle reached, switching'
             return 'switch'
-        if (abs(self.last_maximum) < self.min_angle and self.increasing == False):
+        if (self.last_maximum > 0 and self.last_maximum < self.min_angle and self.increasing == False):
             print 'Minimum angle reached, switching'
             return 'switch'
         return 'no change'
