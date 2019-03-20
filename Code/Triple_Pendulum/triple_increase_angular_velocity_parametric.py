@@ -13,6 +13,7 @@ class TripleIncreaseAngularVelocity():
         self.previous_be = total_angle(values['be'], values['se0'], values['se1'])
         self.previous_av = values["av"]
         self.already_passed_zero = False
+        self.already_passed_maxima = False
     
 
     def algo(self, values, all_data):
@@ -29,44 +30,21 @@ class TripleIncreaseAngularVelocity():
             self.previous_be = self.current_be
             self.previous_av = self.current_av
             self.already_passed_zero = True # Already past minima, don't send the signal again.
+            self.already_passed_maxima = False
 
             if self.increasing:
                 print "raise"
                 return ["raised", 0.5]
             else:
                 return ["lowered", 0.5]
-        
-        # if(sign_zero(self.previous_be)==-1 and self.previous_be - self.current_be <0):
-        #     self.already_passed_minima = False # Moving back down.
-        #     self.previous_be = self.current_be
-        #     self.previous_av = self.current_av
 
-        #     self.previous_max_angle = self.previous_be
-        #     print('max_angle', self.previous_be)
-            
-        #     if(self.increasing == True):
-        #         return ['raised', 0.5]
-        #     elif(self.increasing == False):
-        #         return ['lowered', 0.5]
-            
-        # elif(sign_zero(self.previous_be)==1 and self.previous_be - self.current_be >0):
-        #     self.already_passed_minima = False # Moving back down.
-        #     self.previous_be = self.current_be
-        #     self.previous_av = self.current_av
-            
-        #     self.previous_max_angle = self.previous_be
-        #     print('max_angle', self.previous_be)
-            
-        #     if(self.increasing == True):
-        #         return ['raised', 0.5]
-        #     elif(self.increasing == False):
-        #         return ['lowered', 0.5]
-
-        if abs(self.previous_be) >= abs(self.current_be):
+        if abs(self.previous_be) >= abs(self.current_be) and not self.already_passed_maxima:
             #print("BEs:", self.previous_be, self.current_be, "time", values['time'], "lower")
             self.already_passed_zero = False # Moving back down.
+            self.already_passed_maxima = True
             self.previous_be = self.current_be
             self.previous_av = self.current_av
+            
             
             self.previous_max_angle = self.previous_be
             print('max_angle', self.previous_be)
