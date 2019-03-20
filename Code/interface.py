@@ -406,6 +406,7 @@ class Interface(Algorithm):
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
+            
             self.__run_test(filename, output_directory)
         else:
             t = kwargs.get('t', 1000.0)

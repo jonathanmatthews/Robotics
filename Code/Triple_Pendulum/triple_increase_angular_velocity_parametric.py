@@ -23,8 +23,8 @@ class TripleIncreaseAngularVelocity():
         self.current_av = values["av"]
         print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
-        #if abs(self.current_av) <= abs(self.previous_av) and not self.already_passed_zero:
-        if sign_zero(self.current_av) != sign_zero(self.previous_av) and not self.already_passed_zero:
+        if abs(self.current_av) <= abs(self.previous_av) and not self.already_passed_zero:
+        #if sign_zero(self.current_av) != sign_zero(self.previous_av) and not self.already_passed_zero:
             #print("AVs:", self.previous_av, self.current_av, "time:", values['time'], "raise")
             self.previous_be = self.current_be
             self.previous_av = self.current_av
