@@ -86,8 +86,13 @@ def get_latest_file(current_dir, test=True):
     if len(files) == 0:
         files = [name[:-4]
                  for name in listdir(output_directory) if name[-3:] == 'Org']
-    dates = [datetime.datetime.strptime(
-        ts, "%d-%m-%Y %H:%M:%S") for ts in files]
+    dates = []
+    for date in files:
+        try:
+            dates.append(datetime.datetime.strptime(
+        date, "%d-%m-%Y %H:%M:%S"))
+        except ValueError:
+            pass
     dates.sort()
     latest = dates[-1]
     latest = datetime.datetime.strftime(latest, "%d-%m-%Y %H:%M:%S")
@@ -230,7 +235,6 @@ def last_zero_crossing(values, previous_time, previous_be):
     current_be = values['be']
     dt = values['time'] - previous_time
 
-    print 'last zero crossing', current_be, previous_be
     interpolate = dt * np.abs(current_be) / \
         np.abs(current_be - previous_be)
 

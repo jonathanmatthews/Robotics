@@ -94,7 +94,7 @@ def times_and_values_maxima(time, values, start_time=0.0, end_time=10000000):
     value_max = values[max_index]
     return time_max, value_max
 
-def add_named_position_plot(time, positions):
+def add_named_position_plot(time, positions, offset=0.0, multiplier=1.0):
     """
     This adds the position over time, and format the axis correctly with name, want a new axis over the top
     of old one before doing this, aka ax2 = ax.twinx() then plt.sca(ax2), then add_named_position_plot(time, positions)

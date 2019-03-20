@@ -16,6 +16,8 @@ from single_decrease_small_angle import DecreaseSmallAngle
 from single_increase_max_angle import IncreaseMaxAngle
 from single_stopping_variable_speed import StoppingVariableSpeed
 from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
+from single_increase_angular_velocity import IncreaseAngularVelocity
+from triple_startup_const_period import Start
 
 
 class Algorithm(Robot, Encoders):
@@ -31,57 +33,11 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 5
+            'duration': 3.0
         },{
             'algo': DecreaseSmallAngle,
             'duration': 60
         }]
-
-        #self.order = [{
-            #'algo': Nothing,
-            #'duration': 10
-        #},{
-            #'algo': MaintainFeedback,
-            #'duration': 90,
-            #'masses': True
-        #}]
-        
-        #self.order = [{
-            #'algo': Nothing,
-            #'duration': 90
-        #}]
-
-        #self.order = [{
-            #'algo': Nothing,
-            #'duration': 10
-        #},
-
-        #self.order = [{
-            #'algo': Start,
-            #'duration': 25
-        #},{
-            #'algo': IncreaseQuarterPeriod,
-            #'max_angle': 15
-        #},
-            ##'algo': DecreaseQuarterPeriod,
-            ##'increasing': False,
-            ##'min_angle': 10
-        ##},{
-            ##'algo': MaintainConstant,
-            ##'duration': 45
-        #{
-            #'algo': IncreaseParametric,
-            #'duration': 60,
-            #'max_angle': 40
-        #},{
-            #'algo': DecreaseParametric,
-            #'duration': 60,
-            #'increasing': False,
-            #'min_angle': 5
-        #},{
-            #'algo': Nothing,
-            #'duration': 10
-        #}]
 
         for dictionary in self.order:
             dictionary['period'] = period

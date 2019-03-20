@@ -57,15 +57,11 @@ class Encoders():
             > self.get_small_encoders()
             [10.0, 0.5, 5.0, 3.0]
         """
-        if self.small_encoders_required:
-            encoder0 = self.SmallEncoders.getAngle0()
-            encoder1 = self.SmallEncoders.getAngle1()
-            encoder2 = self.SmallEncoders.getAngle2()
-            encoder3 = self.SmallEncoders.getAngle3()
-            return [encoder0, encoder1, encoder2, encoder3]
-        else:
-            # Small encoders are very slow so option to skip them when not needed 
-            return [0.0, 0.0, 0.0, 0.0]
+        encoder0 = self.SmallEncoders.getAngle0()
+        encoder1 = self.SmallEncoders.getAngle1()
+        encoder2 = self.SmallEncoders.getAngle2()
+        encoder3 = self.SmallEncoders.getAngle3()
+        return [encoder0, encoder1, encoder2, encoder3]
 
     def get_big_encoder(self):
         """
