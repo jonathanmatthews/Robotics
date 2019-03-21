@@ -308,9 +308,6 @@ class Interface(Algorithm):
             algo = self.algo_name
             position = self.position
             
-            ax = self.get_angle('AX')[0]
-            ay = self.get_angle('AY')[0]
-
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
             # way) aka values['Time'] or all_data['Time']
@@ -417,7 +414,7 @@ if __name__ == '__main__':
     # afterwards doesn't bother
     interface = Interface(setup, period=0.20)
     try:
-        interface.run()
+        interface.run(filename='Accelerometer Data')
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')

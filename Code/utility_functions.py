@@ -4,7 +4,7 @@ from os import listdir
 from collections import OrderedDict
 import datetime
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 def flatten(values):
     """
@@ -284,7 +284,7 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     """
     Generalised function that calculates zero crossing point or maxima value 
     """
-    n = int(3.0 / dt)
+    n = int(6.0 / dt)
     window_number = int(0.8 / dt)
     if window_number % 2 == 0:
         window_number += 1
@@ -296,6 +296,8 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
         max_index = (np.diff(sign_zero(np.diff(np.abs(avg_values_list)))) > 0).nonzero()[0] + 1 + (window_number - 1)/2
     elif min_max == 'max':
         max_index = (np.diff(sign_zero(np.diff(avg_values_list))) < 0).nonzero()[0] + 1 + (window_number - 1)/2
+    elif min_max == 'either':
+        max_index = (np.abs(np.diff(sign_zero(np.diff(np.abs(avg_values_list))))) > 0).nonzero()[0] + 1 + (window_number - 1)/2
     else:
         raise ValueError('Choice of min or max not provided')
     
