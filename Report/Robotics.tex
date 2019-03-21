@@ -51,7 +51,7 @@ Start-up not startup\\
 Large encoder not big encoder (sounds better I think)\\
 Rotational not torque\\
 Centre point not zero point (as now swings through the centre etc)\\
-Set-up not setup (probably this way round who knows tbh)
+Set-up not setup (probably this way round who knows tbh) ((They mean slightly different things i think))
 
 
 \section{Abstract}
@@ -140,7 +140,13 @@ Once the optimisations to both the small encoders and the calls to Nao, the inte
 
 \subsection{Webots}
 \ruleline{James Doering}
-\textit{Here I will talk about Webots, and define each position for Nao with pictures and values for his centre of mass. I will also discuss how we can connect to it with NAOQISIM.}
+Webots is a program that can simulate robots in a virtual environment with accurate physics and sensory feedback. In the same way that the real Nao can be communicated with via the Python library NAOqi, the virtual Nao can be controlled via NAOqisim, which is available [PUT STUFF HERE]. Through this method, Python code can be run through the NAOqi library, and sent to the NAOqisim controller in Webots, meaning that code can be tested away from the lab. This was especially useful for defining Nao's postures, as described in figure \ref{fig:webotspostures}. Webots automatically calculates the centre of mass of Nao - by removing the floor and setting gravity to be 0, the centre of mass relative to Nao's accelerometers could be found for each posture. This allowed for the 'raised' and 'lowered' postures to have the largest possible difference in heights for the centre of mass, optimising the parametric motion.\\
+
+Webots also offered semi-accurate physics simulations, with some caveats. Using the swing modelled by the previous year revealed that the virtual Nao will easily assume it is falling, activating its fall manager and changing the algorithm's current posture. If the computer running Webots was weaker, the simulation would quickly become physically inaccurate and the algorithm would desynchronise. Finally, Webots offered no simple way of extracting the hinge encoder data in real time - this forms the basis of most algorithms, and so it could only be used for very simple tests. More information on setting up Webots can be seen in [PLACE REF HERE]
+
+\textbf{I WILL REWRITE AND ADD IN FIGURES}
+
+
 
 \subsection{Optimising Nao's Kicks}
 
@@ -182,6 +188,13 @@ I'll talk about how much of the damping comes from the air resistance and how mu
 \subsection{Start-up}
 \ruleline{James Doering}
 There are multiple different ways to begin a swing from rest, the most intuitive being to "kick off" from the ground - due to Nao's short legs, this was not achievable.This was solved in previous attempts by using a weighted box to kick away from, or by manually pushing Nao, giving the initial amplitude required for normal swinging to be effective. In order to achieve our goals of a fully self-sufficient swinger, a dedicated start-up algorithm was developed. The method is simple - Nao kicks into the extended posture, waits a quarter period, kicks into seated, and then loops between waiting a half period and kicking into the next posture. The initial quarter period wait is used to account for Nao beginning in the centre of his swing, not at the edge. \\
+
+    \begin{figure}
+        \centering
+        \captionbox
+             {Illustration of the values of the swing, before and after the crossing point.\label{fig:startup}}
+             {\includegraphics[width=1.0\textwidth]{Test.png}}
+    \end{figure}
 
 As can be seen in figure \ref{fig:startup}, this method is blah blah blah... The period was calculated from previous data of nao swinging blah blah... noteably, the period of the swing changes slightly depending on the posture, but this was not considered in the code due to the difference in timing being miniscule... \\
 
