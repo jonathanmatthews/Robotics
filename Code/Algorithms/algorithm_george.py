@@ -33,8 +33,12 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=True, gyro_required=False)
 
         self.order = [{
-            'algo': SmallAngleDamping,
-            'duration': 180
+            'algo': Nothing,
+            'duration': 5
+        },
+        {
+            'algo': IncreaseQuarterPeriod,
+            'duration': 60
         }]
 
         for dictionary in self.order:
