@@ -38,7 +38,7 @@ class Robot():
 
         self.set_posture_initial('seated', max_speed = 0.1)
         self.motion.setFallManagerEnabled(False)
-        #self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
+        self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
         
     def check_setup(self, position):
         """
@@ -58,9 +58,11 @@ class Robot():
         if len(incorrect_positions) != 0:        
             # for values in incorrect_positions:
                 # print values[0], 'Actual value: {}'.format(values[1]), 'Difference from expected: {}'.format(values[2])
+            
             error_amounts = ['{}, Actual value: {}, Difference from expected: {}'.format(*values) for values in incorrect_positions]
             raise PositionError("Initial check of setup failed\n" + '\n'.join(error_amounts))
-
+            
+            
     def get_gyro(self):
         """
         Obtain the current gyroscope data. Returns a tuple containing the (x, y, z) gyroscope data,

@@ -307,7 +307,6 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
             algo = self.algo_name
             position = self.position
-            
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
             # way) aka values['Time'] or all_data['Time']
@@ -412,7 +411,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.20)
+    interface = Interface(setup, period=0.15)
     try:
         interface.run(filename='Accelerometer Data')
     except KeyboardInterrupt:
