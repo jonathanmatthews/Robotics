@@ -7,11 +7,11 @@ class DecreaseSmallAngle():
     def __init__(self, values, all_data, **kwargs):
         print 'Starting'
         self.start_time = values['time']
-        self.max_angle = kwargs.get('max_angle', 180)
+        self.max_speed = kwargs.get('max_speed', 1)
         self.increase = kwargs.get('increase', True)
         self.duration = kwargs.get('duration', float('inf'))
         self.pendulum_length = 1.82
-        self.min_angle = kwargs.get('min_angle', 0.5)
+        self.min_angle = kwargs.get('min_angle', 1)
         self.next_highest_angle = None
         self.previous_left_max_angle = all_data['be'].max()
         self.previous_right_max_angle = all_data['be'].max()
@@ -35,9 +35,9 @@ class DecreaseSmallAngle():
 
         if(np.sign(current_be)!= np.sign([previous_be])):
             if( (current_be-previous_be)<0 and values['pos'] == 'seated'):
-                return ['extended', 0.3]
+                return ['extended', self.max_speed]
             elif( (current_be-previous_be)>0 and values['pos'] == 'extended'):
-                return ['seated',0.3]
+                return ['seated',self.max_speed]
         
         if(np.sign(previous_be)==-1 and previous_be - current_be <0):
             self.previous_max_left_angle = previous_be
@@ -51,7 +51,7 @@ class DecreaseSmallAngle():
         
         av_list = []
         
-        for x in range(10):
+        for x in range(20):
             if(all_data['av'][-x] == 0):
                 av_list.append(True)
             else:
@@ -60,5 +60,8 @@ class DecreaseSmallAngle():
         if(False in av_list):
             pass
         else:
-            return 'switch'
+            if(abs(current_be)>1):
+                pass
+            else:
+                return 'switch'
         
