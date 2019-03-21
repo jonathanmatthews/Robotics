@@ -42,6 +42,18 @@
 
 \tableofcontents
 
+HERE IS A LIST OF WORDS THAT WE SHOULD CHECK AT THE END TO MAKE SURE WE HAVE ALL USED THE SAME
+
+Double pendulum not triple pendulum \\
+Nao not NAO (or other way let's just keep it constant)\\
+Posture not position\\
+Start-up not startup\\
+Large encoder not big encoder (sounds better I think)\\
+Rotational not torque\\
+Centre point not zero point (as now swings through the centre etc)\\
+Set-up not setup (probably this way round who knows tbh)
+
+
 \section{Abstract}
 Wow look at \ref{angleplot}. \cite{Bae2006}.
 
@@ -79,16 +91,14 @@ Creating
 
 \subsection{Encoders}
 \ruleline{George Sheppard}
-There are two sets of hinge encoders used, the large/big encoder, and the small encoders. The large encoder record the angle from the vertical to the largest rod of the swing. The small encoders record the angle with respect to the previous rod, there are 2 on each side of the swing.\\
+There are two sets of hinge encoders used, the large/big encoder, and the small encoders. The large encoder records the angle from the vertical to the largest rod of the swing. The small encoders record the angle with respect to the previous rod, there are 2 on each side of the swing.\\
 
 A large amount of time was invested into connecting to these hinge encoders from any computer other than the lab one. Unfortunately, due to the nature of the shared object files required by the encoders, the set up is complicated and it is advised to use the lab computer when using the hinge encoders.\\
 
 A guide for setting up the hinge encoders is provided in the wiki found in \ref{sec:wiki}.
 
-
-
-\subsection{Interface}
-The creation of each individual algorithm required the use of a substantial amount of common code, such as the logic required for: connecting to Nao, collecting values from the hinge encoders and Nao, handling of previous collected values, switching Nao's position, and storage. For this reason an interface was created that functioned as a base that all algorithms were built off, the logic of this base code is illustrated in figure \ref{InterfaceLogic}. The interface starts by collecting all values required for the algorithm decision making process, it then passes these values through the algorithm, depending on the output of the algorithm it will either change Nao's position, switch to the next algorithm, or finish and store the data. It also fixes the sample rate to a specified frequency.\\
+\subsection{Interface}\label{Interface}
+The creation of each individual algorithms required the use of a substantial amount of common code, such as the logic required for: connecting to Nao, collecting values from the hinge encoders and Nao, handling of previous collected values, switching Nao's position, and storage. For this reason an interface was created that functioned as a base that all algorithms were built off, the logic of this base code is illustrated in figure \ref{InterfaceLogic}. The interface starts by collecting all values required for the algorithm decision making process, it then passes these values through the algorithm, depending on the output of the algorithm it will either change Nao's position, switch to the next algorithm, or finish and store the data. It also fixes the sample rate to a specified frequency.\\
 
     \begin{figure}[!htb]
         \centering
@@ -101,14 +111,30 @@ With this base structure in place, creating an algorithm involved one function t
 
 With this base structure in place, creating an algorithm had two requirements: it took the set of values given to it by the interface, and it returned either 'switch', None, or any of the named positions that were defined in the Robot subsection of the interface e.g. 'Seated', 'Extended' etc.\\
 
-As the interface required the encoders and the robot to connect to, a series of mock classes were created that aimed to replicate their functionality. This meant that away from the lab these fake classes were used as a substitute such that the interface could be developed.
+As the interface required the encoders and the robot to connect to, a series of mock classes were created that aimed to replicate their functionality. This meant that away from the lab these fake classes were used as a substitute for the real encoders such that the interface could be developed without errors.
 
 \subsection{Testing}
-One of the advantages of this setup was the ability to test algorithms without connecting to either the robot or the hinge encoders. As all previous data collected in the lab were stored, a setup was developed that read the file in line by line and passed it through the algorithm. The results of this test were then stored to a file in the same way as normal, and as such data such as the kicking times of Nao could be plotted instantly.\\
-
-One downside of this method was that the data being fed into the algorithm wasn't reactive to the previous decision of the algorithm, as all the data was pre-recorded. This meant that this method was in no way a replacement for testing the algorithm in the lab, but instead was used as a way to check that the algorithm is logically correct before spending time with Nao on it.
+One of the main advantages of this setup was the ability to test algorithms without connecting to either the robot or the hinge encoders. As all previous data collected in the lab were stored, a setup was developed that read the file in line by line and passed it through the algorithm. This is exactly what would happen in a real test except the real data is replaced with the pre-recorded data.\\
+Properties such as the position of Nao at each cycle, and the current algorithm the interface was on is recorded in both the real mode and the testing mode. This meant how each algorithm reacted to different scenarios could be plotted away from the lab, given that pre-recorded data that mimicked that scenario existed.\\
+One downside of this method was that the data being fed into the algorithm wasn't reactive to the previous decision of the algorithm, as all the data was pre-recorded. This meant that this method was in no way a full replacement for testing the limits of the algorithm in the lab, but instead was used as a way to check that the algorithm was logically correct before spending limited time with Nao on it.
 
 \subsection{Optimisations}
+As discussed in section \ref{Interface}, the interface would record any data relevant to the motion of the swing and Nao. This data could be used to effectively diagnose any problems with the motion, or investigate any other properties of Nao that could be useful in creating new algorithms. This amount of data, however, became a performance issue in certain situations, and this section is dedicated to discussing the optimisations made regarding this.
+
+\subsubsection{Small Encoders}
+\ruleline{Jonathan Matthews}
+One of the obvious sources of delay in the system is the set of small encoders attached to the swing. These encoders are incredibly useful in modelling the double pendulum of the swing, however, they are irrelevant when the swing is setup in it's simple pendulum mode with all the joints fixed. For these reason there were two setups created for the interface, one that recorded from both the large and small encoders, and one that only recorded from the large encoder only.\\
+
+A method that was investigated to avoid this problem was the introduction of multiprocessing into the interface....
+TODO: JONATHAN FINISH THIS BIT, WHY DOESN'T IT WORK, WHAT IS THE SAMPLE RATE OF THE SMALL ENCODERS
+
+\subsubsection{Nao}
+\ruleline{George Sheppard}
+A second source of delay was the transmission of data to and from Nao, a small subset of this data was paramount to the success of the algorithms, such as the commands for changing the joint positions. A large amount, however, were redundant in certain situations. An example of this was the accelerometer values, initially these were included such that algorithms could be created using only values collected from Nao. A large majority of the time, however, these values were not being used in the algorithms or even looked at when investigating problems with Nao etc.\\
+
+For this reason when creating an algorithm the user could input flags that allowed them to define whether they required these values, when they didn't require these values then fake values would be returned such that performance would increase.\\
+
+Once the optimisations to both the small encoders and the calls to Nao, the interface was able to sample at a maximum of around $200Hz$, at this point the large encoder was restricting any further increases. For most algorithms, however, the workload required by the individual algorithm would restrict this sampling rate before this point. 
 
 \section{Swinging}
 
@@ -148,6 +174,9 @@ I'll put stuff on how each posture changes his damping coefficient.
 I'm also going to talk about how the rotational and parametric methods might look with no damping.
 There's a part I need to talk about how rotational the parametric method actually is but IDK where to put it.
 
+\ruleline{George Sheppard}
+I'll talk about how much of the damping comes from the air resistance and how much comes from the bearing torque friction, then may calculate the maximum theoretical angle Nao should reach
+
 
 \section{Single Pendulum}
 \subsection{Start-up}
@@ -171,7 +200,7 @@ The angular Velocity algorithms uses the fact that the sign of the angular veloc
 \subsection{Timing via Maximum Angle}
 \subsection{Timing via Quarter Period}
 \ruleline{George Sheppard}
-The quarter period algorithm uses the time that the last quarter period of the cycle took to predict the time of the next maximum, and utilizes the fact that Nao's motion only increases in angle by a small amount per cycle. Whenever Nao swings through the first thing to calculate is an estimate of the time that Nao actually crossed the boundary. This is important as Nao swings the fastest through the centre, and therefore the first time recorded after he crossed may not be close enough to the true time. Shown in figure \ref{InterpolationDiagram} is a diagram of this situation. 
+The quarter period algorithm uses the time that the last quarter period of the cycle took to predict the time of the next maximum, and utilizes the fact that Nao's motion only increases in angle by a small amount per cycle. Whenever Nao swings through the centre of the swing, the first thing to calculate is an estimate of the time that Nao actually crossed the boundary. This is important as Nao swings the fastest through the centre, and therefore the first time recorded after he crossed may not be close enough to the true time. Shown in figure \ref{InterpolationDiagram} is a diagram of this situation. 
 
     \begin{figure}[!htb]
         \centering
@@ -198,33 +227,59 @@ As is expected for a higher sampling time this error on the true centre time is 
 
 This process is repeated every half period, whenever Nao crosses the centre point, such that the next maxima time can be calculated before it is reached. From here the only decision that needs to be made is whether it is better to swing before the maxima, at the maxima, or after the maxima for the greatest amplitude swing. An advantage of this algorithm is that the estimate of the period is constantly updated, such that the calculation of the maxima time remains accurate for all amplitudes (as long as there is sufficient build up time to calculate the previous period).
 
+
 TODO: Advantages and disadvantages of this method
 Advantages: Can predict much before the peak allowing offset to decide when is best  
 Disadvantages: Only works for small amplitude increases at a time, linear interpolation only works for fast sample speed, smoothing won't remove all local maxima
 
-\subsection{Increasing QP Rotational}
+\subsection{Increasing QP Rotational}\label{Increasing QP Rotational}
 \subsection{Increasing QP Parametric}
 \subsection{Maintain}
+\ruleline{George Sheppard}
+
+
+
+
 \subsection{Decreasing}
 
-\section{Triple Pendulum}
+
+\subsection{Dicussion}
+
+\section{Double Pendulum}
 \subsection{Start-up}
 \ruleline{James Doering}
 How is this different to the single pendulum version? Need data on low angle oscillations. How should tactics change?
 
-\subsection{Timing via ???}
+\subsection{Adjusting Algorithms}
+\ruleline{George Sheppard}
+To adjust for the new setup of the swing, the single pendulum algorithms needed to be adjusted such that they would account for the motion of the swing below the hinges. For this reason a new coordinate system was defined that took into account the angle of the small encoders. This new coordinate system was defined by an angle named the 'total angle', and a diagram of this angle is shown in figure \ref{} TODO: THIS FIGURE. The large encoder value used previously in all single pendulum algorithms was then replaced with this new total angle to create the new algorithms.
+
 \subsection{Increasing QP Rotational}
+From initial experimentation with the double pendulum, it was found that the period of the motion depended largely on the specific motion of the swing below the first now opened hinge. This motion is large when Nao implements the rotational motion seen in section \ref{Increasing QP Rotational}, and as such the angular velocity timing method was decided to be optimum for a rotational motion.\\
+
+The adjusted angular velocity was used to decide when Nao has reached the maximum of his swing, however, there were other adjustments that needed to be made. The first of these adjustments was reducing the speed of Nao's motion. This is because when Nao was switching postures at the maximum speed, the motion of the rods below the first hinge became very chaotic, and ultimately caused a reduction in the total swinging angle. By reducing the posture switching speed to half of the maximum this motion was mostly under control, such that there was mostly a smooth swing.
+
+TODO: RESULTS OF THIS
+TODO: PROS AND CONS OF THIS
+
 \subsection{Increasing QP Parametric}
+
+
+
+\subsection{Discussion}
 \subsection{Maintain}
 \subsection{Decreasing}
 
+\section{Future Suggestions}
+\ruleline{Code Team}
+There are several ideas that given a longer amount of time we would have liked to investigate, the first of which is an algorithm based on accelerometer and gyrometer values only. This would be interesting as it would remove the need for any external inputs such as the hinge encoders, and would allow Nao to be operate any swing without additional setup.
 
 
 \appendix
 \section{Appendix}
 \subsection{Wiki} \label{sec:wiki}
 \ruleline{George Sheppard}
-Throughout this project, there were a large amount of issues found when trying to connect to: NAO, Webots, and the hinge encoders etc. For this reason a wiki was created to document how to set everything up correctly. This wiki is available at: https://github.com/GeorgeSheppard/Robotics. Alongside this wiki is the final code, including how to use it, the report, and any analysis files used to create plots. Feel free to clone this repository and add to it such that there remains a comprehensive guide for each year.
+Throughout this project, there were a large amount of issues found when trying to connect to: Nao, Webots, and the hinge encoders etc. For this reason a wiki was created to document how to set everything up correctly. This wiki is available at: https://github.com/GeorgeSheppard/Robotics. Alongside this wiki is the final code, including how to use it, the report, and any analysis files used to create plots. Feel free to clone this repository and add to it such that there remains a comprehensive guide for each year.
 
 \subsection{Webots}
 \ruleline{James Doering}
