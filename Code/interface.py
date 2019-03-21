@@ -403,7 +403,7 @@ class Interface(Algorithm):
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
-            filename = "19-03-2019 10:17:13 Org"
+            #filename = "19-03-2019 10:17:13 Org"
             
             self.__run_test(filename, output_directory)
         else:
