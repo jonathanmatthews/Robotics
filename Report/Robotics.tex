@@ -189,12 +189,13 @@ I'll talk about how much of the damping comes from the air resistance and how mu
 \ruleline{James Doering}
 There are multiple different ways to begin a swing from rest, the most intuitive being to "kick off" from the ground - due to Nao's short legs, this was not achievable.This was solved in previous attempts by using a weighted box to kick away from, or by manually pushing Nao, giving the initial amplitude required for normal swinging to be effective. In order to achieve our goals of a fully self-sufficient swinger, a dedicated start-up algorithm was developed. The method is simple - Nao kicks into the extended posture, waits a quarter period, kicks into seated, and then loops between waiting a half period and kicking into the next posture. The initial quarter period wait is used to account for Nao beginning in the centre of his swing, not at the edge. \\
 
-    \begin{figure}
+    \begin{figure}[]
         \centering
         \captionbox
-             {Illustration of the values of the swing, before and after the crossing point.\label{fig:startup}}
-             {\includegraphics[width=1.0\textwidth]{Test.png}}
+             {Illustration of the values of the swing, before and after the crossing point.\label{InterpolationDiagram}}
+             {\includegraphics[width=1.0\textwidth]{Ideal Startup No Damping.png}}
     \end{figure}
+
 
 As can be seen in figure \ref{fig:startup}, this method is blah blah blah... The period was calculated from previous data of nao swinging blah blah... noteably, the period of the swing changes slightly depending on the posture, but this was not considered in the code due to the difference in timing being miniscule... \\
 
