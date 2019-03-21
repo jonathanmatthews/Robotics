@@ -45,14 +45,24 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
 
 # Filter requirements.
 order = 6
 fs = 1.0/dt       # sample rate, Hz
-lowcut = 0.01 # desired cutoff frequency of the filter, Hz
-highcut = 0.65
+cutoff = 0.65# desired cutoff frequency of the filter, Hz
+lowcut = 0.35
+highcut = 0.50
 
-# Filter the data, and plot both the original and filtered signals.
 y = butter_bandpass_filter(accz, lowcut, highcut, fs, order)
 
 # plt.plot(t, accx, 'b-', label='accx')
@@ -60,7 +70,8 @@ y = butter_bandpass_filter(accz, lowcut, highcut, fs, order)
 plt.plot(t, accz, 'r-', label='accz')
 
 plt.plot(t, be, label='Big Encoder')
-plt.plot(t-2.5/4.0, y, 'g-', linewidth=2, label='Filtered accz')
+# y_middle = np.mean(y[-140])
+plt.plot(t, y, 'g-', linewidth=2, label='Filtered accz')
 
 plt.title("Data in '{}'".format(filename))
 plt.legend(loc='upper right')

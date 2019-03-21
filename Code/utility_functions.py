@@ -181,17 +181,17 @@ def centre_of_mass_respect_seat(position, masses):
         centre of mass of nao with respect to the seat in metres
     """
     if position == "seated" and masses == False:
-        x_com = (0.03674 - 0.03)
-        y_com = (0.16 - 0.02463)
+        x_com = (0.0429973 - 0.03)
+        y_com = (0.16 - 0.0165042)
     elif position == "extended" and masses == False:
-        x_com = (0.0488 - 0.03)
-        y_com = (0.16 - 0.0124)
+        x_com = (0.0478673 - 0.03)
+        y_com = (0.16 - 0.01934243)
     elif position == 'raised' and masses == False:
-        x_com = (0.0558 - 0.03)
-        y_com = (0.16 - 0.000757)
+        x_com = (0.0496793 - 0.03)
+        y_com = (0.16 + 0.00690544)
     elif position == 'lowered' and masses == False:
-        x_com = (0.031 - 0.03)
-        y_com = (0.16 - 0.035)
+        x_com = (0.0386997 - 0.03)
+        y_com = (0.16 - 0.0238556)
     elif position == 'seated' and masses:
         x_com = 1.000
         y_com = 1.000

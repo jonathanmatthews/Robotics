@@ -413,7 +413,7 @@ if __name__ == '__main__':
     # afterwards doesn't bother
     interface = Interface(setup, period=0.15)
     try:
-        interface.run()
+        interface.run(filename='Accelerometer Data')
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
