@@ -17,7 +17,8 @@ from single_increase_max_angle import IncreaseMaxAngle
 from single_stopping_variable_speed import StoppingVariableSpeed
 from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
 from single_increase_angular_velocity import IncreaseAngularVelocity
-from triple_startup_const_period import Start
+from single_damping_small_angles import SmallAngleDamping 
+#from triple_startup_const_period import Start
 
 
 class Algorithm(Robot, Encoders):
@@ -32,11 +33,8 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=True, gyro_required=False)
 
         self.order = [{
-            'algo': Nothing,
-            'duration': 60
-        },{
-            'algo': IncreaseQuarterPeriod,
-            'duration': 60
+            'algo': SmallAngleDamping,
+            'duration': 180
         }]
 
         for dictionary in self.order:
