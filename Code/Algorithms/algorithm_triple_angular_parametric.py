@@ -7,6 +7,7 @@ path.insert(0, 'Triple_Pendulum')
 
 from triple_startup_const_period import Start
 from triple_increase_angular_velocity_parametric_2 import TripleIncreaseAngularVelocity
+from single_nothing import Nothing
 
 
 
@@ -21,13 +22,16 @@ class Algorithm(Robot, Encoders):
         # Initialise robot
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
-        self.order = [{
-            'algo': Start,
-            'duration': 5
-        },{
-            'algo': TripleIncreaseAngularVelocity 
-        }]
-
+   #     self.order = [{
+    #        'algo': Start,
+     #       'duration': 5
+      #  },{
+       #     'algo': TripleIncreaseAngularVelocity 
+        #}]
+        
+        
+        self.order = [{'algo': Nothing, 'duration': 100}]
+        
 
         for dictionary in self.order:
             dictionary['period'] = period
