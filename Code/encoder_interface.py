@@ -13,13 +13,14 @@ class Encoders():
     or real encoders depending on the setup used in interface.py.
     """
 
-    def __init__(self, BigEncoder, SmallEncoders, **kwargs):
+    def __init__(self, BigEncoder, SmallEncoders, angvel_avg=5, **kwargs):
         """
         Initialises encoders.
         Args:
             BigEncoder: Class that connects to big encoder, available in hidlibs for real values or training functions for fake
             SmallEncoders: Class that connects to small encoders, available in hidlbis for real values or training functions for fake
             small_encoders_required (optional): whether you want to return zero or not as small encoders are slow
+            angvel_avg: the number of positions back to calculate the angular velocity with. (don't set to 0)
         Returns:
             None
         """
@@ -31,6 +32,7 @@ class Encoders():
         self.small_encoders_required = kwargs.get('small_encoders_required', False)
         # Set current angle to zero point
         self.calibrate()
+        self.angvel_avg = angvel_avg
 
     def calibrate(self):
         """

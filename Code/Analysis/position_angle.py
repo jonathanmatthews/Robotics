@@ -16,7 +16,7 @@ if argv[-1] == 'Real':
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
 
-filename = '19-03-2019 10:17:13 Tst'
+#filename = '19-03-2019 10:17:13 Tst'
 
 angles = read_file(output_data_directory + filename)
 

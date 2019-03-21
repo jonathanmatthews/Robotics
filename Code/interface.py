@@ -207,10 +207,10 @@ class Interface(Algorithm):
             -0.2
         """
         # No angular velocity if no old data
-        if len(self.all_data) < 5:
+        if len(self.all_data) < self.angvel_avg:
             return 0
 
-        old_values = self.all_data[-5]
+        old_values = self.all_data[-self.angvel_avg]
 
         delta_time = time - old_values['time']
         delta_angle = current_angle - old_values['be']
@@ -403,6 +403,7 @@ class Interface(Algorithm):
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
+            filename = "19-03-2019 10:17:13 Org"
             
             self.__run_test(filename, output_directory)
         else:
