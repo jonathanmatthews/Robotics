@@ -33,7 +33,7 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 5
+            'duration': 60
         },{
             'algo': IncreaseQuarterPeriod,
             'duration': 60
