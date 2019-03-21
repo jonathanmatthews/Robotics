@@ -146,7 +146,7 @@ class Interface(Algorithm):
         self.setup = setup
 
         # Robot initialises and moves to start position
-        self.speech.say("Checking position, then starting")
+        self.speech.say("Checking position")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
         tme.sleep(2.0)
