@@ -11,7 +11,7 @@ class IncreaseQuarterPeriod():
         self.period = kwargs.get('period', 0.005)
         # offset is time from maximum to swing
         self.time_switch = 100
-        self.offset = -0.05
+        self.offset = 0.2
         print 'Offset for this run: {}'.format(self.offset)
         self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)
 
