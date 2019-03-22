@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import curve_fit
+from scipy.signal import find_peaks
 import os
 import matplotlib.pyplot as plt
 from graph_functions import *
@@ -47,6 +48,8 @@ def get_name(location):
     return result
 
 
+
+
 #files_to_compare = get_files(output_data_directory)
 files_to_compare = [output_data_directory + "Rotational No Masses 400secs",
                     output_data_directory + "Parametric No Masses 800secs"]
@@ -64,6 +67,14 @@ def fit_parametric(n, m, c, q, k):
     ans = np.piecewise(n, [n < q, n >= q], [lin, exp])
     print ans
     return float(ans)
+
+
+para_angles = read_file(files_to_compare[1])['be']
+rot_angles = read_file(files_to_compare[0])['be']
+
+
+
+
 
 
 
