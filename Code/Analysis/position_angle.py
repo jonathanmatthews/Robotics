@@ -15,9 +15,13 @@ if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
 filename, output_data_directory = get_latest_file('Analysis', test=test)
+<<<<<<< HEAD
 
 filename = 'Single Nothing with encoders 100 sec Tst'
 
+=======
+output_data_directory = '../Output_data/'
+>>>>>>> master
 angles = read_file(output_data_directory + filename)
 
 # Extract data

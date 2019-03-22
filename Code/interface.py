@@ -146,10 +146,10 @@ class Interface(Algorithm):
         self.setup = setup
 
         # Robot initialises and moves to start position
-        self.speech.say("Checking position, then starting")
+        #self.speech.say("Checking position")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
-        tme.sleep(2.0)
+        tme.sleep(4.0)
         try:
             self.check_setup('seated')
         except PositionError as e:
@@ -307,7 +307,6 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
             algo = self.algo_name
             position = self.position
-
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
             # way) aka values['Time'] or all_data['Time']
