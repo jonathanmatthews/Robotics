@@ -22,8 +22,8 @@ output_data_directory = '../Output_data/'
 def linear_fit(x, m, c, d):
     return m * x + c + d * x ** 2
 
-def exp_fit(x, b, m):
-    return b/m * (1 - np.exp(- b * x))
+def exp_fit(x, m, b, c, d):
+    return m/b * (1 - np.exp(- b * (x-c))) + d
 
 
 # setup figure
@@ -41,7 +41,6 @@ for offset in sorted(files_offsets.keys()):
     information[offset] = {
         'gradients': [],
         'periods': [],
-        'gradients_error': [],
     }
 
     for i, filename in enumerate(files_offsets[offset]):
@@ -86,7 +85,7 @@ for offset in sorted(files_offsets.keys()):
                 max_times = max_times[:-1][no_large_change_indexes]
                 maximas = maximas[:-1][no_large_change_indexes]
 
-                plt.plot(max_times, maximas, label=offset)
+                # plt.plot(max_times, maximas, label=offset)
 
                 # curve fit doesn't work with different data types
                 max_times = max_times.astype(dtype=np.float32)
@@ -97,20 +96,18 @@ for offset in sorted(files_offsets.keys()):
                 periods = np.diff(max_times)
                 information[offset]['periods'] = list(information[offset]['periods']) + list(periods)
 
-                # popt, pcov = curve_fit(linear_fit, max_times, maximas, p0=[0.1, 4.0, -0.01], sigma=errors)
-                popt, pcov = curve_fit(exp_fit, max_times, maximas, p0=[0.01, 0.001], sigma=errors)
-                print 'Gradient: {}, Intercept: {}'.format(*popt)
+                popt, pcov = curve_fit(exp_fit, max_times, maximas, p0=[0.08, 0.01, 10.0, 4.5], sigma=errors)
+                print 'b: {}, m: {}'.format(popt[1], popt[0])
 
                 fitted_times = np.linspace(min(max_times), max(max_times), 50)
                 # fitted_maximas = linear_fit(fitted_times, *popt)
                 fitted_maximas = exp_fit(fitted_times, *popt)
-                plt.plot(fitted_times, fitted_maximas, label='Fit')
-                plt.legend(loc='best')
-                plt.show()
+                # plt.plot(fitted_times, fitted_maximas, label='Fit')
+                # plt.legend(loc='best')
+                # plt.show()
                 perr = np.sqrt(np.diag(pcov))
 
                 information[offset]['gradients'].append(popt[0])
-                information[offset]['gradients_error'].append(perr[0])
 
 
 
@@ -121,10 +118,25 @@ std_periods = [np.std(information[key]['periods']) for key in information.keys()
 increase_per_cycle = [grad * period for grad, period in zip(average_gradients, average_periods)]
 std_increase_per_cycle = [np.sqrt((dg/p)**2 + (-g*dp/p**2)**2) for g, p, dg, dp in zip(average_gradients, average_periods, std_gradients, std_periods)]
 
-plt.errorbar(information.keys(), increase_per_cycle, yerr=std_increase_per_cycle, label='Increase per cycle', fmt='o')
+plt.errorbar(information.keys(), increase_per_cycle, yerr=std_increase_per_cycle, label='Increase per period', fmt='o')
 plt.xlabel('Offset (s)')
-plt.ylabel('Increase per cycle ' + r'$(^o)$')
+plt.ylabel('Increase per period ' + r'$(^o)$')
 plt.title('Comparison between different offsets\nand the rate of increase of angle')
+
+# def resonance_curve(x, a, b, c):
+#     return 1/((x-a)**2 + (b/2)**2) + c
+
+
+# resonance_offsets = np.array(information.keys()).astype(dtype=np.float32)
+# resonance_values = np.array(increase_per_cycle).astype(dtype=np.float32)
+# popt, pcov = curve_fit(resonance_curve, information.keys(), increase_per_cycle, p0=[-0.25, 1.7, -1.1], bounds=([-0.3, -10.0, -1.5], [-0.2, 10, 0.7]))
+# perr = np.sqrt(np.diag(pcov))
+
+# print popt
+
+# fitted_times = np.linspace(min(information.keys()), max(information.keys()), 100)
+# fitted_values = resonance_curve(fitted_times, *popt)
+# plt.plot(fitted_times, fitted_values, label='Resonance fit')
 
 plt.legend(loc='best')
 plt.show()
