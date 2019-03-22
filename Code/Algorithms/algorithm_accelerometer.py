@@ -33,9 +33,9 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 10.0
+            'duration': 20.0
         },{
-            'algo': IncreaseAccelerometer 
+            'algo': IncreaseAccelerometer
         }]
 
         for dictionary in self.order:

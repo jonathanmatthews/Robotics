@@ -21,7 +21,7 @@ def final_filter(time, values):
     # Filter requirements.
     order = 6
     fs = 1.0/np.mean(np.diff(time[-200:]))
-    lowcut = 0.35 # desired cutoff frequency of the filter, Hz
+    lowcut = 0.30 # desired cutoff frequency of the filter, Hz
     highcut = 0.50
 
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
@@ -50,6 +50,7 @@ class IncreaseAccelerometer():
 
         self.filter_offset = 0.15
         self.time_switch = float('inf')
+        self.last_time_set = values['time']
 
     def algo(self, values, all_data):
         """
@@ -60,7 +61,7 @@ class IncreaseAccelerometer():
 
         # will collect the last n results
         n = int(1.0/self.period * 6.0)
-        if n < 39:
+        if n <= 39:
             n = 40
 
         filtered_az = - final_filter(times[-n:], az[-n:])
@@ -69,15 +70,18 @@ class IncreaseAccelerometer():
         previous_az = filtered_az[-2]
 
         if sign_zero(current_az) != sign_zero(previous_az):
-            # print 'After {}'.format(current_az), 'Before {}'.format(previous_az)
-            self.min_time = last_zero_crossing_az(times, filtered_az)
-            self.max_time = last_maxima(times, filtered_az, time_values='time', dt=self.period)
-            # quarter period difference between time at maxima and minima
-            self.quart_period = np.abs(self.min_time - self.max_time)
+            if values['time'] - self.last_time_set > 0.7:
+                # print 'After {}'.format(current_az), 'Before {}'.format(previous_az)
+                self.min_time = last_zero_crossing_az(times, filtered_az)
+                self.max_time = last_maxima(times, filtered_az, time_values='time', dt=self.period)
+                # quarter period difference between time at maxima and minima
+                self.quart_period = np.abs(self.min_time - self.max_time)
 
-            # set time for position to switch
-            self.time_switch = self.min_time + self.quart_period + self.offset
-            print 'Next switching time: {:.3f}'.format(self.time_switch)
+                # set time for position to switch
+                self.time_switch = self.min_time + self.quart_period + self.offset
+                
+                self.last_time_set = values['time']
+                print 'Current time: {}'.format(values['time']), 'Next switching time: {:.3f}'.format(self.time_switch)
 
         if values['time'] > self.time_switch:
             self.time_switch = float('inf')

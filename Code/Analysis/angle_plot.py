@@ -17,8 +17,9 @@ from utility_functions import read_file, get_latest_file
 
 
 # access latest file if underneath file name is blanked out
-filename, output_data_directory = get_latest_file('Analysis')
-filename = '15-03-2019 17:01:15 Org'
+#filename, output_data_directory = get_latest_file('Analysis')
+output_data_directory = '../Output_data/'
+filename ='22-03-2019 14:23:53 Org'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
