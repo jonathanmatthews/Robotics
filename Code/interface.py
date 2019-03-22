@@ -74,7 +74,7 @@ setups = {
 
 
 # Can set manually or use argv when running interface or plot.sh
-setup = 'Testing'
+setup = 'Robot_big_no_small'
 
 if argv[-1] in setups.keys():
     setup = argv[-1]
@@ -414,7 +414,7 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.15)
+    interface = Interface(setup, period=0.03)
     try:
         interface.run()
     except KeyboardInterrupt:

@@ -2,6 +2,7 @@
     and kicks again.'''
     
 from utility_functions import last_maxima
+#from scipy.signal import find_peaks
 
 
 class Start():
