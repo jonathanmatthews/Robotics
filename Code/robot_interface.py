@@ -38,7 +38,8 @@ class Robot():
 
         self.set_posture_initial('seated', max_speed = 0.1)
         self.motion.setFallManagerEnabled(False)
-        self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
+        #self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
+        print 'Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100)
         
     def check_setup(self, position):
         """

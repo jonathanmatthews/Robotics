@@ -146,10 +146,10 @@ class Interface(Algorithm):
         self.setup = setup
 
         # Robot initialises and moves to start position
-        self.speech.say("Checking position")
+        #self.speech.say("Checking position")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
-        tme.sleep(2.0)
+        tme.sleep(4.0)
         try:
             self.check_setup('seated')
         except PositionError as e:
@@ -411,9 +411,9 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.15)
+    interface = Interface(setup, period=0.01)
     try:
-        interface.run(filename='Accelerometer Data')
+        interface.run()
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')

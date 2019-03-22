@@ -14,9 +14,8 @@ if argv[-1] == 'Testing':
 if argv[-1] == 'Real':
     test = False
 # access latest file if underneath file name is blanked out
-# filename, output_data_directory = get_latest_file('Analysis', test=test)
+filename, output_data_directory = get_latest_file('Analysis', test=test)
 output_data_directory = '../Output_data/'
-filename = 'Accelerometer  Tst'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
