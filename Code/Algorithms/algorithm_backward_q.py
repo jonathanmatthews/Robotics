@@ -18,6 +18,7 @@ from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
 from single_increase_angular_velocity import IncreaseAngularVelocity
 from triple_startup_const_period import Start
 from single_increase_accelerometer import IncreaseAccelerometer
+from single_backward_q import BackwardQ
 
 
 class Algorithm(Robot, Encoders):
@@ -29,13 +30,10 @@ class Algorithm(Robot, Encoders):
         # Initialise encoder
         Encoders.__init__(self, BigEncoder, SmallEncoders)
         # Initialise robot
-        Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=True, gyro_required=False)
+        Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
-            'algo': Nothing,
-            'duration': 20.0
-        },{
-            'algo': IncreaseAccelerometer
+            'algo': BackwardQ
         }]
 
         for dictionary in self.order:
