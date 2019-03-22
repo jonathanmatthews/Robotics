@@ -74,7 +74,7 @@ setups = {
 
 
 # Can set manually or use argv when running interface or plot.sh
-setup = 'Real'
+setup = 'Testing'
 
 if argv[-1] in setups.keys():
     setup = argv[-1]
@@ -403,7 +403,7 @@ class Interface(Algorithm):
         if self.setup == 'Testing':
             latest, output_directory = get_latest_file('Code', test=False)
             filename = kwargs.get('filename', latest)
-            #filename = "19-03-2019 10:17:13 Org"
+            filename = "Single Nothing with encoders 100 sec Org"
             
             self.__run_test(filename, output_directory)
         else:
