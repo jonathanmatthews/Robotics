@@ -53,7 +53,9 @@ class IncreaseAccelerometer():
 
     def algo(self, values, all_data):
         """
-        Use the angular velosity to estimate the time to switch the posture
+        This algorithm uses the accelerometer data to reconstruct the big encoder values, from this
+        sinusoid it is used with the quarter period algorithm to predict the maximas and switch
+        accordingly.
         """
         times = np.append(all_data['time'], np.array(values['time'])) + self.filter_offset
         az = np.append(all_data['az'], np.array(values['az']))
