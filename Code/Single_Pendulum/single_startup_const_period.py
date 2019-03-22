@@ -49,7 +49,7 @@ class Start():
                 print 'Switch on duration'
                 return 'switch'
             if t > 10:
-                if last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period) > self.max_angle:
+                if values['be'] > self.max_angle:
                     print 'last move', self.last_move
                     print 'Switched on max angle'
                     return 'switch'

@@ -1,6 +1,6 @@
 import numpy as np
 from utility_functions import last_maxima, last_zero_crossing, moving_average, sign_zero
-
+import matplotlib.pyplot as plt
 
 class IncreaseQuarterPeriod():
     """
@@ -46,7 +46,8 @@ class IncreaseQuarterPeriod():
 
             print 'Ran at time {}'.format(values['time'])
             # set time for position to switch
-            self.time_switch = self.min_time + self.quart_period + self.offset
+            #self.time_switch = self.min_time + self.quart_period + self.offset
+            self.time_switch = self.min_time + 0.67 + self.offset
             print 'Next switching time: {:.3f}'.format(self.time_switch), 'Last maximum: {:.3f}'.format(self.last_maximum)
 
         # At the end of the loop, set the value of big encoder to the previous value

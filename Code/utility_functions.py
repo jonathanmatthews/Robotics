@@ -284,7 +284,7 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     """
     Generalised function that calculates zero crossing point or maxima value 
     """
-    n = int(3.0 / dt)
+    n = int(6.0 / dt)
     window_number = int(0.8 / dt)
     if window_number % 2 == 0:
         window_number += 1
