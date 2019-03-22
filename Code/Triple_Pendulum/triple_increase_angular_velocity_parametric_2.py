@@ -13,6 +13,8 @@ class TripleIncreaseAngularVelocity():
         self.previous_max_angle = total_angle(all_data['be'], all_data['se0'], all_data['se1']).max()
         self.previous_be = total_angle(values['be'], values['se0'], values['se1'])
         self.previous_av = values["av"]
+        self.moving_up = False
+        self.moving_down = False # Start both flags at false, so either is possible.
     
 
     def algo(self, values, all_data):
@@ -24,25 +26,29 @@ class TripleIncreaseAngularVelocity():
         print 'Time: {:.2f}'.format(values['time']), 'Total angle value: {:.2f}'.format(self.current_be)
         
         
-        if sign_zero(self.current_av) != sign_zero(self.previous_av):
+        if sign_zero(self.current_av) != sign_zero(self.previous_av) and not self.moving_up:
             # Change in direction of motions, therefore at maxima.
+            self.moving_up = True
+            self.moving_down = False # Set flags to prevent triggering constantly (causing algo switch to never be reached).
             self.previous_be = self.current_be
             self.previous_av = self.current_av
             
             if self.increasing:
-                return ["lowered", 0.5]
+                return ["lowered", 1.0]
             else:
-                return ["raised", 0.5]
+                return ["raised", 1.0]
         
-        elif abs(self.current_av) < abs(self.previous_av):
+        elif abs(self.current_av) < abs(self.previous_av) and not self.moving_down:
             # Velocity is decreasing, must have passed zero and begun moving up.
+            self.moving_down = True
+            self.moving_up = False # Set flags to prevent triggering constantly (causing algo switch to never be reached).
             self.previous_be = self.current_be
             self.previous_av = self.current_av
             
             if self.increasing:
-                return ["raised", 0.5]
+                return ["raised", 1.0]
             else:
-                return ["lowered", 0.5]
+                return ["lowered", 1.0]
         
         else:
             # Switch current and previous anyway.
