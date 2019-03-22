@@ -146,7 +146,7 @@ class Interface(Algorithm):
         self.setup = setup
 
         # Robot initialises and moves to start position
-        self.speech.say("Checking position, then starting")
+        self.speech.say("Checking position")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
         tme.sleep(2.0)
@@ -307,10 +307,6 @@ class Interface(Algorithm):
             av = self.get_ang_vel(time, be)
             algo = self.algo_name
             position = self.position
-            
-            ax = self.get_angle('AX')[0]
-            ay = self.get_angle('AY')[0]
-
             # position recorded is position before any changes
             # Convert all values into dictionary (dictionary as then all_data and values are indexed in the same
             # way) aka values['Time'] or all_data['Time']
@@ -415,9 +411,9 @@ class Interface(Algorithm):
 if __name__ == '__main__':
     # Raising error after loosening as then script that plots
     # afterwards doesn't bother
-    interface = Interface(setup, period=0.20)
+    interface = Interface(setup, period=0.15)
     try:
-        interface.run()
+        interface.run(filename='Accelerometer Data')
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
