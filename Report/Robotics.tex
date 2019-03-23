@@ -210,7 +210,7 @@ To create algorithms that are efficient at applying Nao's energy into the motion
 For this reason a discussion of the best method for determining the maximum of the swing is outlined below.
 
 \ruleline{Chenglong Li}
-The angular velocity algorithms is developed base on the fact that the sign of the angular velocity will change just after the Nao hits its maxima. Therefore one can instruct the Nao to change its posture whenever the angular velocity change its sign. This algorithm is very easy to implement and very reliable, which means that the Nao will never miss any kicks. However, there are two serious weakness for this algorithm. The first one is that this algorithm do not learn from old data, because this algorithm use the instantaneous big encoder value to decide if Nao should kick or not. This indicates that the angular velocity method does not have the ability to improve itself.  Before talking about the second weakness, one should understand the concept of 'offset' for the algorithm. Assuming the algorithm predicts Nao should change its posture at time T or angle A and one would like it to start change its position a little bit earlier before
+The angular velocity algorithms is developed base on the fact that the sign of the angular velocity will change just after the Nao hits its maxima. Therefore one can instruct the Nao to change its posture whenever the angular velocity change its sign. This algorithm is very easy to implement and very reliable, which means that the Nao will never miss any kicks. However, there are two serious weakness for this algorithm. The first one is that this algorithm do not learn from old data, because this algorithm use the instantaneous big encoder value to decide if Nao should kick or not. This indicates that the angular velocity method does not have the ability to improve itself. The second weakness of this algorithm is that one cannot set offset in this algorithm. Assuming that an algorithm predict that Nao should be at the maxima at time T or angle A but one would like Nao to kick a little bit earlier or latter. Hence we set Nao to kick at T + offset or A + offset.
 
 
 \subsection{Timing via Maximum Angle}
@@ -258,9 +258,7 @@ A comparison between the Z accelerometer data for both a static and changing pos
              {\includegraphics[width=1.0\textwidth]{AccelerometerComparison.eps}}
     \end{figure}
 
-Figure \ref{fig:FrequencyDecomposition} shows a comparison between the frequencies present in the accelerometer data for a static posture, and for a switching posture, each dataset has been normalised by largest frequency peak. 
-
-For the static posture dataset there are two spikes, the largest of which with a frequency of $0.8$Hz. This frequency is twice that of the swing, as the acceleration goes from maximum at the edge, to minimum at the centre point, back to maximum at the other edge. The other peak has a frequency of $0.4$Hz, this arises due to the asymmetry in Nao's seated position, as Nao's seated posture is slightly behind the seat, the maximum angle that he reaches will be asymmetric and will oscillate slightly higher and lower dependent on which side of the centre point he is on, this explains why it is at the frequency of the swing. To understand the frequency composition for the changing posture, it is worth looking at modelling Nao's motion. Nao's motion switches once at each maxima, and the switch point can be approximated as instantaneous, in other words Nao's motion is a square wave with the same frequency as the swing. The fourier transform for a square wave is
+Figure \ref{fig:FrequencyDecomposition} shows a comparison between the frequencies present in the accelerometer data for a static posture, and for a switching posture, each dataset has been normalised by largest frequency peak. For the static posture dataset there are two spikes, the largest of which with a frequency of $0.8$Hz. This frequency is twice that of the swing, as the acceleration goes from maximum at the edge, to minimum at the centre point, back to maximum at the other edge. The other peak has a frequency of $0.4$Hz, this arises due to the asymmetry in Nao's seated position, as Nao's seated posture is slightly behind the seat, the maximum angle that he reaches will be asymmetric and will oscillate slightly higher and lower dependent on which side of the centre point he is on, this explains why it is at the frequency of the swing. To understand the frequency composition for the changing posture, it is worth looking at modelling Nao's motion. Nao's motion switches once at each maxima, and the switch point can be approximated as instantaneous, in other words Nao's motion is a square wave with the same frequency as the swing. The fourier transform for a square wave is
 
 \begin{equation}
     f(t) = \frac{4}{\pi}\sum_{n=1}^{\infty} \frac{1}{2n-1}\sin(2(2n-1)\pi ft),
@@ -300,7 +298,7 @@ It is worth noting that the implementation of this algorithm as it currently sta
 \subsection{Increasing QP Parametric}
 \subsection{Maintain}
 \ruleline{George Sheppard}
-
+TODO: THIS SECTION
 
 
 
@@ -339,11 +337,7 @@ TODO: PROS AND CONS OF THIS
 
 \subsection{Increasing QP Parametric}
 
-
-
 \subsection{Discussion}
-\subsection{Maintain}
-\subsection{Decreasing}
 
 \section{Future Suggestions}
 \ruleline{Code Team}
