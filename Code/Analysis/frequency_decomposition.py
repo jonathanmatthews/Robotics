@@ -14,17 +14,22 @@ fig, ax = plt.subplots(
 ax = format_graph(ax)
 plt.sca(ax)
 
+filename, output_data_directory = get_latest_file('Analysis', test=False)
+files = ['Accelerometer Data', 'Accelerometer Data No Movement']
+# files = ['Accelerometer Data']
+# files = ['Accelerometer Data No Movement']
+
 def decompose_frequencies(time, values):
     sp = fft(values)
     freq = np.fft.fftfreq(time.shape[-1], d=dt)
     print freq
     return freq, sp
 
-filename, output_data_directory = get_latest_file('Analysis', test=False)
-files = ['Accelerometer Data', 'Accelerometer Data No Movement']
-# files = ['Accelerometer Data']
-# files = ['Accelerometer Data No Movement']
-
+def signal_creator(frequencies, components, t):
+    output = 0
+    for (frequency, component) in zip(frequencies, components):
+        output += component * np.sin(2 * np.pi * frequency * t)
+    return output
 for file_ in files:
     angles = read_file(output_data_directory + file_)
 
@@ -45,10 +50,9 @@ for file_ in files:
     decompose_columns = ['ax']
 
     for column in decompose_columns:
-        frequencies, components = decompose_frequencies(t, angles[column])
-
         plt.plot(frequencies, components.real, label='{} Real parts, file: {}'.format(column, file_))
         # plt.plot(frequencies, components.imag, label='{} Imaginary parts, file: {}'.format(column, file_))
+
 
 # plt.plot(t, 100*(angles['az']+9.81), label='Accelerometer Data')
 plt.title("Decomposition of frequencies,\ntaken from data in '{}'".format(file_))

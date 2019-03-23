@@ -146,10 +146,10 @@ class Interface(Algorithm):
         self.setup = setup
 
         # Robot initialises and moves to start position
-        self.speech.say("Checking position, then starting")
+        #self.speech.say("Checking position")
         # Give robot time to get into position before checking it
         self.motion.setStiffnesses("Body", 1.0)
-        tme.sleep(2.0)
+        tme.sleep(4.0)
         try:
             self.check_setup('seated')
         except PositionError as e:
@@ -413,7 +413,7 @@ if __name__ == '__main__':
     # afterwards doesn't bother
     interface = Interface(setup, period=0.15)
     try:
-        interface.run()
+        interface.run(filename='Accelerometer Algorithm')
     except KeyboardInterrupt:
         interface.finish_script()
         interface.speech.say('Loosening')
