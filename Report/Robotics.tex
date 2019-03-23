@@ -240,15 +240,20 @@ As is expected for a higher sampling time this error on the true centre time is 
     \end{figure}
 
 
-This process is repeated every half period, whenever Nao crosses the centre point, such that the next maxima time can be calculated before it is reached. From here the only decision that needs to be made is whether it is better to swing before the maxima, at the maxima, or after the maxima for the greatest amplitude swing. An advantage of this algorithm is that the estimate of the period is constantly updated, such that the calculation of the maxima time remains accurate for all amplitudes (as long as there is sufficient build up time to calculate the previous period).
+This process is repeated every half period, whenever Nao crosses the centre point, such that the next maxima time can be calculated before it is reached. An advantage of this algorithm is that the estimate of the period is constantly updated, such that the calculation of the maxima time remains accurate for all amplitudes (as long as there is sufficient build up time to calculate the previous period). From here the only decision that needs to be made is whether it is better to swing before the maxima, at the maxima, or after the maxima, for the greatest amplitude swing.
 
-
-TODO: Advantages and disadvantages of this method
-Advantages: Can predict much before the peak allowing offset to decide when is best  
-Disadvantages: Only works for small amplitude increases at a time, linear interpolation only works for fast sample speed, smoothing won't remove all local maxima
+DAVID: OFFSET INVESTIGATION HERE
 
 \subsection{Timing via Accelerometer Values}
 \ruleline{George Sheppard}
+Nao's ability to swing in each previous timing method requires the use of external inputs, such as the hinge encoders. For Nao to truly swing unassisted an equivalent to the large encoder angle needed to be extracted from Nao's outputs only. It was decided that the accelerometer values, and more specifically the vertical accelerometer (Nao's Z accelerometer) would allow us to extract a sinusodial curve.\\
+
+The Z accelerometer data for Nao with a static posture during swinging is shown in figure TODO: THIS FIGURE, this confirms that the Z accelerometer is the vertical direction, as it is of the order of $g$. It is sinusodial due to the sinusodial motion of the swing, and can be used to extract the maximas of the swing in the same way the large encoder is used. The introduction of a changing posture, however, causes the Z accelerometer to transition to something that resembles more of a square wave, and to be able to extract the maximas this data needed to be filtered.\\
+
+Figure \ref{} TODO: THIS FIGURE shows a comparison between the frequencies present in the accelerometer data for a static posture, and for a switching posture. The large peak at $~0.4$Hz corresponds to the frequency of the swing, and is the only spike present in the static posture dataset. For a changing posture, however, there are many other frequencies introduced. This is because Nao switching posture is not a sinusodial process, and therefore appears as the superposition of many different frequencies. These are the frequencies that must be filtered in order to extract the angle data only.\\
+
+To remove the frequencies corresponding to Nao's posture switching, the accelerometer data was passed through a band-pass filter, with a lowcut frequency of $0.30$Hz, and a highcut frequency of $0.50$Hz. With these frequencies removed the resulting curve can be inverted, and an offset can be added such that the final curve resembles that of the large encoder values, this process is shown in figure \ref{fig:AccelerometerFiltering}. This method of filtering allows the Z accelerometer data to be 'converted' to the large encoder value, the magnitude of the curve sinusodial motion is unimportant, as it is only the time at which the peaks occur that is used each of the previous timing methods. This means that the filtered Z accelerometer data can be used as a direct substitute for the large encoder value such that no modifications need to be made to any of the timing methods.\\
+
     \begin{figure}[!htb]
         \centering
         \captionbox
@@ -256,6 +261,8 @@ Disadvantages: Only works for small amplitude increases at a time, linear interp
              {\includegraphics[width=1.0\textwidth]{AccelerometerFiltering.eps}}
     \end{figure}
     
+As this algorithm doesn't change the timing of the maxima, it will be subject to the same maximum angle that the individual timing method it is connected to has. One point of interest however is the reliability in making this conversion from accelerometer to equivalent large encoder value. Figure \ref{fig:PositionAccelerometer} shows a sample of this algorithm reacting in real time. This algorithm is able to switch at the correct times for the majority of cases, unfortunately however, Nao occasionally fails to transmit the correct accelerometer value, as can be seen from $162-168$seconds. In this case the algorithm is unable to adapt and will not kick. The reason for this recording error is unknown due to time restrictions.
+
     \begin{figure}[!htb]
         \centering
         \captionbox
