@@ -16,7 +16,6 @@ def final_filter(time, values):
     fs = 1.0/np.mean(np.diff(time[-200:]))
     lowcut = 0.30 # desired cutoff frequency of the filter, Hz
     highcut = 0.50
-
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     padded_signal = filtfilt(b, a, values)
 
@@ -43,16 +42,16 @@ position = angles['pos']
 algorithm = angles['algo']
 accz = angles['az']
 
-be = be[t > 145]
-accz = accz[t > 145]
-algorithm = algorithm[t > 145]
-position = position[t > 145]
-t = t[t > 145]
-be = be[t < 175]
-accz = accz[t < 175]
-algorithm = algorithm[t < 175]
-position = position[t < 175]
-t = t[t < 175]
+be = be[t > 140]
+accz = accz[t > 140]
+algorithm = algorithm[t > 140]
+position = position[t > 140]
+t = t[t > 140]
+be = be[t < 160]
+accz = accz[t < 160]
+algorithm = algorithm[t < 160]
+position = position[t < 160]
+t = t[t < 160]
 
 
 # setup figure
@@ -70,7 +69,7 @@ plt.title('Extraction of Large Encoder Values from Accelerometer Data')
 
 plt.plot(t, accz, label='Original Z Accelerometer Values', color='r')
 plt.legend(loc='upper left')
-plt.xlim([145, 175])
+plt.xlim([140, 160])
 
 plt.sca(ax1)
 plt.ylabel('Acceleration\nDifference\n' + r'$(ms^{-2})$')
@@ -78,7 +77,7 @@ plt.ylabel('Acceleration\nDifference\n' + r'$(ms^{-2})$')
 filtered_accz = final_filter(t, accz)
 # plt.plot(t, filtered_accz, label='Filtered Z Accelerometer', color='r')
 # plt.legend(loc='upper left')
-plt.plot(t + 2.55/4.0, -filtered_accz, label='Final Z Accelerometer Values', color='r')
+plt.plot(t + 2.55/4.0, -filtered_accz, label='Final Filtered Z Accelerometer Values', color='r')
 plt.legend(loc='upper left')
 
 plt.sca(ax2)

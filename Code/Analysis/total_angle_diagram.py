@@ -34,8 +34,7 @@ def plot_rods(xs, ys):
         plt.plot(xs[i:i+2], ys[i:i+2], color=colors[i])
 
 fig, ax = plt.subplots(
-    1, 1, figsize=(
-        8, 13))
+    1, 1)
 
 ax = format_graph(ax)
 
