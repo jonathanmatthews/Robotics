@@ -13,7 +13,7 @@
 \usepackage[fleqn]{amsmath} % for maths
 \usepackage{subfig}
 \setlength{\parindent}{0pt} % no indents on new paragraphs
-\graphicspath{{Code/Analysis/Figures/}}
+\graphicspath{{Report/Figures/}}
 
 \newcommand*\ruleline[1]{\par\noindent\raisebox{.8ex}{\makebox[\linewidth]{\hrulefill\hspace{1ex}\raisebox{-.8ex}{#1}\hspace{1ex}\hrulefill}}}
 
@@ -73,7 +73,7 @@ Improved on positions from previous years to maximise each posture to extend as 
 
 Increased the speed of NAOs kicks as previous years limiteted by using the set range of the knee pitch as there max angle as they  assumed this was the largest angle and so the one to maximise
 
-instead based on the range of indidividual positions 
+instead based on the range of individual positions 
 
 Put in stops to prevent the angle aching to far, same with checking the initial posture when setting up the postures
 
@@ -98,7 +98,7 @@ A large amount of time was invested into connecting to these hinge encoders from
 A guide for setting up the hinge encoders is provided in the wiki found in \ref{sec:wiki}.
 
 \subsection{Interface}\label{sec:Interface}
-The creation of each individual algorithms required the use of a substantial amount of common code, such as the logic required for: connecting to Nao, collecting values from the hinge encoders and Nao, handling of previous collected values, switching Nao's position, and storage. For this reason an interface was created that functioned as a base that all algorithms were built off, the logic of this base code is illustrated in figure \ref{fig:InterfaceLogic}. The interface starts by collecting all values required for the algorithm decision making process, it then passes these values through the algorithm, depending on the output of the algorithm it will either change Nao's position, switch to the next algorithm, or finish and store the data. It also fixes the sample rate to a specified frequency.\\
+The creation of each individual algorithm required the use of a substantial amount of common code, such as the logic required for: connecting to Nao, collecting values from the hinge encoders and Nao, handling of previous collected values, switching Nao's position, and storage. For this reason an interface was created that functioned as a base that all algorithms were built off, the logic of this base code is illustrated in figure \ref{fig:InterfaceLogic}. The interface starts by collecting all values required for the algorithm decision making process, it then passes these values through the algorithm, depending on the output of the algorithm it will either change Nao's position, switch to the next algorithm, or finish and store the data. It also fixes the sample rate to a specified frequency.\\
 
     \begin{figure}[!htb]
         \centering
@@ -107,7 +107,7 @@ The creation of each individual algorithms required the use of a substantial amo
              {\includegraphics[width=1.0\textwidth]{InterfaceLogic.eps}}
     \end{figure}
 
-With this base structure in place, creating an algorithm involved one function that took a set of values, and decided how to react to them, the algorithm had access to all past data to help in decision making. As these algorithms were defined in the same way, it is easy to switch between different algorithms mid swing, such that the motion of NAO could be more stringently controlled. For example NAO could be told to increase to $30^o$, then maintain this amplitude for $10s$, and then finally decrease back down to $0^o$.\\
+With this base structure in place, creating an algorithm involved one function that took a set of values, and decided how to react to them, the algorithm had access to all past data to help in decision making. As these algorithms were defined in the same way, it is easy to switch between different algorithms mid swing, such that the motion of Nao could be more stringently controlled. For example Nao could be told to increase to $30^o$, then maintain this amplitude for $10s$, and then finally decrease back down to $0^o$.\\
 
 With this base structure in place, creating an algorithm had two requirements: it took the set of values given to it by the interface, and it returned either 'switch', None, or any of the named positions that were defined in the Robot subsection of the interface e.g. 'Seated', 'Extended' etc.\\
 
@@ -130,11 +130,11 @@ TODO: JONATHAN FINISH THIS BIT, WHY DOESN'T IT WORK, WHAT IS THE SAMPLE RATE OF 
 
 \subsubsection{Nao}
 \ruleline{George Sheppard}
-A second source of delay was the transmission of data to and from Nao, a small subset of this data was paramount to the success of the algorithms, such as the commands for changing the joint positions. A large amount, however, were redundant in certain situations. An example of this was the accelerometer values, initially these were included such that algorithms could be created using only values collected from Nao. A large majority of the time, however, these values were not being used in the algorithms or even looked at when investigating problems with Nao etc.\\
+A second source of delay was the transmission of data to and from Nao. A small subset of this transmission data was paramount to the success of the algorithms, such as the commands for changing the joint positions. A large amount, however, were redundant in certain situations. An example of this was the accelerometer values, initially these were included such that algorithms could be created using only values collected from Nao. A large majority of the time, however, these values were not being used in the algorithms or even looked at when investigating problems with Nao etc.\\
 
 For this reason when creating an algorithm the user could input flags that allowed them to define whether they required these values, when they didn't require these values then fake values would be returned such that performance would increase.\\
 
-Once the optimisations to both the small encoders and the calls to Nao, the interface was able to sample at a maximum of around $200$Hz, at this point the large encoder was restricting any further increases. For most algorithms, however, the workload required by the individual algorithm would restrict this sampling rate before this point. 
+Once the optimisations to both the small encoders and the calls to Nao, the interface was able to sample at a maximum of around $200$Hz, and at this point the large encoder was restricting any further increases. For most algorithms, however, the workload required by the individual algorithm would restrict this sampling rate before this point. 
 
 \section{Swinging}
 
@@ -149,9 +149,10 @@ Webots also offered semi-accurate physics simulations, with some caveats. Using 
 
 
 \subsection{Optimising Nao's Kicks}
+\ruleline{David Thomas}
 
 \subsection{Rotational Method}
-
+\ruleline{David Thomas}
 \begin{align}
     &\frac{\Delta E}{E} = 1 - e^{\frac{-2\pi}{Q}}\\
     &\text{At maximum angle},\\
@@ -176,9 +177,23 @@ Jon: Talk about using the two extra positions defined for this motion from david
 
 \subsection{Damping}
 \ruleline{James Doering}
-I'll put stuff on how each posture changes his damping coefficient.
-I'm also going to talk about how the rotational and parametric methods might look with no damping.
-There's a part I need to talk about how rotational the parametric method actually is but IDK where to put it.
+\textit{I'm putting a general section on the damping each posture produces, how it was found, and a comparison of how the expected motion would look with and without damping.}
+
+The combined damping of the swing can be modelled as an exponential decay of amplitude, modelled as 
+\begin{equation} \label{eq:damping}
+    \theta = \theta_0 e^{-bt}.
+\end{equation}
+By taking data of the swing being released at $\approx 10^\circ$ and fitting the decay of amplitude to a curve following equation \ref{eq:damping}, the coefficient of damping $b$ can be found. The results for this method can be seen in figure \ref{fig:dampingpositions}.
+
+    \begin{figure}[!htb]
+        \centering
+        \captionbox
+             {The logic behind the interface, all that required changing was the algorithm logic that the decision making was based on.\label{fig:dampingpositions}}
+             {\includegraphics[width=1.0\textwidth]{Damping Comparison.eps}}
+    \end{figure}
+
+
+
 
 \ruleline{George Sheppard}
 I'll talk about how much of the damping comes from the air resistance and how much comes from the bearing torque friction, then may calculate the maximum theoretical angle Nao should reach
@@ -189,13 +204,6 @@ I'll talk about how much of the damping comes from the air resistance and how mu
 \ruleline{James Doering}
 There are multiple different ways to begin a swing from rest, the most intuitive being to "kick off" from the ground - due to Nao's short legs, this was not achievable.This was solved in previous attempts by using a weighted box to kick away from, or by manually pushing Nao, giving the initial amplitude required for normal swinging to be effective. In order to achieve our goals of a fully self-sufficient swinger, a dedicated start-up algorithm was developed. The method is simple - Nao kicks into the extended posture, waits a quarter period, kicks into seated, and then loops between waiting a half period and kicking into the next posture. The initial quarter period wait is used to account for Nao beginning in the centre of his swing, not at the edge. \\
 
-    
-    \begin{figure}[!htb]
-        \centering
-        {\includegraphics[width=1.0\textwidth]{}}
-        \caption{HELP HELP HELP}
-        \label{fig:test}
-    \end{figure}
 
 
 As can be seen in figure \ref{fig:startup}, this method is blah blah blah... The period was calculated from previous data of nao swinging blah blah... noteably, the period of the swing changes slightly depending on the posture, but this was not considered in the code due to the difference in timing being miniscule... \\
@@ -203,18 +211,30 @@ As can be seen in figure \ref{fig:startup}, this method is blah blah blah... The
 This script also offers a good comparison for mass vs no mass etc etc etc etc etc etc etc...
 
 
-
-\subsection{Timing via Angular Velocity}
+\subsection{Timing Maximas}
 \ruleline{George Sheppard}
-To create algorithms that are efficient at applying Nao's energy into the motion of the swing requires an accurate estimate of the maximum angle of the swing, or the time at which this occurs. To early a swing dissipates the energy, and too late doesn't take advantage of the boost in velocity caused by changing position.\\
-For this reason a discussion of the best method for determining the maximum of the swing is outlined below.
+To create algorithms that are efficient at applying Nao's energy into the motion of the swing requires an accurate estimate of the maximum angle of the swing, or the time at which this occurs. To early a swing dissipates the energy, and too late doesn't take advantage of the boost in velocity caused by changing position. For this reason a discussion of the best method for determining the maximum of the swing is outlined in the sections below.
 
+\subsubsection{Timing via Angular Velocity}
 \ruleline{Chenglong Li}
-The angular velocity algorithms is developed base on the fact that the sign of the angular velocity will change just after the Nao hits its maxima. Therefore one can instruct the Nao to change its posture whenever the angular velocity change its sign. This algorithm is very easy to implement and very reliable, which means that the Nao will never miss any kicks. However, there are two serious weakness for this algorithm. The first one is that this algorithm do not learn from old data, because this algorithm use the instantaneous big encoder value to decide if Nao should kick or not. This indicates that the angular velocity method does not have the ability to improve itself. The second weakness of this algorithm is that one cannot set offset in this algorithm. Assuming that an algorithm predict that Nao should be at the maxima at time T or angle A but one would like Nao to kick a little bit earlier or latter. Hence we set Nao to kick at T + offset or A + offset.
+The angular velocity algorithms is developed base on the fact that the sign of the angular velocity will change just after the Nao hits its maxima. Therefore one can instruct the Nao to change its posture whenever the angular velocity change its sign. This algorithm is very easy to implement since there is no calculation involved and very reliable. Because Nao will never miss any kicks. However, there are two serious weakness for this algorithm. 
+\\
+\\
+The first one is that this algorithm do not learn from old data, because this algorithm use the instantaneous big encoder value to decide if Nao should kick or not. This indicates that the angular velocity method does not have the ability to improve itself. The second weakness of this algorithm is that one cannot set offset in this algorithm. Assuming that an algorithm predict that Nao should be at the maxima at time T or angle A but one would like Nao to kick a little bit earlier or latter. Hence one can set Nao to kick at T + offset or A + offset. The offset can be positive or negative. However, due to the nature of the angular velocity algorithm, Nao will only know it is at the maxima after it passed the maxima. Therefore it is impossible to set offset for this algorithm. 
+
+\subsubsection{Timing via Maximum Angle}
+The max angle algorithm uses the energy conservation law to predicts the next possible max angle that Nao can reach. Two different algorithms are developed. The first one is using the simplest energy conservation law in simple pendulum assuming there is no damping involved The equations are shown below:
+
+\begin{align}
+    &\frac{1}{2}MV_{max}^2 = Mgh\\
+    & h = \frac{V_{max}^2}{2g}\\
+\end{align}
+
+The $V_{max}$ is the maximum speed that the swing reached in every cycle, which is observed at the minima and h is the difference in height between the minima and the next maxima. Once the height difference is determined, one can calculate the next maximum angle by using the technique shown in figure
 
 
-\subsection{Timing via Maximum Angle}
-\subsection{Timing via Quarter Period}
+
+\subsubsection{Timing via Quarter Period}
 \ruleline{George Sheppard}
 The quarter period algorithm uses the time that the last quarter period of the cycle took to predict the time of the next maximum, and utilizes the fact that Nao's motion only increases in angle by a small amount per cycle. Whenever Nao swings through the centre of the swing, the first thing to calculate is an estimate of the time that Nao actually crossed the boundary. This is important as Nao swings the fastest through the centre, and therefore the first time recorded after he crossed may not be close enough to the true time. Shown in figure \ref{fig:InterpolationDiagram} is a diagram of this situation. 
 
@@ -243,9 +263,38 @@ As is expected for a higher sampling time this error on the true centre time is 
 
 This process is repeated every half period, whenever Nao crosses the centre point, such that the next maxima time can be calculated before it is reached. An advantage of this algorithm is that the estimate of the period is constantly updated, such that the calculation of the maxima time remains accurate for all amplitudes (as long as there is sufficient build up time to calculate the previous period). From here the only decision that needs to be made is whether it is better to swing before the maxima, at the maxima, or after the maxima, for the greatest amplitude swing.
 
-DAVID: OFFSET INVESTIGATION HERE
 
-\subsection{Timing via Accelerometer Values}
+\subsection{Investigation of Offest Values}
+\ruleline{David Thomas}
+
+\subsection{Increasing QP Rotational}\label{sec:Increasing QP Rotational}
+\subsection{Increasing QP Parametric}
+\subsection{Maintaining}
+\ruleline{George Sheppard}
+For Nao to be able to maintain his angle of swing requires the matching of the energy lost to damping, with the energy gained from his motion. This can be done easily for one specific angle by determining the correct time to kick to match this energy loss, however, for a generalised algorithm that is required to maintain at any angle requires a different method.\\
+
+The first method for accomplishing this requires the use of a feedback loop. First, the angle that needs to be maintained is defined, and an offset is defined that is a guess at the correct time before/after the peak to create sustained motion. Nao is then left to kick using this initial offset, and by recording the angle of the maximas this offset can be adjusted to bring Nao closer to the correct amplitude. This offset can also be defined as the number of degrees before the maintaining angle Nao should kick at, such that the motion is maintained.\\
+
+An alternative method for maintaining amplitude requires the use of a 'good', 'average', and 'bad' kick. Then when the angle increases past a critical point a bad kick can be used to decrease the amplitude, and vice versa for when the angle is lower than needed. The average kick is defined such that it is as close to a maintaining kick as possible, however, as this is not perfect the good and bad kicks compensate for it.
+
+These three methods of maintaining are compared in figure \ref{fig:MaintainFeedbackComparison}, TODO: RETAKE THIS DATA AT 7.5 DEGREES AND ADD IN LINE FROM OLD JOE PLOT TOO\\
+
+    \begin{figure}[!htb]
+        \centering
+        \captionbox
+             {Comparison between using timed feedback and feedback based on angle for maintaining a $10^o$ amplitude swing.\label{fig:MaintainFeedbackComparison}}
+             {\includegraphics[width=1.0\textwidth]{MaintainFeedback.eps}}
+    \end{figure}
+    
+TODO: DISCUSSION OF RESULTS\\
+TODO: WHICH IS BEST WHICH IS WORSE, WHY IS THIS\\
+TODO: DO ALL ALGORITHMS WORK FOR EACH ANGLE OR ARE THEY SPECIFIC TO CERTAIN ANGLES\\
+
+\clearpage
+
+\subsection{Decreasing}
+
+\subsection{Using Accelerometer Values}
 \ruleline{George Sheppard}
 Nao's ability to swing in each previous timing method requires the use of external inputs, such as the hinge encoders. For Nao to truly swing unassisted an equivalent to the large encoder angle needed to be extracted from Nao's outputs only. It was decided that the accelerometer values, and more specifically the vertical accelerometer (Nao's Z accelerometer) would allow us to extract a sinusodial curve.\\
 
@@ -294,25 +343,13 @@ It is worth noting that the implementation of this algorithm as it currently sta
 
 \clearpage
 
-\subsection{Increasing QP Rotational}\label{sec:Increasing QP Rotational}
-\subsection{Increasing QP Parametric}
-\subsection{Maintain}
-\ruleline{George Sheppard}
-TODO: THIS SECTION
-
-
-
-\subsection{Decreasing}
-
-
-\subsection{Dicussion}
 
 \section{Double Pendulum}
 \subsection{Start-up}
 \ruleline{James Doering}
 How is this different to the single pendulum version? Need data on low angle oscillations. How should tactics change?
 
-\subsection{Adjusting Algorithms}
+\subsection{Adjusting Algorithms}\label{sec:AdjustingAlgorithms}
 \ruleline{George Sheppard}
 To adjust for the new setup of the swing, the single pendulum algorithms needed to be adjusted such that they would account for the motion of the swing below the hinges. For this reason a new coordinate system was defined that took into account the angle of the small encoders. This new coordinate system was defined by an angle named the 'total angle', and a diagram of this angle is shown in figure \ref{fig:TotalAngleDiagram}. The large encoder value used previously in all single pendulum algorithms was then replaced with this new total angle to create the new algorithms.
 
@@ -330,22 +367,24 @@ From initial experimentation with the double pendulum, it was found that the per
 
 The adjusted angular velocity based on the total angle was used to decide when Nao has reached the maximum of his swing. For an efficient motion, the speed of Nao's motion had to be reduced. This is because when Nao was switching postures at the maximum speed, the motion of the rods below the first hinge became very chaotic, and ultimately caused a reduction in the total swinging angle. By reducing the posture switching speed to half of the maximum this motion was mostly under control, such that there was mostly a smooth swing.\\
 
-Figure TODO: THIS FIGURE \ref{} shows the results for this method. 
+Figure \ref{fig:DoublePendulumData3} shows the results for this method. This algorithm maintains an amplitude of around $10^o$, but due to the motion below the first hinge there are large jumps in the angle of successive peaks.
 
-TODO: RESULTS OF THIS
-TODO: PROS AND CONS OF THIS
+    \begin{figure}[!htb]
+        \centering
+        \captionbox
+             {Total angle reached using rotational pumping, with the alteration to the angle defined in section \ref{sec:AdjustingAlgorithms}.\label{fig:DoublePendulumData3}}
+             {\includegraphics[width=1.0\textwidth]{DoublePendulumRotationalAngular.eps}}
+    \end{figure}
 
 \subsection{Increasing QP Parametric}
 
 \subsection{Discussion}
 
 \section{Future Suggestions}
-\ruleline{Code Team}
-There are several ideas that given a longer amount of time we would have liked to investigate, the first of which is an algorithm based on accelerometer and gyrometer values only. This would be interesting as it would remove the need for any external inputs such as the hinge encoders, and would allow Nao to be operate any swing without additional setup.
+\ruleline{David Thomas}
+There are several ideas that given a longer amount of time we would have liked to investigate, but serve as points of interest for future years:
 
-David: Improvements to the seat of the swing could be made in order to improve the stability of Nao when changing positions. During the current project tape was required to secure Nao but with a re-milled seat, grips could be made to attach to the rear of the hips and prevent any lifting motion. A CAD designed attachment could also be made for Nao's torso and feet in order to weights to be quickly added and removed. This would allow much greater amplitudes to be reached will securing the weights to Nao's body. It could also be beneficial in future projects to instigate machine learning teams to use internal sensors as inputs for the training, this could effectively mean Nao could be self sufficient and Not rely on any external sensor inputs.
-
-The flexible shaft on the encoder adds a lot of sideways motion to the swing, and makes it difficult to maximise energy transferred to the swing, especially in the case where all the hinges are open. 
+Improvements to the seat of the swing could be made in order to improve the stability of Nao when changing positions. During the current project, tape was required to secure Nao but with a re-milled seat, grips could be made to attach to the rear of the hips and prevent any lifting motion. A CAD designed attachment could also be made for Nao's torso and feet in order for weights to be quickly added and removed. This would allow much greater amplitudes to be reached and securing the weights to Nao's body will prevent any scratching or risk of tape becoming loose. It could also be beneficial in future projects to investigate the use of internal sensors as inputs for the machine learning teams to train their virtual robot. This could allow Nao to become be self sufficient and not rely on any external sensor inputs, such as the encoders. There has also previously been some investigation into the range of motion of Nao was compared to that of a human but this performed on a rope swing and much of the motions were unrepresentative of what Nao could achieve. It could be interesting in future years to motion track a human swinging on a rod swing, especially from a self-start point of view to see how these real life motions could be translated onto Nao. The flexible shaft on the encoder adds a lot of sideways motion to the swing, and makes it difficult to maximise energy transferred to the swing, especially in the case where all the hinges are open. 
 \appendix
 \section{Appendix}
 \subsection{Wiki} \label{sec:wiki}
