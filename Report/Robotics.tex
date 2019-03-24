@@ -138,13 +138,28 @@ Once the optimisations to both the small encoders and the calls to Nao, the inte
 
 \section{Swinging}
 
-\subsection{Webots}
+\subsection{Webots} \label{sec:webots}
 \ruleline{James Doering}
 Webots is a program that can simulate robots in a virtual environment with accurate physics and sensory feedback. In the same way that the real Nao can be communicated with via the Python library NAOqi, the virtual Nao can be controlled via NAOqisim, which is available [PUT STUFF HERE]. Through this method, Python code can be run through the NAOqi library, and sent to the NAOqisim controller in Webots, meaning that code can be tested away from the lab. This was especially useful for defining Nao's postures, as described in figure \ref{fig:webotspostures}. Webots automatically calculates the centre of mass of Nao - by removing the floor and setting gravity to be 0, the centre of mass relative to Nao's accelerometers could be found for each posture. This allowed for the 'raised' and 'lowered' postures to have the largest possible difference in heights for the centre of mass, optimising the parametric motion.\\
 
 Webots also offered semi-accurate physics simulations, with some caveats. Using the swing modelled by the previous year revealed that the virtual Nao will easily assume it is falling, activating its fall manager and changing the algorithm's current posture. If the computer running Webots was weaker, the simulation would quickly become physically inaccurate and the algorithm would desynchronise. Finally, Webots offered no simple way of extracting the hinge encoder data in real time - this forms the basis of most algorithms, and so it could only be used for very simple tests. More information on setting up Webots can be seen in [PLACE REF HERE]
 
 \textbf{I WILL REWRITE AND ADD IN FIGURES}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{COMPLACEHOLDER.eps}
+    \caption{PLACEHOLDER: Will eventually show a nice comparison of Nao's centre of mass in each posture.}
+    \label{fig:centreofmasses}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{}
+    \caption{PLACEHOLDER: Will have all 4 postures}
+    \label{fig:postures}
+\end{figure}
+
 
 
 
@@ -177,22 +192,33 @@ Jon: Talk about using the two extra positions defined for this motion from david
 
 \subsection{Damping}
 \ruleline{James Doering}
-\textit{I'm putting a general section on the damping each posture produces, how it was found, and a comparison of how the expected motion would look with and without damping.}
+\textit{I'm putting a general section on the damping each posture produces, how it was found, and a comparison of how the expected motion would look with and without damping. This is all basic skeleton text right now, will rewrite in the coming days.}
 
 The combined damping of the swing can be modelled as an exponential decay of amplitude, modelled as 
 \begin{equation} \label{eq:damping}
     \theta = \theta_0 e^{-bt}.
 \end{equation}
-By taking data of the swing being released at $\approx 10^\circ$ and fitting the decay of amplitude to a curve following equation \ref{eq:damping}, the coefficient of damping $b$ can be found. The results for this method can be seen in figure \ref{fig:dampingpositions}.
+By taking data of the swing being released at $\approx 10^\circ$ and fitting the decay of amplitude to a curve following equation \ref{eq:damping}, the coefficient of damping $b$ can be found. The results for this method can be seen in figure \ref{fig:dampingpositions}. The full values and method of fitting can be seen in section \ref{sec:dampingboring}.
 
-    \begin{figure}[!htb]
+    \begin{figure}[]
         \centering
         \captionbox
-             {The logic behind the interface, all that required changing was the algorithm logic that the decision making was based on.\label{fig:dampingpositions}}
-             {\includegraphics[width=1.0\textwidth]{Damping Comparison.eps}}
+             {The swing's damping fitted for each posture described in section \ref{sec:webots}.\label{fig:dampingpositions}}
+             {\includegraphics[width=0.7\textwidth]{DampingComparison.eps}}
     \end{figure}
+ 
+From this figure it can be seen that the "seated" and "raised" postures produce the most damping, and the "extended" causes the least - this is likely due to air resistance blah blah George might discuss this.\\
+
+This model of damping can be used as an alternative way to estimate the maximum angles will produce. From section [REFER TO THEORY SECTION] the rotational method is expected to produce a linear increase in amplitude per cycle. By combining this linear growth with the exponential decay, and solving the differential equation, we find that the rotational method can be modelled as
+\begin{equation}
+    \theta = \frac{m}{b}\big(1-e^{-bt}\big),
+\end{equation}
+where $m$ is the rate of change of amplitude expected for the rotational method and $b$ is the coefficient found through equation \ref{eq:damping}. By measuring the linear growth using the rotational quarter period algorithm in section [REFERENCE A SECTION, NEEDS RECONSIDERATION] to find m, the plot in figure [REFERENCE FIGURE] was produced.\\
 
 
+[FIGURE HERE]
+
+This shows the expected maximum amplitude........
 
 
 \ruleline{George Sheppard}
@@ -227,10 +253,28 @@ The max angle algorithm uses the energy conservation law to predicts the next po
 
 \begin{align}
     &\frac{1}{2}MV_{max}^2 = Mgh\\
-    & h = \frac{V_{max}^2}{2g}\\
+    & h = \frac{V_{max}^2}{2g}
 \end{align}
 
-The $V_{max}$ is the maximum speed that the swing reached in every cycle, which is observed at the minima and h is the difference in height between the minima and the next maxima. Once the height difference is determined, one can calculate the next maximum angle by using the technique shown in figure
+The $V_{max}$ is the maximum speed that the swing reached in every cycle, which is observed at the minima and h is the difference in height between the minima and the next maxima. To record the max speed at bottom, One should record the two big encoder data that the sign of the big encoder value just flipped. However, it is very inaccurate to just use the big encoder value just before or after the minima because the max speed is affected highly when only two data point was used. Hence one have defined the max speed is the average speed that from -1 to 1 degree.
+\\
+\\
+
+Once the height difference is determined, one can calculate the next maximum angle by using the technique shown in figure \ref{fig:max_angle_calculation}
+
+    \begin{figure}[!htb]
+        \centering
+        \captionbox
+             {Illustration of using height difference h and pendulum length L to calculate the max angle $\theta$\label{fig:max_angle_calculation}}
+             {\includegraphics[scale = 0.85]{max_angle_calculation.eps}}
+    \end{figure}
+    
+Now one could calculate the max angle $\theta$ using:
+\begin{align}
+    &\theta = cos^{-1}(\frac{L-h}{L})
+\end{align}
+
+
 
 
 
@@ -391,9 +435,42 @@ Improvements to the seat of the swing could be made in order to improve the stab
 \ruleline{George Sheppard}
 Throughout this project, there were a large amount of issues found when trying to connect to: Nao, Webots, and the hinge encoders etc. For this reason a wiki was created to document how to set everything up correctly. This wiki is available at: https://github.com/GeorgeSheppard/Robotics. Alongside this wiki is the final code, including how to use it, the report, and any analysis files used to create plots. Feel free to clone this repository and add to it such that there remains a comprehensive guide for each year.
 
-\subsection{Webots}
+\subsection{Using Webots} \label{sec:usingwebots}
 \ruleline{James Doering}
-Webots offers a substantial amount of uses - throughout this project Webots was used to test the interface and algorithms away from the lab, and to find accurate estimates for NAO's centre of mass in different positions. However, Webots did not offer much in useful physical simulations - the simulated swing would often fail, and physics would quickly go out of sync if the target frame-rate was missed momentarily. In order to interface with Webots from the NAOQI python library (supplied by Aldebaran/SoftBanks), the NAOQISIM controller was required - this acted as a 'virtual robot' to translate from Python script written with NAOQI to the NAOQISIM controller in Webots, which controlled the simulated NAO. This proved difficult to achieve, only being possible with certain software configurations. It is highly recommended that this is done on a linux operating system, otherwise there will be errors between 32 and 64 bit versions of python and NAOQI/NAOQISIM. The version of NAOQI required to connect to Webots is different to the version required to connect to the real NAO - as of writing, Webots/NAOQISIM requires NAOQI 2.1.4.13, whereas NAO requires NAOQI 1.14.5. Further explanation can be seen on the wiki decribed in section \ref{sec:wiki}.
+Connecting to Webots using the same code used to connect to Nao is possible, though requires some tinkering. The NAOQISIM controller (available \textbf{put something here!!!}) must be installed, but can only be connected to using version 2.1.4.13 of NAOqi - the real robot requires NAOqi 1.14.5, meaning the two versions must be switched between if connection to both is required. Connection will not work with non 64-bit versions of Python 2.7. If all the correct versions are used, the simulated robot should react to all commands, though speech will be printed in the Webots console. Pausing the simulation will break this connection, and will require a restart of the simulation. Similarly, computer slowdown can cause disconnection or missed commands. It is not recommended to use Webots to test the viability of algorithms, as the simulation quickly deteriorates if the computer is not strong enough, and there is no simple way to extract hinge data from a simulated swing. \\
+
+
+As described in section \ref{sec:webots}, Webots was used to find the centre of mass of Nao in each posture. Despite this being automatically calculated and displayed on the screen (when enabled), there is no simple way to extract the position of the centre of mass relative to Nao - discussion with Cyberbotics revealed that this could be achieved by creating a supervisor for Nao in C++, which was beyond the scope of this project. To get around this limitation, the centre of mass was found using the viewpoint of the camera in Webots. By placing Nao at the centre of the virtual space, the viewpoint could be "zoomed" into the centre of mass until it was large and central to the screen. By carefully considering the axes and rotation of Nao, the viewpoint's position (which is given by the Webots) could be transformed to give the relative vector between Nao's centre and its centre of mass for each position. \textbf{Rewrite.}
+
+
+
+\subsection{Fitting Damping}\label{sec:dampingboring}
+\ruleline{James Doering}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{SeatedDecay.eps}
+    \caption{One of the eight fitted plots for the seated posture.}
+    \label{fig:dampingfitexample}
+\end{figure}
+
+To obtain the plot in figure \ref{fig:dampingpositions}, where each of the posture's expected decays are compared, Nao was raised to $\approx 10^\circ$ and released. The decay of the swing was recorded for 80 seconds, with the first swing cut to remove data of Nao being lifted and dropped. The maximums of this swing were then automatically detected using SciPy's 'find\_peaks' and fitted to equation \ref{eq:damping}, producing plots similar to figure \ref{fig:dampingfitexample}. This was then repeated 8 times for each of Nao's postures, producing the results and standard deviations in table \ref{tbl:damping}. Finally, equation \ref{eq:damping} was plotted for each of the postures, using an initial $\theta_0 = 10$, giving a comparison for the expected decay of each posture.
+
+
+
+\begin{table}[hb]
+\centering
+\caption{The damping coefficients for each posture.}
+\label{tbl:damping}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+                         & Extended                           & Seated                             & Raised                             & Lowered                            \\ \hline
+$\theta_0$ & $13.82 \pm 0.64$      & $12.42 \pm 0.37$      & $12.46 \pm 1.03$      & $14.22 \pm 0.73$      \\ \hline
+$b$                        & $0.00923 \pm 0.00068$ & $0.01133 \pm 0.00115$ & $0.01153 \pm 0.00276$ & $0.01032 \pm 0.00063$ \\ \hline
+$\omega_d$ & $2.475 \pm 0.0493$    & $2.490 \pm 0.039$     & $2.488 \pm 0.030$     & $2.485 \pm 0.372$     \\ \hline
+$\zeta$    & $0.00373 \pm 0.00021$ & $0.00454 \pm 0.00039$ & $0.00464 \pm 0.00112$ & $0.00416 \pm 0.00028$ \\ \hline
+\end{tabular}
+\end{table}
 
 \bibliographystyle{ieeetr}
 \bibliography{References}
