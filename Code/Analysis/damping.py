@@ -11,7 +11,7 @@ from graph_functions import *
 from scipy.optimize import curve_fit
 from sys import path
 path.insert(0, '..')
-from utility_functions import read_file, convert_read_numpy, get_latest_file
+from utility_functions import read_file, get_latest_file
 
 filename, output_data_directory = get_latest_file('Analysis')
 angles = read_file(output_data_directory + filename)
