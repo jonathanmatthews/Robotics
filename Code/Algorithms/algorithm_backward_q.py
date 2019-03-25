@@ -19,6 +19,7 @@ from single_increase_angular_velocity import IncreaseAngularVelocity
 from triple_startup_const_period import Start
 from single_increase_accelerometer import IncreaseAccelerometer
 from single_backward_q import BackwardQ
+from single_backward_q_parametric import BackwardQParametric
 
 
 class Algorithm(Robot, Encoders):
@@ -28,12 +29,12 @@ class Algorithm(Robot, Encoders):
 
     def __init__(self, BigEncoder, SmallEncoders, values, positions, ALProxy, period):
         # Initialise encoder
-        Encoders.__init__(self, BigEncoder, SmallEncoders)
+        Encoders.__init__(self, BigEncoder, SmallEncoders, angvel_avg=1)
         # Initialise robot
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
-            'algo': BackwardQ
+            'algo': BackwardQ#Parametric
         }]
 
         for dictionary in self.order:
