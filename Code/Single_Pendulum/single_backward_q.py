@@ -23,14 +23,14 @@ class BackwardQ():
     def get_state(self, x_pos, x_vel):
         #states=[0,1,2,3]
         if(x_pos<=0):
-            if(x_vel<=0):
+            if(x_vel<0):
                 state=0
-            elif(x_vel>0):
+            elif(x_vel>=0):
                 state=1
         elif(x_pos>0):
-            if(x_vel>=0):
+            if(x_vel>0):
                 state=2
-            elif(x_vel<0):
+            elif(x_vel<=0):
                 state=3
         return state
     #def get_state(self, x_pos, x_vel):

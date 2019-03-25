@@ -42,6 +42,6 @@ class BackwardQParametric():
         best_action = self.data1[state].index(max(self.data1[state]))
         
         if best_action == 0:
-            return "lowered"
+            return ["lowered", 0.5]
         elif best_action == 1:
-            return "raised"
+            return ["raised", 0.5]
