@@ -25,7 +25,7 @@ class MaintainFeedback():
     def algo(self, values, all_data):
         
         # sign_zero_zero of big encoder changes when crossing zero point
-        if sign_zero(values['be']) != sign_zero(self.previous_be):
+        if sign_zero(values['be']) != sign_zero(self.previous_be) and values['be'] >= 0:
 
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
             self.max_time, self.max_angle = last_maxima(all_data['time'], all_data['be'], values_time='both', dt=self.period)

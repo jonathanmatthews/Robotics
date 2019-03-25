@@ -62,7 +62,7 @@ for i, file_ in enumerate(files):
         frequencies = frequencies[frequencies > 0.1]
         scaling = max(abs(components))
         print i, file_
-        # components = abs(components)/scaling
+        components = abs(components)/scaling
         if i == 0:
             label = 'Changing Posture'
         if i == 1:
