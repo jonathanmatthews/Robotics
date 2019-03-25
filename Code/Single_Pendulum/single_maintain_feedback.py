@@ -12,12 +12,12 @@ class MaintainFeedback():
         # offset is time from maximum to swing
         self.time_switch = 100
         
-        masses = kwargs.get('masses', True)
+        masses = kwargs.get('masses', False)
         if masses:
             self.offset = 0.20
         else:
             self.offset = -0.25
-        self.last_maximum = last_maxima(all_data['time'], all_data['be'], values_time='values', dt=self.period)
+        self.last_maximum = last_maxima(all_data['time'], all_data['be'], time_values='values', dt=self.period)
 
         # alternative switch condition
         self.duration = kwargs.get('duration', float('inf'))
@@ -28,7 +28,7 @@ class MaintainFeedback():
         if sign_zero(values['be']) != sign_zero(self.previous_be) and values['be'] >= 0:
 
             self.min_time = last_zero_crossing(values, self.previous_time, self.previous_be)
-            self.max_time, self.max_angle = last_maxima(all_data['time'], all_data['be'], values_time='both', dt=self.period)
+            self.max_time, self.max_angle = last_maxima(all_data['time'], all_data['be'], time_values='both', dt=self.period)
 
             # only worry is if offset becomes >= the quarter period then nao will never change
             # position, until the angle decreases enough that the offset rises again mind
