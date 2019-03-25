@@ -34,11 +34,7 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 5
-        },
-        {
-            'algo': IncreaseQuarterPeriod,
-            'duration': 60
+            'duration': 200
         }]
 
         for dictionary in self.order:
