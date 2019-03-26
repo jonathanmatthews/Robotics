@@ -17,7 +17,7 @@ from single_increase_max_angle import IncreaseMaxAngle
 from single_stopping_variable_speed import StoppingVariableSpeed
 from triple_increase_angular_velocity import TripleIncreaseAngularVelocity
 from single_increase_angular_velocity import IncreaseAngularVelocity
-
+from triple_startup_const_period import StartTriple
 
 class Algorithm(Robot, Encoders):
     """
@@ -31,10 +31,8 @@ class Algorithm(Robot, Encoders):
         Robot.__init__(self, values, positions, ALProxy, masses=False, acc_required=False, gyro_required=False)
 
         self.order = [{
-            'algo': Start,
+            'algo': Nothing,
             'duration': 30
-        },{
-            'algo': IncreaseAngularVelocity 
         }]
 
         #self.order = [{

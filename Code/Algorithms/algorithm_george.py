@@ -34,8 +34,10 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 200
-        }]
+            'duration': 8
+        },{
+            'algo': IncreaseQuarterPeriod
+            'duration' 60}]
 
         for dictionary in self.order:
             dictionary['period'] = period
