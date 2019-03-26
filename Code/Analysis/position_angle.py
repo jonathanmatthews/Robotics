@@ -16,7 +16,7 @@ if argv[-1] == 'Real':
 # access latest file if underneath file name is blanked out
 # filename, output_data_directory = get_latest_file('Analysis', test=test)
 output_data_directory = '../Output_data/'
-filename = 'OLD JOE'
+filename = '22-03-2019 14:00:36 Org'
 angles = read_file(output_data_directory + filename)
 
 # Extract data
@@ -35,7 +35,7 @@ fig, ax = plt.subplots(
     1, 1, figsize=(
         13, 8))
 
-ax = format_graph(ax)
+#ax = format_graph(ax)
 
 
 # editing plot that will show angle
