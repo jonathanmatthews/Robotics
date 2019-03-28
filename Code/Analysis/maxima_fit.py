@@ -47,6 +47,9 @@ def fit_parametric(n, m, c, q, k):
     #print ans
     return ans
 
+def fit_parametric_2(n, k, a, c):
+    return a*np.exp(k*n) + c
+
 def plot_rot():
     """
     Fit linear region of rotational, then plot.
@@ -65,20 +68,21 @@ def plot_para():
     """
     Fit linear/exponential region of parametric, then plot.
     """
-    print [len(n_para), len(peaks_para)]
+    #print [len(n_para), len(peaks_para)]
 
-    para_params = curve_fit(fit_parametric, n_para, peaks_para)
-    fitted_para = fit_parametric(n_para, *para_params[0])
-    #eqn_para = "{} n + {}".format(round(para_params[0][0], 3), round(para_params[0][1], 3))
-    eqn_para = ""
+    para_params = curve_fit(fit_parametric_2, n_para[35:250], peaks_para[35:250], p0=[1/86.5, 1, 0])
+    print para_params[0]
+    fitted_para = fit_parametric_2(n_para[35:250], *para_params[0])
+    eqn_para = "{} exp({} n) + {}".format(*(round(i, 3) for i in  para_params[0]))
+    #eqn_para = ""
 
-    plt.plot(n_para, fitted_para, Label="Parametric (Quarter Period)")
-    plt.plot(n_para, peaks_para, 'g.', label=r"Linear/exponential fit, $\theta$ = " + eqn_para)
+    plt.plot(n_para, peaks_para, "g.", Label="Parametric (Quarter Period)")
+    plt.plot(n_para[35:250], fitted_para, label=r"exponential fit, $\theta$ = " + eqn_para)
     plt.legend()
     plt.show()
 
 
-#plot_rot()
+plot_rot()
 plot_para()
 
 
