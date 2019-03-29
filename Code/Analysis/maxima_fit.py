@@ -6,9 +6,25 @@ from scipy.signal import find_peaks
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 from utility_functions import read_file
+from graph_functions import format_graph
 
-parametric = read_file("../Output_data/Parametric No Masses 800secs")['be']
-rotational = read_file("../Output_data/Rotational No Masses 400secs")['be']
+#parametric = read_file("../Output_data/Parametric No Masses 800secs")['be']
+#rotational = read_file("../Output_data/Rotational No Masses 400secs")['be']
+
+parametric = read_file("../Output_data/26-03-2019 18:17:02 Para 600 secs Org")['be']
+rotational = read_file("../Output_data/26-03-2019 18:30:45 Rot 600 secs Org")['be']
+
+para_dt = np.mean(np.diff(read_file("../Output_data/26-03-2019 18:17:02 Para 600 secs Org")['time']))
+rot_dt = np.mean(np.diff(read_file("../Output_data/26-03-2019 18:30:45 Rot 600 secs Org")['time']))
+
+
+##### George's magical filter.
+be = parametric
+no_large_change_indexes = np.diff(be) < 0.25
+#t = t[:-1][no_large_change_indexes]
+be = be[:-1][no_large_change_indexes]
+parametric = be
+#####
 
 index_para = find_peaks(parametric)[0]
 index_rot = find_peaks(rotational)[0]
@@ -16,8 +32,8 @@ index_rot = find_peaks(rotational)[0]
 peaks_para = abs(parametric[index_para])
 peaks_rot = abs(rotational[index_rot])
 
-n_para = np.arange(len(peaks_para))
-n_rot = np.arange(len(peaks_rot))
+n_para = np.arange(len(peaks_para))*para_dt/2.55
+n_rot = np.arange(len(peaks_rot))*para_dt/2.55
 
 def fit_rotational(n, m, c):
     """
@@ -116,9 +132,10 @@ def plot_both():
     plt.ylabel(r"Amplitude ($^o$)")
     #plt.set_facecolor('#eeeeee')
 
+    ax = format_graph(ax)
 
     # Get parametric.
-    para_params = curve_fit(fit_parametric_2, n_para[35:250], peaks_para[35:250], p0=[1/86.5, 1, 0])
+    para_params = curve_fit(fit_parametric_2, n_para[35:250], peaks_para[35:250], p0=[0.01, 1, 0])
     print para_params[0]
     fitted_para = fit_parametric_2(n_para[35:250], *para_params[0])
     eqn_para = "{} exp({} n) + {}".format(round(para_params[0][1], 3), round(para_params[0][0], 3), round(para_params[0][2], 3))
@@ -128,12 +145,18 @@ def plot_both():
     plt.plot(n_para[35:250], fitted_para, label=r"exponential fit, $\theta$ = " + eqn_para)
     plt.xlabel("Cycle number")
     plt.ylabel(r"Amplitude ($^o$)")
-    plt.title("Fit of per-cycle amplitude gain")
+    plt.title("Fit of per-period amplitude gain")
     plt.legend()
     plt.show()
 
 
 #plot_rot()
 #plot_para()
-plot_both()
+#plot_both()
+
+
+plt.plot(n_para, peaks_para)
+plt.show()
+
+
 
