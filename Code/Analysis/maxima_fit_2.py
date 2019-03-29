@@ -27,7 +27,6 @@ times_para = parametric['time'][index_para]
 times_rot = abs(rotational['time'][index_rot])
 
 
-
 ##### George's magical filter.
 be = peaks_para
 t = times_para
@@ -127,6 +126,7 @@ def plot_para():
     plt.legend()
     plt.show()
 
+
 def plot_both():
     # Get rotational.
     rot_params = curve_fit(fit_rotational, n_rot[20:61], peaks_rot[20:61])
@@ -140,8 +140,8 @@ def plot_both():
     ax.set_facecolor("#eeeeee")
 
     plt.plot(n_rot, peaks_rot, '.', color="#00004d", Label="Rotational (Quarter Period)")
-    plt.plot(n_rot[20:61], fitted_rot, color="#456DBA", label=r"Linear fit, $\theta$ = " + eqn_rot)
-    plt.xlabel("Cycle number")
+    plt.plot(n_rot[20:61], fitted_rot, color="#456DBA", label=r"Linear fit, $\theta$ = " + eqn_rot, linewidth=2.5)
+    plt.xlabel("Time (s)")
     plt.ylabel(r"Amplitude ($^o$)")
     #plt.set_facecolor('#eeeeee')
 
@@ -157,17 +157,21 @@ def plot_both():
     print "rotational errors: {}".format(np.sqrt(np.diag(rot_params[1])))
 
     plt.plot(n_para, peaks_para, ".", color="#CC0000", Label="Parametric (Quarter Period)")
-    plt.plot(n_para[20:90], fitted_para, color="#F9A628", label=r"exponential fit, $\theta$ = " + eqn_para)
-    plt.xlabel("Period number")
+    plt.plot(n_para[20:90], fitted_para, color="#F9A628", label=r"exponential fit, $\theta$ = " + eqn_para, linewidth=2.5)
+    plt.xlabel("Time (s)")
     plt.ylabel(r"Amplitude ($^o$)")
-    plt.title("Fit of per-period amplitude gain")
+    plt.title("Fit of amplitude gain")
     plt.legend()
     plt.show()
+    fig.savefig(
+        'Figures/ParametricRotationalComparison.eps', format='eps'
+    )
 
 
 #plot_rot()
 #plot_para()
 plot_both()
+
 
 
 #plt.plot(t_para, peaks_para)

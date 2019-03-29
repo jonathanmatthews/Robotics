@@ -5,6 +5,7 @@ from graph_functions import *
 from sys import path
 path.insert(0, '..')
 from utility_functions import read_file
+from scipy.signal import find_peaks
 
 output_data_directory = '../Output_data/'
 
@@ -61,24 +62,37 @@ for each_file in files_to_compare:
     time = angles['time']
     be = angles['be']
     angle_max_index = (np.diff(np.sign(np.diff(be))) < 0).nonzero()[0] + 1
+
+    be = be[time > 12.06]
+    time = time[time > 12.06]
+
+    print each_file
+    if each_file == '../Output_data/Decrease Parametric':
+        label = 'Parametric Decrease'
+        be -= 1.2
+    elif each_file == '../Output_data/decreasingdamping':
+        label = 'Natural Damping'
     # true_max = time[angle_max_index][5]
-    # print time[angle_max_index]
-    plt.plot(time-5.5, be, label=get_name(each_file)[:-1])
-    plt.xlim([0, max(time)])
+
+    peak_indexes = find_peaks(be)[0]
+    be *= 15.0/be[peak_indexes[1]]
+    time -= time[peak_indexes[1]]
+    plt.plot(time, be, label=label)
+    #plt.xlim([0, max(time)])
     #plt.show()
 
+plt.xlim([0, 60])
 plt.xlabel('Time (s)')
 plt.ylabel('Angle ' + r"$(^o)$")
 # plt.title('Comparison between different recorded motions')
 # plt.title('Comparison between different feedback\nmethods on maintaining amplitude of ' + r"$10^o$")
-plt.title('Comparison between different decreasing algorithms')
+plt.title('Parametric decrease compared with natural damping')
 plt.legend(loc='best')
 fig.tight_layout()
 plt.show()
 
 # eps is vector graphic doesn't get worse in quality when in latex
-# fig.savefig(
-    # 'Figures/Comparison.eps', format='eps')
-fig.savefig(
-    'Figures/ParametricRotationalComparison.png', format='png'
-)
+fig.savefig('Figures/paradecrease.eps', format='eps')
+#fig.savefig(
+#    'Figures/ParametricRotationalComparison.png', format='png'
+#)
