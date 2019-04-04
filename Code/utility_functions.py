@@ -283,6 +283,9 @@ def last_minima(time_list, values_list, time_values='time', dt=0.005):
 def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     """
     Generalised function that calculates zero crossing point or maxima value 
+
+    THIS FUNCTION IS AWFUL IF YOU DECIDE TO IMPROVE ON OUR CODE MAKING THIS BETTER WOULD BE A START
+    WOULD USE SCIPY BUT CAN'T USE scipy.find_peaks ON THE LAB PC
     """
     n = int(6.0 / dt)
     window_number = int(0.8 / dt)

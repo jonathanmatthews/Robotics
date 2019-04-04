@@ -1,3 +1,10 @@
+# This project:  
+In this repository you will find all the code associated with each part of the projct, e.g. machine learning
+files, simulation from theory, and the actual code for running the robot. Machine learning and simulation
+files have only been added at the end so there is version history for the code team but not for the other teams.
+
+
+
 # Running project:
 Install all packages in Pipfile and then run through terminal  
 Linux:  
