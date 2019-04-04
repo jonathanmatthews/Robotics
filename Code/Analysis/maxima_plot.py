@@ -70,7 +70,7 @@ def plot_maxima_curve(filename, plot=True):
     be = be[be > 1]
 
     # calculate maximas after smoothing results together
-    window_size = 9
+    window_size = 5
     avg_be = np.array(moving_average(be, window_size=window_size))
     angle_max_index = (np.diff(np.sign(np.diff(avg_be))) < 0).nonzero()[0] + 1 + (window_size - 1)/2
 
