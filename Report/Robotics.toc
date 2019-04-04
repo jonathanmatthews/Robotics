@@ -1,0 +1,40 @@
+\contentsline {section}{\numberline {1}Abstract}{1}
+\contentsline {section}{\numberline {2}Introduction}{1}
+\contentsline {subsection}{\numberline {2.1}Background}{1}
+\contentsline {subsection}{\numberline {2.2}Motivation}{1}
+\contentsline {subsection}{\numberline {2.3}Theory}{1}
+\contentsline {section}{\numberline {3}Connecting To Nao}{1}
+\contentsline {subsection}{\numberline {3.1}Nao}{1}
+\contentsline {subsection}{\numberline {3.2}Encoders}{2}
+\contentsline {subsection}{\numberline {3.3}Interface}{2}
+\contentsline {subsection}{\numberline {3.4}Testing}{2}
+\contentsline {subsection}{\numberline {3.5}Optimisations}{3}
+\contentsline {subsubsection}{\numberline {3.5.1}Small Encoders}{4}
+\contentsline {subsubsection}{\numberline {3.5.2}Nao}{4}
+\contentsline {section}{\numberline {4}Swinging}{4}
+\contentsline {subsection}{\numberline {4.1}Webots}{4}
+\contentsline {subsection}{\numberline {4.2}Optimising Nao's Kicks}{5}
+\contentsline {subsection}{\numberline {4.3}Rotational Method}{5}
+\contentsline {subsection}{\numberline {4.4}Parametric Method}{5}
+\contentsline {subsection}{\numberline {4.5}Damping}{5}
+\contentsline {section}{\numberline {5}Single Pendulum}{6}
+\contentsline {subsection}{\numberline {5.1}Start-up}{6}
+\contentsline {subsection}{\numberline {5.2}Timing via Angular Velocity}{6}
+\contentsline {subsection}{\numberline {5.3}Timing via Maximum Angle}{7}
+\contentsline {subsection}{\numberline {5.4}Timing via Quarter Period}{7}
+\contentsline {subsection}{\numberline {5.5}Timing via Accelerometer Values}{8}
+\contentsline {subsection}{\numberline {5.6}Increasing QP Rotational}{14}
+\contentsline {subsection}{\numberline {5.7}Increasing QP Parametric}{14}
+\contentsline {subsection}{\numberline {5.8}Maintain}{14}
+\contentsline {subsection}{\numberline {5.9}Decreasing}{14}
+\contentsline {subsection}{\numberline {5.10}Dicussion}{14}
+\contentsline {section}{\numberline {6}Double Pendulum}{14}
+\contentsline {subsection}{\numberline {6.1}Start-up}{14}
+\contentsline {subsection}{\numberline {6.2}Adjusting Algorithms}{14}
+\contentsline {subsection}{\numberline {6.3}Increasing QP Rotational}{16}
+\contentsline {subsection}{\numberline {6.4}Increasing QP Parametric}{16}
+\contentsline {subsection}{\numberline {6.5}Discussion}{16}
+\contentsline {section}{\numberline {7}Future Suggestions}{16}
+\contentsline {section}{\numberline {A}Appendix}{16}
+\contentsline {subsection}{\numberline {A.1}Wiki}{16}
+\contentsline {subsection}{\numberline {A.2}Webots}{17}

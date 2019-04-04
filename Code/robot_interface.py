@@ -38,7 +38,8 @@ class Robot():
 
         self.set_posture_initial('seated', max_speed = 0.1)
         self.motion.setFallManagerEnabled(False)
-        self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
+        #self.speech.say('Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100))
+        print 'Battery level at {:.0f}%'.format(self.get_angle('BC')[0]*100)
         
     def check_setup(self, position):
         """
@@ -54,7 +55,7 @@ class Robot():
         values = [self.get_angle(key)[0] for key in position.keys()]
         differences = [(key, value, abs(value - position[key])) for (key, value) in zip(position.keys(), values)]
 
-        incorrect_positions = [i for i in differences if i[2] > 0.1]
+        incorrect_positions = [i for i in differences if i[2] > 0.5]
         if len(incorrect_positions) != 0:        
             # for values in incorrect_positions:
                 # print values[0], 'Actual value: {}'.format(values[1]), 'Difference from expected: {}'.format(values[2])

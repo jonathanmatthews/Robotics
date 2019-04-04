@@ -5,6 +5,7 @@ from sys import path
 path.insert(0, 'Single_Pendulum')
 from single_nothing import Nothing
 from single_maintain_improved import MaintainGoodBadKick
+from single_maintain_feedback import MaintainFeedback
 
 
 class Algorithm(Robot, Encoders):
@@ -20,10 +21,10 @@ class Algorithm(Robot, Encoders):
 
         self.order = [{
             'algo': Nothing,
-            'duration': 10.0
+            'duration': 5.0
         },{
             'algo': MaintainGoodBadKick,
-            'maintain_angle': 7.5
+            'maintain_angle': 10.0
         }]
 
 

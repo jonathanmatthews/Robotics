@@ -60,7 +60,7 @@ def current_data_types():
     return [('time', 'f4'), ('event', 'i4'), ('ax', 'f4'), ('ay', 'f4'), ('az', 'f4'), ('gx', 'f4'), ('gy', 'f4'),
             ('gz', 'f4'), ('se0', 'f4'), ('se1', 'f4'), ('se2',
                                                          'f4'), ('se3', 'f4'), ('be', 'f4'), ('av', 'f4'),
-            ('cmx', 'f4'), ('cmy', 'f4'), ('algo', '|S25'), ('pos', '|S10')]
+            ('cmx', 'f4'), ('cmy', 'f4'), ('algo', '|S40'), ('pos', '|S10')]
 
 
 def get_latest_file(current_dir, test=True):
@@ -287,7 +287,7 @@ def zero_maxima(min_max, time_list, values_list, time_values='time', dt=0.005):
     THIS FUNCTION IS AWFUL IF YOU DECIDE TO IMPROVE ON OUR CODE MAKING THIS BETTER WOULD BE A START
     WOULD USE SCIPY BUT CAN'T USE scipy.find_peaks ON THE LAB PC
     """
-    n = int(6.0 / dt)
+    n = int(3.0 / dt)
     window_number = int(0.8 / dt)
     if window_number % 2 == 0:
         window_number += 1

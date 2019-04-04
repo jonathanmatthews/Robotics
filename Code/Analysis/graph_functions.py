@@ -31,7 +31,7 @@ def format_axis(ax):
     This formats an axis according to the style guidelines set below
     """
     plt.sca(ax)
-    # ax.set_facecolor('#eeeeee')
+    ax.set_facecolor('#eeeeee')
     plt.rcParams.update({'axes.titlesize': 18,
                          'legend.fontsize': 14,
                          'font.serif': 'Computer Modern Roman', })

@@ -35,7 +35,6 @@ cmx = angles['cmx']
 cmy = angles['cmy']
 algorithm = angles['algo']
 print angle2
-
 print angle2
 print angle3
 
